@@ -24,7 +24,7 @@
 | Phase | Delivers |
 |---|---|
 | **1 (this file)** | Rules + tests, dashboard v1 (incl. Ideas tab and the model/effort picker in Talk), accounts, draft → approve → post for LinkedIn + Instagram, cloud publisher, message inbox |
-| 2 | Video studio: Studio tab, `jobs` collection, in-page upload (assets, 20 MB) + Google Drive "Social OS inbox" folder, `sos-studio` skill running Edit King / Motion King / Prompt Guy / faceless-explainer with the job's model + effort, install yt-dlp; results become drafts |
+| 2 | Video studio, **Prompt Guy first** (user decision 30 Oct): Studio tab, `jobs` collection, in-page upload (assets, 20 MB) + Google Drive "Social OS inbox" folder. Flow: clip + brief → Prompt Guy job writes the paste-ready prompt → shown in Studio → user taps "Run it" → child job runs it with Edit King (own footage) or Motion King (from nothing) on the job's model + effort → result becomes a draft. `sos-studio` skill; install yt-dlp |
 | 3 | Research: per-account foundation (`pillars.md`, `formats.md` via interview), Apify competitor radar (daily), deep dive (ffmpeg contact sheet + faster-whisper + formula card, weekly), install Agent Reach (no-login channels) + `last30days`, Research tab, weekly plan auto-filled |
 | 4 | More platforms: YouTube + Facebook posting, Composio X test, Threads route, Porotta link (auto DM automation for "comment KEYWORD" posts), "Post now" from the page if Composio works there |
 | 5 | Analytics: weekly numbers pull, review ending in ONE change into `lessons.md`, dashboard charts (`dataviz`), monthly `llm-council` strategy check, best posts → gaznil.com via `blog-repurpose` |
@@ -49,10 +49,10 @@
 ## Data shape (copied into `docs/DATA.md` in Task 2)
 
 - `accounts/{accountId}`: `platform`, `label` (shown in the dashboard, no handle needed), `niche`, `language`, `postsPerWeek` (number), `composioAccountId` (string or null), `status` (`active`|`paused`), `updatedAt` (ISO).
-- `posts/{postId}`: `accountId`, `platform`, `format` (`text`|`image`|`carousel`|`reel`|`video`|`short`|`thread`), `title` (YouTube only, else `""`), `caption`, `mediaUrls` (array of strings), `plannedAt` (ISO), `status` (see queue), `approvedBy` (`dashboard`|`chat`|null), `approvedAt` (ISO|null), `postedAt` (ISO|null), `platformPostId` (string|null), `permalink` (string|null), `error` (string|null), `problems` (array of strings from preflight), `updatedAt` (ISO).
+- `posts/{postId}`: `accountId`, `platform`, `format` (`text`|`image`|`carousel`|`story`|`reel`|`video`|`short`|`thread`), `title` (YouTube only, else `""`), `caption`, `mediaUrls` (array of strings), `plannedAt` (ISO), `status` (see queue), `approvedBy` (`dashboard`|`chat`|null), `approvedAt` (ISO|null), `postedAt` (ISO|null), `platformPostId` (string|null), `permalink` (string|null), `error` (string|null), `problems` (array of strings from preflight), `updatedAt` (ISO).
 - `messages/{messageId}`: `from` (`user`|`claude`), `text`, `status` (`new`|`done`), `reply` (string|null), `createdAt` (ISO).
 - `ideas/{ideaId}`: `text`, `accountId` (string|null = any account), `source` (`user`|`research`|`plan`), `status` (`new`|`drafted`|`dropped`), `createdAt` (ISO).
-- `jobs/{jobId}` (Phase 2; listed now so names stay stable): `tool` (`edit-king`|`motion-king`|`prompt-guy`|`faceless-explainer`|`sos-create`), `accountId`, `brief`, `inputs` (array of asset URLs or Drive links), `model` (`haiku`|`sonnet`|`opus`), `effort` (`low`|`medium`|`high`), `status` (`new`|`working`|`done`|`failed`), `output` (array of links), `note` (string|null), `createdAt`.
+- `jobs/{jobId}` (Phase 2; listed now so names stay stable): `tool` (`prompt-guy` = DEFAULT|`edit-king`|`motion-king`|`faceless-explainer`|`sos-create`), `accountId` (string|null), `brief`, `inputs` (array of asset URLs or Drive links), `prompt` (string|null: Prompt Guy's output), `parentJobId` (string|null: the Prompt Guy job a "Run it" job came from), `model` (`haiku`|`sonnet`|`opus`), `effort` (`low`|`medium`|`high`), `status` (`new`|`working`|`done`|`failed`), `output` (array of links), `note` (string|null), `createdAt`.
 - `runs/{runId}`: `kind` (`publish`|`inbox`|`research`|`analytics`), `startedAt`, `finishedAt`, `summary` (one plain sentence).
 - `settings/main`: `timezone` (`Asia/Kolkata`), `postingWindows` (array, default `["09:00","13:00","19:00"]`).
 
@@ -485,17 +485,31 @@ git push
 - Consumes: data shape above; status names from `queue.STATUSES`; the same `can_move` table (mirrored in JS, see below).
 - Produces: a published artifact with `capabilities: {db: {}, user: {}, sample: {}}` (the page stays private to the user, so the default rules are enough); collections `accounts`, `posts`, `messages`, `runs`, `settings`.
 
+- [ ] **Step 0: Add the `story` format to preflight (TDD).** Test in `tests/test_preflight.py`, class `Instagram`:
+  ```python
+      def test_story_needs_exactly_one_media(self):
+          p = self.ig(format="story")
+          p["mediaUrls"] = ["https://cdn.example.com/a.jpg", "https://cdn.example.com/b.jpg"]
+          self.assertIn("A story is one image or video; this has 2.", preflight.check(p))
+  ```
+  Run it (FAIL), then add inside `if platform == "instagram":` in `tools/sos/preflight.py`:
+  ```python
+          if fmt == "story" and len(media) != 1:
+              problems.append(f"A story is one image or video; this has {len(media)}.")
+  ```
+  Run the whole suite (PASS), commit.
+
 - [ ] **Step 1: Load the design skills** — `artifact-design` (required before any artifact) and `dataviz` (stat tiles). Follow their page contract: `<title>Social OS</title>`, colour tokens on `:root` with the dark-mode block, explicit `body` background, phone width with 16px gutter, no horizontal scroll.
 
 - [ ] **Step 2: Write `docs/DATA.md`** with the data shape section copied from this plan, plus one line: "The dashboard and every `sos-*` skill read and write exactly these fields."
 
 - [ ] **Step 3: Write `dashboard/index.html`** with six tabs:
   - **Today:** counts (waiting approval, approved & scheduled, posted this week, failed) and the next 5 scheduled posts.
-  - **Approve:** every `waiting` post as a card: account label, platform, planned time, caption, media thumbnails, `problems` list in red if not empty. Buttons: Approve, Back to draft, Reject. Approve is disabled while `problems` is not empty.
+  - **Approve:** every `waiting` post as a card: account label, platform, planned time, caption, `problems` list in red if not empty, and a preview that fits the format: carousel = swipeable slide strip, story = 9:16 frames in order, reel/video/short = video player, image = the image, text/thread = the text as it will read. Buttons: Approve, Back to draft, Reject. Approve is disabled while `problems` is not empty.
   - **Calendar:** next 14 days, posts grouped by day, coloured by status. X/Threads posts show a "Copy text" button and an "Open app" link (`https://x.com/compose/post`, `https://www.threads.net/`).
-  - **Accounts:** list of `accounts` (label, platform, niche, posts per week, connected yes/no, status). Read-only in Phase 1.
+  - **Accounts:** list of `accounts` (label, platform, niche, posts per week, connected yes/no, status). Read-only in Phase 1. With zero accounts (the starting state, user decision 30 Oct) every tab still works and Accounts shows "No accounts yet. Tell Claude in chat: add an account."
   - **Ideas:** a text box ("Tip: tap the mic on your phone keyboard to speak"), an account picker (accounts + "Any account"), Save → writes an `ideas` doc `{text, accountId, source:"user", status:"new", createdAt}`. Below: the list of ideas with status.
-  - **Talk:** a message box + list of `messages` (newest first). Send writes `{from:"user", text, status:"new", reply:null, createdAt}`. A second button "Quick answer" calls `sample` for an instant reply shown under the box (not saved), with the page's own system text: "You help a social media creator. Answer briefly and concretely." Two pickers beside it, remembered in browser storage (wrapped in try/catch): **Model** = Fast (`modelTier:"quick"`) / Balanced (`"default"`) / Best (`"complex"`); **Effort** = low / medium / high. Show the model that answered from `modelTierApplied`. Below the box: "Tip: tap the mic on your phone keyboard to speak."
+  - **Talk:** a message box + list of `messages` (newest first). Send writes `{from:"user", text, status:"new", reply:null, createdAt}`. A second button "Quick answer" calls `sample` for an instant reply shown under the box (not saved), with the page's own system text: "You help a social media creator. Answer briefly and concretely." Two pickers beside it, remembered in browser storage (wrapped in try/catch), named exactly like Claude's own picker (user decision 30 Oct): **Model** = Haiku 5.5 / Sonnet 5.5 / Opus 5.5 (ids in `MODELS` below), default Sonnet; **Effort** = Low / Medium / High, default Medium. Show which model answered (`answeredBy`). Below the box: "Tip: tap the mic on your phone keyboard to speak."
 
   The data module inside the page (vanilla JS; status rules mirror `tools/sos/queue.py`):
   ```html
@@ -535,13 +549,20 @@ git push
     await db.collection("ideas").add({ text, accountId: accountId || null, source: "user", status: "new", createdAt: nowIso() });
   }
 
-  async function quickAnswer(text, modelTier, effort) {
+  const MODELS = {
+    haiku:  { model: "claude-haiku-5-5",  modelTier: "quick",   label: "Haiku 5.5" },
+    sonnet: { model: "claude-sonnet-5-5", modelTier: "default", label: "Sonnet 5.5" },
+    opus:   { model: "claude-opus-5-5",   modelTier: "complex", label: "Opus 5.5" },
+  };
+
+  async function quickAnswer(text, modelKey, effort) {
     const sample = await claude.use("sample");
     if (!sample) return showToast("Quick answers are off for this page.");
+    const m = MODELS[modelKey] || MODELS.sonnet;
     const out = await sample([{ role: "user", content:
       "You help a social media creator. Answer briefly and concretely.\n\n" + text }],
-      { cache: false, modelTier, effort });
-    return { text: out.text, tier: out.modelTierApplied };
+      { cache: false, model: m.model, modelTier: m.modelTier, effort });
+    return { text: out.text, answeredBy: out.modelApplied ? m.label : "the fallback model" };
   }
   </script>
   ```
@@ -588,7 +609,7 @@ git -C private add README.md && git -C private commit -m "Dashboard URL" && git 
   6. Commit + push `private/`. Never write handles or IDs into the public repo.
   ```
 
-- [ ] **Step 2: Ask the user for the starting accounts** (product decision): which accounts on which platforms, one niche each. Recommended start: their existing LinkedIn (already connected in Composio) + 1 Instagram account.
+- [ ] **Step 2: WAITS FOR THE USER** (30 Oct: will create ONE account later; none exists now). Meanwhile do the parts of Tasks 4-7 that need no account (skills written, dry runs on test docs); real posts wait for the account.
 
 - [ ] **Step 3: Run `sos-account` for each.** Instagram must be a Creator/Business account first (user step in the Instagram app: Settings → Account type and tools → Switch to professional account).
 

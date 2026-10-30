@@ -24,7 +24,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **30 Oct 2026 (round 2):** user asked for more. ChatGPT-chat repos opened and mined (SKILLS.md "Round 2"); added
   Ideas tab + model/effort picker to Phase 1; new Phase 2 = video studio (Edit King / Motion King / Prompt Guy from the
   dashboard), Phase 3 = research (Apify no-login competitor radar, reel deep dive, Agent Reach no-login channels,
-  last30days). Agent Reach is NOT installed yet (checked 30 Oct); installs in Phase 3. yt-dlp not installed; ffmpeg is.
+  last30days). yt-dlp not installed; ffmpeg is.
+- **30 Oct 2026 (round 3, user decisions):** (1) video editing = **Prompt Guy first**, then "Run it" with Edit King /
+  Motion King; (2) **zero accounts now**: the user will create ONE account later, so Task 3 waits and the dashboard must
+  work empty; (3) every format (carousel, story, reel, image, text, thread) previews in the dashboard's Approve tab;
+  `story` format added to the plan (Task 2 Step 0); (4) model picker uses Claude's names: Haiku 5.5 / Sonnet 5.5 /
+  Opus 5.5 + Low / Medium / High. **Agent Reach:** skill files now present (`~/.claude/skills/agent-reach`,
+  `~/.agents/skills/agent-reach`) but the `agent-reach` command is NOT installed; install the CLI in Phase 3.
+  **HANDOFF 30 Oct:** user switched chats. **Next = Task 2** (Step 0 story rule, then dashboard v1). Nothing else pending.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
