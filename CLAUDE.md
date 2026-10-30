@@ -17,7 +17,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 ## 2. STATUS
 - **30 Oct 2026:** project created. Skill research done and recorded in `SKILLS.md` (each pick compared by opening the repos).
   Four skill packs vendored into `.claude/skills/`. Repos: `gaznil/social-os` (public, so GitHub Actions minutes are free)
-  and `gaznil/social-os-private` (private, cloned into `private/`). Next: the build plan in `docs/plans/`.
+  and `gaznil/social-os-private` (private, cloned into `private/`).
+- **30 Oct 2026:** Phase 1 plan written: `docs/plans/2026-10-30-phase-1-foundation.md` (7 tasks). Execution = inline,
+  Claude decides. **Task 1 DONE** (queue + preflight rules, 27 tests pass: `python -m unittest discover -s tests`).
+  **Next: Task 2** (dashboard v1). Task 3 needs the user's account list (platforms + one niche each).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
