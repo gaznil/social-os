@@ -1,0 +1,15 @@
+# private data has its own repo
+private/
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# local junk
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
