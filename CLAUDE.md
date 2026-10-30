@@ -21,6 +21,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **30 Oct 2026:** Phase 1 plan written: `docs/plans/2026-10-30-phase-1-foundation.md` (7 tasks). Execution = inline,
   Claude decides. **Task 1 DONE** (queue + preflight rules, 27 tests pass: `python -m unittest discover -s tests`).
   **Next: Task 2** (dashboard v1). Task 3 needs the user's account list (platforms + one niche each).
+- **30 Oct 2026 (round 2):** user asked for more. ChatGPT-chat repos opened and mined (SKILLS.md "Round 2"); added
+  Ideas tab + model/effort picker to Phase 1; new Phase 2 = video studio (Edit King / Motion King / Prompt Guy from the
+  dashboard), Phase 3 = research (Apify no-login competitor radar, reel deep dive, Agent Reach no-login channels,
+  last30days). Agent Reach is NOT installed yet (checked 30 Oct); installs in Phase 3. yt-dlp not installed; ffmpeg is.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).

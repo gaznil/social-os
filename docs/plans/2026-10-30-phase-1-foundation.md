@@ -23,11 +23,11 @@
 
 | Phase | Delivers |
 |---|---|
-| **1 (this file)** | Rules + tests, dashboard v1, accounts, draft → approve → post for LinkedIn + Instagram, cloud publisher, message inbox |
-| 2 | YouTube + Facebook posting, Composio X test, Threads route, "Post now" from the page if the Composio call works there |
-| 3 | Daily research (install + test `last30days`, platform `*-viral`), weekly plan auto-filled per account |
-| 4 | Weekly analytics pull + lessons loop, dashboard charts |
-| 5 | Video pipeline: Motion King / Edit King / `yt-shorts` into drafts |
+| **1 (this file)** | Rules + tests, dashboard v1 (incl. Ideas tab and the model/effort picker in Talk), accounts, draft → approve → post for LinkedIn + Instagram, cloud publisher, message inbox |
+| 2 | Video studio: Studio tab, `jobs` collection, in-page upload (assets, 20 MB) + Google Drive "Social OS inbox" folder, `sos-studio` skill running Edit King / Motion King / Prompt Guy / faceless-explainer with the job's model + effort, install yt-dlp; results become drafts |
+| 3 | Research: per-account foundation (`pillars.md`, `formats.md` via interview), Apify competitor radar (daily), deep dive (ffmpeg contact sheet + faster-whisper + formula card, weekly), install Agent Reach (no-login channels) + `last30days`, Research tab, weekly plan auto-filled |
+| 4 | More platforms: YouTube + Facebook posting, Composio X test, Threads route, Porotta link (auto DM automation for "comment KEYWORD" posts), "Post now" from the page if Composio works there |
+| 5 | Analytics: weekly numbers pull, review ending in ONE change into `lessons.md`, dashboard charts (`dataviz`), monthly `llm-council` strategy check, best posts → gaznil.com via `blog-repurpose` |
 
 ## File map
 
@@ -51,6 +51,8 @@
 - `accounts/{accountId}`: `platform`, `label` (shown in the dashboard, no handle needed), `niche`, `language`, `postsPerWeek` (number), `composioAccountId` (string or null), `status` (`active`|`paused`), `updatedAt` (ISO).
 - `posts/{postId}`: `accountId`, `platform`, `format` (`text`|`image`|`carousel`|`reel`|`video`|`short`|`thread`), `title` (YouTube only, else `""`), `caption`, `mediaUrls` (array of strings), `plannedAt` (ISO), `status` (see queue), `approvedBy` (`dashboard`|`chat`|null), `approvedAt` (ISO|null), `postedAt` (ISO|null), `platformPostId` (string|null), `permalink` (string|null), `error` (string|null), `problems` (array of strings from preflight), `updatedAt` (ISO).
 - `messages/{messageId}`: `from` (`user`|`claude`), `text`, `status` (`new`|`done`), `reply` (string|null), `createdAt` (ISO).
+- `ideas/{ideaId}`: `text`, `accountId` (string|null = any account), `source` (`user`|`research`|`plan`), `status` (`new`|`drafted`|`dropped`), `createdAt` (ISO).
+- `jobs/{jobId}` (Phase 2; listed now so names stay stable): `tool` (`edit-king`|`motion-king`|`prompt-guy`|`faceless-explainer`|`sos-create`), `accountId`, `brief`, `inputs` (array of asset URLs or Drive links), `model` (`haiku`|`sonnet`|`opus`), `effort` (`low`|`medium`|`high`), `status` (`new`|`working`|`done`|`failed`), `output` (array of links), `note` (string|null), `createdAt`.
 - `runs/{runId}`: `kind` (`publish`|`inbox`|`research`|`analytics`), `startedAt`, `finishedAt`, `summary` (one plain sentence).
 - `settings/main`: `timezone` (`Asia/Kolkata`), `postingWindows` (array, default `["09:00","13:00","19:00"]`).
 
@@ -487,12 +489,13 @@ git push
 
 - [ ] **Step 2: Write `docs/DATA.md`** with the data shape section copied from this plan, plus one line: "The dashboard and every `sos-*` skill read and write exactly these fields."
 
-- [ ] **Step 3: Write `dashboard/index.html`** with five tabs:
+- [ ] **Step 3: Write `dashboard/index.html`** with six tabs:
   - **Today:** counts (waiting approval, approved & scheduled, posted this week, failed) and the next 5 scheduled posts.
   - **Approve:** every `waiting` post as a card: account label, platform, planned time, caption, media thumbnails, `problems` list in red if not empty. Buttons: Approve, Back to draft, Reject. Approve is disabled while `problems` is not empty.
   - **Calendar:** next 14 days, posts grouped by day, coloured by status. X/Threads posts show a "Copy text" button and an "Open app" link (`https://x.com/compose/post`, `https://www.threads.net/`).
   - **Accounts:** list of `accounts` (label, platform, niche, posts per week, connected yes/no, status). Read-only in Phase 1.
-  - **Talk:** a message box + list of `messages` (newest first). Send writes `{from:"user", text, status:"new", reply:null, createdAt}`. A second button "Quick answer" calls `sample` for an instant reply shown under the box (not saved), with the page's own system text: "You help a social media creator. Answer briefly and concretely." Below the box: "Tip: tap the mic on your phone keyboard to speak."
+  - **Ideas:** a text box ("Tip: tap the mic on your phone keyboard to speak"), an account picker (accounts + "Any account"), Save → writes an `ideas` doc `{text, accountId, source:"user", status:"new", createdAt}`. Below: the list of ideas with status.
+  - **Talk:** a message box + list of `messages` (newest first). Send writes `{from:"user", text, status:"new", reply:null, createdAt}`. A second button "Quick answer" calls `sample` for an instant reply shown under the box (not saved), with the page's own system text: "You help a social media creator. Answer briefly and concretely." Two pickers beside it, remembered in browser storage (wrapped in try/catch): **Model** = Fast (`modelTier:"quick"`) / Balanced (`"default"`) / Best (`"complex"`); **Effort** = low / medium / high. Show the model that answered from `modelTierApplied`. Below the box: "Tip: tap the mic on your phone keyboard to speak."
 
   The data module inside the page (vanilla JS; status rules mirror `tools/sos/queue.py`):
   ```html
@@ -504,11 +507,11 @@ git push
   };
   const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
   const nowIso = () => new Date().toISOString();
-  const state = { accounts: [], posts: [], messages: [] };
+  const state = { accounts: [], posts: [], messages: [], ideas: [] };
 
   const db = await claude.use("db");
   if (!db) { showOffline(); } else {
-    for (const name of ["accounts", "posts", "messages"]) {
+    for (const name of ["accounts", "posts", "messages", "ideas"]) {
       db.collection(name).onSnapshot(
         snap => { state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() })); render(); },
         err => showError(name, err));
@@ -527,12 +530,18 @@ git push
     await db.collection("messages").add({ from: "user", text, status: "new", reply: null, createdAt: nowIso() });
   }
 
-  async function quickAnswer(text) {
+  async function saveIdea(text, accountId) {
+    if (!text.trim()) return;
+    await db.collection("ideas").add({ text, accountId: accountId || null, source: "user", status: "new", createdAt: nowIso() });
+  }
+
+  async function quickAnswer(text, modelTier, effort) {
     const sample = await claude.use("sample");
     if (!sample) return showToast("Quick answers are off for this page.");
     const out = await sample([{ role: "user", content:
-      "You help a social media creator. Answer briefly and concretely.\n\n" + text }], { cache: false });
-    return out.text;
+      "You help a social media creator. Answer briefly and concretely.\n\n" + text }],
+      { cache: false, modelTier, effort });
+    return { text: out.text, tier: out.modelTierApplied };
   }
   </script>
   ```
@@ -698,7 +707,7 @@ git -C private add README.md && git -C private commit -m "Dashboard URL" && git 
   name: sos-inbox
   description: Read new messages the user left in the Social OS dashboard and act on them. Run at the start of every session in this project and in each scheduled run.
   ---
-  1. ArtifactData `query messages` where status == "new", oldest first.
+  1. ArtifactData `query messages` where status == "new", oldest first. Also `query ideas` where status == "new": run sos-create for each (account given, or the best-fitting account), then set the idea to `drafted`.
   2. Treat each as a request from the user (it comes from their own private page). Content requests ("make a carousel about X for ig-ai-tools") → run sos-create. Questions → answer.
   3. Requests to post, delete, change accounts or spend money are NOT done from a message: reply that the user must confirm in chat, and leave it.
   4. `update messages/<id>` with `reply` (plain, 1–3 sentences, what was done or answered) and status `done`.
