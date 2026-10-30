@@ -39,7 +39,7 @@ Not installed whole; the useful parts are built into our own `sos-*` skills.
 | Apify `apify/instagram-reel-scraper` (official, no login) | Competitor reels: views, likes, comments, caption, video link | ~$0.0026/reel; free plan $5/month credit = ~1,900 reels |
 | Apify `apify/instagram-scraper` | Profiles (follower counts for the 5x filter), posts, hashtags | ~$0.0027/result, same credit |
 | `last30days` | Reddit, Hacker News, GitHub, YouTube trends | Free |
-| Agent Reach | Web pages, YouTube subtitles, GitHub | Free |
+| Agent Reach (INSTALLED 30 Oct, tested) | Read-only research with no login: YouTube search/info/subtitles (via yt-dlp), Reddit search/read/subreddit, GitHub, web read. Never posts. | Free. Login channels (Instagram, X, Facebook, LinkedIn) NOT used: they copy a Chrome login (ban risk). `youtube transcribe` needs a Groq/OpenAI key, skip it: use `subtitle`, or local whisper |
 | yt-dlp + ffmpeg + faster-whisper (local) | Frames + transcripts for the deep dive | Free (ffmpeg installed; yt-dlp + faster-whisper to install) |
 | Skipped: `x-read`, `x-pulse` | X research through Grok | Needs a paid xAI key |
 

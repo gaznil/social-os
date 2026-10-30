@@ -6,6 +6,11 @@ Finds what is working now, per account niche. Never logs into anyone's account t
 (Reddit, Hacker News, GitHub, YouTube), Agent Reach (web, YouTube, GitHub only), `yt-viral` / `x-viral`,
 `firecrawl-search`, `competitive-ads-extractor` for paid ads.
 
+**Agent Reach jobs (free, no login):** what's trending on YouTube for the niche (`youtube search`, view counts),
+subtitles of top videos to study hooks and structure (`youtube subtitle`), what the audience asks and complains about
+(`reddit search` / `reddit subreddit`), new AI tools and repos (`github search`), reading any link (`read <url>`).
+Command: `C:\Users\gazni\.local\bin\agent-reach.exe` (not on PATH). Output is JSON.
+
 **Competitor radar (daily, light):** for each account's `competitors.md`, pull new posts → rank by multiple over that
 account's own median → keep outliers (>= 5x followers on views, or >= 3x the account median).
 

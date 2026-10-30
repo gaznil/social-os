@@ -29,8 +29,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   Motion King; (2) **zero accounts now**: the user will create ONE account later, so Task 3 waits and the dashboard must
   work empty; (3) every format (carousel, story, reel, image, text, thread) previews in the dashboard's Approve tab;
   `story` format added to the plan (Task 2 Step 0); (4) model picker uses Claude's names: Haiku 5.5 / Sonnet 5.5 /
-  Opus 5.5 + Low / Medium / High. **Agent Reach:** skill files now present (`~/.claude/skills/agent-reach`,
-  `~/.agents/skills/agent-reach`) but the `agent-reach` command is NOT installed; install the CLI in Phase 3.
+  Opus 5.5 + Low / Medium / High. **Agent Reach: INSTALLED by the user 30 Oct**, tested OK (YouTube + Reddit search,
+  no login). Role = free read-only research (see engine/research README).
   **HANDOFF 30 Oct:** user switched chats. **Next = Task 2** (Step 0 story rule, then dashboard v1). Nothing else pending.
 
 ## 3. WHERE THINGS LIVE
@@ -62,6 +62,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   or a Composio-staged file.
 - LinkedIn: one personal profile per human; extra accounts must be company pages.
 - Claude cloud scheduled tasks: at most once an hour; each run uses normal subscription usage.
+- Agent Reach command is `C:\Users\gazni\.local\bin\agent-reach.exe` (that folder is not on PATH). Use only its no-login
+  channels (youtube, reddit, github, web); never `agent-reach login` for Instagram/X/Facebook/LinkedIn.
 
 ## 6. QUEUE
 The current plan in `docs/plans/` is the queue. Do not duplicate it here.
