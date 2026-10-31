@@ -127,6 +127,13 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026: USER ASK, design item 7 queued: Growth section** (after the horizontal scroll ends -> vertical, one still
   section, account switch buttons, followers/views graph). Spec in the plan roadmap row "4b"; built with Phase 4 `sos-results`.
 
+- **31 Oct 2026: research step 6 DONE, week 1 drafts in Approve** (posts `w1-claude-commands` carousel Sun 1 Nov,
+  `w1-stop-scrolling` reel Tue 3, `w1-photo-codes` carousel Thu 5, `w1-setup` reel Sat 7; all 19:00). Carousel PNGs in
+  `C:\Gaznil\social-os-media\ig-ai-tools\` and uploaded as dashboard assets (`/_blob/<id>` in mediaUrls). Dashboard v16
+  now declares `assets` (capabilities db, sample, user, assets) + carousel previews 4:5. Reels show the Manglish script in
+  `problems` until the user films them. **Note for sos-publish:** `/_blob` URLs are not public; publish from the local PNGs
+  (Composio staged files). **Next:** user taps Approve/Back to draft; films the 2 reels.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
