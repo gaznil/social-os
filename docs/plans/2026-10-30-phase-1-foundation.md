@@ -24,10 +24,12 @@
 | Phase | Delivers |
 |---|---|
 | **1 (this file)** | Rules + tests, dashboard v1 (incl. Ideas tab and the model/effort picker in Talk), accounts, draft → approve → post for LinkedIn + Instagram, cloud publisher, message inbox |
-| 2 | Video studio, **Prompt Guy first** (user decision 30 Oct): Studio tab, `jobs` collection, in-page upload (assets, 20 MB) + Google Drive "Social OS inbox" folder. Flow: clip + brief → Prompt Guy job writes the paste-ready prompt → shown in Studio → user taps "Run it" → child job runs it with Edit King (own footage) or Motion King (from nothing) on the job's model + effort → result becomes a draft. `sos-studio` skill; install yt-dlp |
-| 3 | Research: per-account foundation (`pillars.md`, `formats.md` via interview), Apify competitor radar (daily), deep dive (ffmpeg contact sheet + faster-whisper + formula card, weekly), install Agent Reach (no-login channels) + `last30days`, Research tab, weekly plan auto-filled |
-| 4 | More platforms: YouTube + Facebook posting, Composio X test, Threads route, Porotta link (auto DM automation for "comment KEYWORD" posts), "Post now" from the page if Composio works there |
-| 5 | Analytics: weekly numbers pull, review ending in ONE change into `lessons.md`, dashboard charts (`dataviz`), monthly `llm-council` strategy check, best posts → gaznil.com via `blog-repurpose` |
+| 2 | **Research engine** (was 3; user approved 31 Oct): per-account foundation (`pillars.md`, `formats.md`), **style learning from the account's own past posts -> `voice.md` + `style.md`**, competitor + trending radar (Apify for Instagram — check free tier is enough before building; Agent Reach/web for YouTube, Reddit, web), deep dive on top reels/carousels (ffmpeg contact sheet + faster-whisper + formula card), viral-ideas -> calendar fill for approval. **Per-account schedules** (one cloud job per account/brand, max hourly) + **Schedules screen** in the dashboard (add / pause / delete, shows active). Research tab |
+| 3 | **Video studio** (was 2): Studio tab, `jobs`, upload (20 MB) + Drive inbox. Clip/reference + brief -> Prompt Guy prompt -> "Run it" with Edit King / Motion King. **NEW: "one video in, pack out"** — from one clip, drafts for every connected platform (reel, carousel, story, text, thread), each rewritten per platform, never duplicated. `sos-studio`; install yt-dlp |
+| 4 | **Results loop** (was 5, moved earlier): weekly numbers pull, best posting times per account, ONE change into `lessons.md`, dashboard charts, monthly `llm-council` check. Trending audio = suggested only, user adds it in the app |
+| 5 | More platforms: YouTube + Facebook posting, Composio X test, Threads route, Porotta link, "Post now" from the page |
+
+Per-account brand rules (voice, colours, topics) never mix between accounts — applies to every phase.
 
 ## File map
 

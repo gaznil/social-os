@@ -74,6 +74,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026: TASK 2 DONE.** User tapped Approve on `posts/test-1`; verified status "approved", approvedBy "dashboard",
   approvedAt set; test doc deleted. **Next = Task 3** (needs the user's first account: platform + one niche).
 
+- **31 Oct 2026: ROADMAP REORDERED (user approved).** Phase 2 = research engine + style learning + per-account schedules
+  screen; 3 = video studio + "one video -> all-platform pack"; 4 = results loop; 5 = more platforms. See plan Roadmap.
+  **Next still = Task 3** (user gives first account: platform + niche).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
