@@ -256,7 +256,7 @@ h2 { margin: 0; font: 400 28px/1.1 var(--font-body); letter-spacing: -.03em; }
 .meta { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font: 400 12px var(--font-mono); color: var(--muted); }
 .plat { display: inline-flex; gap: 6px; align-items: center; color: var(--fg); font-family: var(--font-body); font-size: 13px; }
 .pill { font: 400 11px var(--font-mono); border-radius: 99px; padding: 2px 9px; background: var(--surface-2); color: var(--muted); white-space: nowrap; }
-.s-waiting, .s-new, .s-setup { color: var(--warn); } .s-approved, .s-posting { color: var(--accent); } .s-posted, .s-active, .s-drafted, .s-done { color: var(--ok); } .s-failed, .s-rejected, .s-dropped { color: var(--bad); }
+.s-waiting, .s-new, .s-setup, .s-requested, .s-paused { color: var(--warn); } .s-approved, .s-posting { color: var(--accent); } .s-posted, .s-active, .s-drafted, .s-done { color: var(--ok); } .s-failed, .s-rejected, .s-dropped, .s-remove { color: var(--bad); }
 .caption { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
 .problems { margin: 0; padding: 10px 12px 10px 28px; background: color-mix(in srgb, var(--bad) 8%, transparent); color: var(--bad); border-radius: 12px; font-size: 14px; }
 .strip { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
@@ -321,7 +321,7 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [] };
+const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [] };
 const ui = { loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
 
 const MODELS = {
@@ -342,7 +342,7 @@ const BRAND = { instagram: "#e1306c", youtube: "#ff0033", linkedin: "#0a66c2", x
 const logoOf = p => ICONS[p] ? `<span style="color:${BRAND[p] || "currentColor"};display:inline-flex">${svg(p)}</span>` : "";
 const plat = p => `<span class="plat">${logoOf(p)}${PLATFORMS[p] || p}</span>`;
 const MANUAL = { x: "https://x.com/compose/post", threads: "https://www.threads.net/" };
-const TABS = [["wall", "Control room"], ["approve", "Approve"], ["calendar", "Calendar"], ["accounts", "Accounts"], ["ideas", "Ideas"]];
+const TABS = [["wall", "Control room"], ["approve", "Approve"], ["calendar", "Calendar"], ["accounts", "Accounts"], ["ideas", "Ideas"], ["schedules", "Schedules"]];
 const TZ = "Asia/Kolkata";
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -380,8 +380,8 @@ async function connect() {
   db = window.claude ? await claude.use("db") : null;
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  let pending = 4;
-  for (const name of ["accounts", "posts", "messages", "ideas"]) {
+  let pending = 5;
+  for (const name of ["accounts", "posts", "messages", "ideas", "schedules"]) {
     let first = true;
     db.collection(name).onSnapshot(
       snap => {
@@ -996,7 +996,29 @@ function viewIdeas() {
     </section>`;
 }
 
-const VIEWS = { wall: viewWall, approve: viewApprove, calendar: viewCalendar, accounts: viewAccounts, ideas: viewIdeas };
+// The page only records what the user wants; Claude's next run creates, pauses or removes the real cloud job
+// (that step needs the user's yes in chat) and marks the row "active".
+const SCHED_KIND = { research: "Find trending ideas", publish: "Post approved items", results: "Check results" };
+const SCHED_STATE = { requested: "Waiting for Claude", active: "Active", paused: "Paused", remove: "Removing" };
+function viewSchedules() {
+  const rows = [...state.schedules].sort((a, b) => String(a.time).localeCompare(String(b.time)));
+  return `<section class="card"><h2>New schedule</h2>
+      <div class="field"><label class="label" for="sch-acct">For</label><select class="field-in" id="sch-acct">${accountOptions("").replace("Any account", "All accounts")}</select></div>
+      <div class="field"><label class="label" for="sch-kind">Job</label><select class="field-in" id="sch-kind">${Object.entries(SCHED_KIND).map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select></div>
+      <div class="field"><label class="label" for="sch-every">How often</label><select class="field-in" id="sch-every"><option value="daily">Every day</option><option value="weekly">Every Monday</option></select></div>
+      <div class="field"><label class="label" for="sch-time">Time (India)</label><input class="field-in" id="sch-time" type="time" value="08:00"></div>
+      <div class="row"><button class="btn primary" id="sch-save">Add schedule</button></div>
+      <span class="muted">Claude switches it on in its next chat. Finding ideas fills the Ideas tab; you still approve every post.</span></section>
+    <section class="list"><h2>Schedules</h2>
+      ${rows.length ? rows.map(r => `<div class="card"><div class="meta"><span>${esc(r.accountId ? accountLabel(r.accountId) : "All accounts")}</span><span>${esc(r.every === "weekly" ? "Mondays" : "Daily")} ${esc(r.time)}</span>${pill(r.status, SCHED_STATE[r.status] || r.status)}</div>
+        <p class="caption">${esc(SCHED_KIND[r.kind] || r.kind)}${r.note ? ` · ${esc(r.note)}` : ""}</p>
+        <div class="row">${r.status === "paused" ? `<button class="btn" data-sch="active" data-id="${esc(r.id)}">Resume</button>` : r.status === "remove" ? "" : `<button class="btn" data-sch="paused" data-id="${esc(r.id)}">Pause</button>`}
+          ${r.status === "remove" ? "" : `<button class="btn danger" data-sch="remove" data-id="${esc(r.id)}">Remove</button>`}</div></div>`).join("")
+        : `<div class="empty">No schedules yet. Add one above, for example "Find trending ideas, every day at 08:00".</div>`}
+    </section>`;
+}
+
+const VIEWS = { wall: viewWall, approve: viewApprove, calendar: viewCalendar, accounts: viewAccounts, ideas: viewIdeas, schedules: viewSchedules };
 
 let lastKey = "";
 function render(dataChanged) {
@@ -1057,12 +1079,24 @@ document.addEventListener("click", async e => {
     catch (err) { ui.answer = { text: err.code === "rate_limited" ? "Too many quick answers just now. Wait a minute." : err.code === "not_granted" ? "Quick answers are switched off for this page." : (err.text || "That didn't work. Try again."), answeredBy: "nobody" }; }
     ui.answering = false; paintHero(); return;
   }
-  if (!db && (t.dataset.act || t.id === "idea-save")) return showToast("Sign in to claude.ai to save.");
+  if (!db && (t.dataset.act || t.dataset.sch || t.id === "idea-save" || t.id === "sch-save")) return showToast("Sign in to claude.ai to save.");
   if (t.dataset.act) { const p = state.posts.find(x => x.id === t.dataset.id); if (p) { t.disabled = true; await setStatus(p, t.dataset.act); } return; }
   if (t.dataset.copy) {
     const p = state.posts.find(x => x.id === t.dataset.copy); if (!p) return;
     try { await navigator.clipboard.writeText(p.caption); showToast("Copied. Paste it in the app."); }
     catch { showToast("Copy was blocked. Press and hold the text to copy it."); }
+    return;
+  }
+  if (t.id === "sch-save") {
+    const time = $("#sch-time").value; if (!time) return showToast("Pick a time first.");
+    try { await db.collection("schedules").add({ accountId: $("#sch-acct").value || null, kind: $("#sch-kind").value, every: $("#sch-every").value, time, status: "requested", note: null, createdAt: nowIso(), updatedAt: nowIso() }); showToast("Schedule saved. Claude switches it on next time."); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.sch) {
+    t.disabled = true;
+    try { await db.doc(`schedules/${t.dataset.id}`).update({ status: t.dataset.sch, updatedAt: nowIso() }); showToast(t.dataset.sch === "remove" ? "Claude removes it next time." : t.dataset.sch === "paused" ? "Paused" : "Resumed"); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
     return;
   }
   if (t.id === "idea-save") {

@@ -85,6 +85,13 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   **Waiting on accounts (not on build):** Task 3 Step 3, Task 4 Step 2, Task 5 Step 5. **Task 6 (cloud publisher)
   needs the user's yes** to create a cloud scheduled task. **Next build = Phase 2 plan (research engine + schedules screen).**
 
+- **31 Oct 2026 (Phase 2 build, part 1):** dashboard v15 published with a **Schedules tab** (`schedules` collection,
+  docs/DATA.md): user adds/pauses/removes; Claude syncs real cloud tasks via new `sos-schedules` skill (creating one
+  still needs the user's yes in chat). New `sos-research` skill (foundation files, Apify `apidojo/instagram-scraper`
+  verified $0.50/1,000 posts on the FREE tier 31 Oct; free plan = $5/month credit, stops when used, no charge; Agent
+  Reach for the rest; outliers -> ideas with "Why" -> calendar drafts). **Not yet built:** deep-dive scripts
+  (ffmpeg + faster-whisper), Phase 3 video studio + "one video -> pack", Phase 4 results (`sos-results` named but not written).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
