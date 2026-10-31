@@ -3,7 +3,7 @@
 Turns research and past results into each account's week.
 
 **Skills:** `content-strategy` (base), then the platform planner (`ig-plan`, `yt-plan`, `linkedin-content-planner`,
-`x-plan`).
+`x-plan`). Big calls (new niche, format, pivot): `llm-council`; niche + pillars: `niche-content-strategist`.
 
 **In:** latest research, `private/analytics/lessons.md`, each account's `profile.md` (goal, cadence, hours the user has).
 **Out:** calendar slots in the dashboard database and `private/calendar/<week>.md` — date, account, format, idea, why.

@@ -9,5 +9,6 @@ Copied unchanged into `.claude/skills/` (LinkedIn's shared `references/` and `li
 | YouTube | github.com/Jakeschincariol/youtube-agent-skill | a2feb2104981a375ffd4f87ee04f4f5344ac43c6 | `yt-*` (11) |
 | X | github.com/Jakeschincariol/x-agent-skill | 7822c29b4aedbd400b9339839d3f59f3652b1317 | `x-*` (11) |
 | LinkedIn | github.com/sergebulaev/linkedin-skills | 8f8bc4b40a2d5419b2dcf898772b85712cfbdf41 | `linkedin-*` (12) |
+| Trends | github.com/mvanhorn/last30days-skill (MIT, v3.31.0) | 7efc0ef764765ed9ceff5ce1204462b35b89d680 | `last30days` (demo `assets/` left out) |
 
 To update a pack: clone the new version, compare its skills with these, copy over, update the commit here.

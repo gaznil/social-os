@@ -40,7 +40,8 @@ Not installed whole; the useful parts are built into our own `sos-*` skills.
 | Apify `apify/instagram-scraper` | Profiles (follower counts for the 5x filter), posts, hashtags | ~$0.0027/result, same credit |
 | `last30days` | Reddit, Hacker News, GitHub, YouTube trends | Free |
 | Agent Reach (INSTALLED 30 Oct, tested) | Read-only research with no login: YouTube search/info/subtitles (via yt-dlp), Reddit search/read/subreddit, GitHub, web read. Never posts. | Free. Login channels (Instagram, X, Facebook, LinkedIn) NOT used: they copy a Chrome login (ban risk). `youtube transcribe` needs a Groq/OpenAI key, skip it: use `subtitle`, or local whisper |
-| yt-dlp + ffmpeg + faster-whisper (local) | Frames + transcripts for the deep dive | Free (ffmpeg installed; yt-dlp + faster-whisper to install) |
+| `last30days` (VENDORED 31 Oct, `.claude/skills/last30days`) | Niche trends from Reddit, Hacker News, GitHub, Polymarket, YouTube | Free keyless sources only. Never its browser-cookie or ScrapeCreators/paid-key options |
+| ffmpeg + yt-dlp (installed 31 Oct) + ElevenLabs Scribe v2 (local faster-whisper fallback) | Frames + transcripts for the deep dive (`tools/sos/deepdive.py`) | Free: ElevenLabs free plan ~12 min STT/month |
 | Skipped: `x-read`, `x-pulse` | X research through Grok | Needs a paid xAI key |
 
 ## Already installed, now part of the system

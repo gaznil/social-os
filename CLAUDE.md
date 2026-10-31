@@ -96,6 +96,13 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   fill). **User decision: transcription = ElevenLabs** (Scribe v2, key `ELEVENLABS_API_KEY` user variable, free plan
   ~12 min STT/month shared with voiceovers); local faster-whisper `small` (cached) is the automatic fallback. Live
   test passed via ElevenLabs. **Next build = Phase 3** (video studio + "one video -> all-platform pack"), then Phase 4 `sos-results`.
+- **31 Oct 2026: skills wired everywhere (user ask: "if a skill exists, use it").** Each `sos-*` skill now opens with a
+  skills rule and names the skill per step (research: last30days, ig/yt/x-viral, firecrawl, ads extractor, planners,
+  llm-council; account: niche-content-strategist, profile scorers, linkedin-interviewer; create: writers, repurposers,
+  humanizers incl. content-humanizer, frontend/canvas/banner design, prompt-guy -> edit/motion-king, faceless-explainer,
+  embedded-captions). **`last30days` vendored** (`.claude/skills/last30days`, MIT, commit in THIRD_PARTY.md) + yt-dlp
+  installed. **Not yet run once:** the auto-mode guard blocks running its downloaded scripts until the user allows it
+  (asked 31 Oct). First run: say no to cookies and paid keys.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
@@ -114,7 +121,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **One niche per account.** Never post the same content to two accounts on the same platform (spam rules = bans).
 - **Never automate** likes, follows, mass comments or cold DMs. Instagram replies/DMs after a comment = Porotta, not this system.
 - **Posting only through official APIs** (via Composio). No browser automation, no password sharing, no scraping behind logins.
-- **Skills first:** before writing or building, load the skill named in the platform/stage README. If a better one appears, compare
+- **Skills first:** every `sos-*` skill starts with a skills rule and names the skill for each step; load them before the work,
+  and use any other installed skill that fits better (then add it to `SKILLS.md`). Before writing or building, load the skill named in the platform/stage README. If a better one appears, compare
   by opening both (not by stars) and record the result in `SKILLS.md`.
 - **Session start:** in every session in this project, run the `sos-inbox` skill first.
 - **Save as you go:** after every real step update STATUS above, commit and push both repos.

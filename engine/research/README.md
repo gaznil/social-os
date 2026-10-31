@@ -3,7 +3,7 @@
 Finds what is working now, per account niche. Never logs into anyone's account to collect data.
 
 **Sources (all free tiers, see `SKILLS.md`):** Apify official Instagram scrapers (no login), `last30days`
-(Reddit, Hacker News, GitHub, YouTube), Agent Reach (web, YouTube, GitHub only), `yt-viral` / `x-viral`,
+(vendored; free keyless: Reddit, Hacker News, GitHub, Polymarket, YouTube), Agent Reach (web, YouTube, GitHub only), `yt-viral` / `x-viral`,
 `firecrawl-search`, `competitive-ads-extractor` for paid ads.
 
 **Agent Reach jobs (free, no login):** what's trending on YouTube for the niche (`youtube search`, view counts),
