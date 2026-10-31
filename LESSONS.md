@@ -3,6 +3,12 @@
 Written by the `sos-learn` skill. Read at every session start (sos-inbox step 0). Newest first. One lesson per entry;
 repeats get `seen xN`, not a new entry. Rules here are already copied into the skill named in "Fixed in".
 
+## 2026-10-31 · HIGH · A system-wide rule goes into every stage
+- **Mistake:** the learning loop was first wired only into research + inbox; user: "wire it to the system".
+- **Rule:** when the user asks for a behaviour for "the system", add it to every `sos-*` skill and `SYSTEM.md`, not just
+  the stage being worked on. Check with `grep -c <rule> .claude/skills/sos-*/SKILL.md`.
+- **Fixed in:** all `sos-*` skills ("Learning rule"), `SYSTEM.md` "Learning loop".
+
 ## 2026-10-31 · HIGH · Search GitHub too when looking for a system to copy
 - **Mistake:** looked for a self-learning repo with web search only; the user had to add "use the GitHub connector and search".
 - **Rule:** when hunting for an existing repo/skill to copy, run web search AND the GitHub connector (`search_repositories`,
