@@ -64,6 +64,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   screen fits short screens. Don't redesign unless asked. **Next:** finish Task 2 Step 5 (user presses Approve on
   `posts/test-1`, Claude verifies approvedBy "dashboard" then deletes it), then Task 3 (needs the user's first account:
   platform + one niche).
+- **31 Oct 2026 (final design touches, v13-14):** voice mode has only ✕ + minimise (auto-send after 2 s pause, Enter
+  sends); minimise = floating pill bottom-right, keeps listening/speaking while the page scrolls; voice list on top
+  (z-index fix) and scrollable. Dashboard is published and live at the URL in `private/README.md`.
+  **HANDOFF 31 Oct:** user moved to a new chat. **Next = Task 2 Step 5:** ask the user to tap Approve on the
+  "TEST - do not publish" card, then `ArtifactData get posts/test-1` must show status "approved", approvedBy
+  "dashboard", approvedAt set -> delete posts/test-1 -> Task 2 done. Then Task 3 (first account: platform + one niche).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
