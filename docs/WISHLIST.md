@@ -1,7 +1,6 @@
 # Wishlist — "if only my system could…" (30 Oct 2026)
 
-Each item: the wish, the free way to get it, and what was checked. Status: PROPOSED until the user says yes; then it
-moves into a phase in `docs/plans/`.
+Each item: the wish, the free way to get it, and what was checked. Status: ALL APPROVED by the user 31 Oct 2026 ("add all"). Each goes in the phase named; the phase plan file gets the detail.
 
 | # | The wish | Solution | Checked | Fits phase |
 |---|---|---|---|---|
@@ -24,3 +23,24 @@ moves into a phase in `docs/plans/`.
 - **Your own AI voice for faceless videos:** good voices are paid; local voices were rejected on 4 Oct 2026 ("worst").
 - **Shadowban checker:** no reliable source; tools that claim it guess.
 - **AI-generated video clips:** Higgsfield/Krea credits are near zero; revisit once there is income.
+
+## User decisions 31 Oct 2026
+- #4 shorts generator: NOT installed. It needs a MuAPI key or an OpenAI/Gemini key. We copy its method instead: local faster-whisper + Claude picks highlights + ffmpeg/OpenCV 9:16 crop. Free.
+- #8 viewer panel: OK. Costs no money, only light Claude usage (Haiku).
+- Music: use it unless it is 100% sure to hurt reach. The API cannot attach Instagram-library songs, so: trending audio found via Apify (reel/hashtag scrapers return the audio name, ~$0.0026/result) -> the draft is flagged "post from the Instagram app with sound X" (manual step). Otherwise royalty-free music baked into the video.
+- Voice: ElevenLabs is connected (free plan: 10k credits/month, non-commercial + attribution). Use for faceless voiceovers, sparingly; paid plan only once there is income.
+- AI video (Google Flow, kaze.ai: Seedance, Kling): the user generates these by hand. Use only when the user asks, or suggest it when it is clearly best and let the user decide. Prompt Guy writes the prompts.
+
+## Round 2 additions (approved with the rest)
+| # | Wish | Solution | Phase |
+|---|---|---|---|
+| 14 | Collab posts | Instagram API `collaborators` param on posts/reels (in Meta's media reference) + collab finder (Apify) + `ig-dm` pitch | 4 |
+| 15 | See the grid before posting | Dashboard grid preview: next 9 covers in Instagram's 3:4 grid crop | 1 |
+| 16 | Film faster | Teleprompter view of the approved script in the dashboard (phone) | 2 |
+| 17 | Save inspiration from the phone | Inspiration inbox: paste any reel/video link -> deep-dive card (Apify by URL, Agent Reach for YouTube) | 3 |
+| 18 | Old winners work again | Evergreen recycling: best posts older than 90 days come back as a new variant | 5 |
+| 19 | Profile looks pro | Bio rewrite (`ig-profile`), story highlight covers, profile picture check | 1 |
+| 20 | Trending sound | Flag above (manual sound add in the app) | 3 |
+
+## Covers and formats (confirmed in the system)
+Reel cover: designed 1080x1920 with the important part inside the centre 3:4 area (grid shows 3:4, 1080x1440); sent with the API `cover_url`. Carousels 1080x1440 (3:4) or 1080x1350. Stories 1080x1920. YouTube thumbnails 1280x720 (`yt-package` + render). LinkedIn carousels = PDF document posts (check Composio supports documents in Phase 4).

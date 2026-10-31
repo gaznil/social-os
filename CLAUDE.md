@@ -31,6 +31,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   `story` format added to the plan (Task 2 Step 0); (4) model picker uses Claude's names: Haiku 5.5 / Sonnet 5.5 /
   Opus 5.5 + Low / Medium / High. **Agent Reach: INSTALLED by the user 30 Oct**, tested OK (YouTube + Reddit search,
   no login). Role = free read-only research (see engine/research README).
+- **31 Oct 2026:** all 20 wishlist items APPROVED (docs/WISHLIST.md, with the user's music/voice/AI-video rules). Shorts generator copied as a method, not installed.
   **HANDOFF 30 Oct:** user switched chats. **Next = Task 2** (Step 0 story rule, then dashboard v1). Nothing else pending.
 
 ## 3. WHERE THINGS LIVE
