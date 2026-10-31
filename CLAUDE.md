@@ -108,8 +108,9 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026: TASK 3 STARTED, first account = Instagram `ig-ai-tools`** (handle in `private/` only). Public profile +
   22 posts read via Apify (~$0.09 of free credit); `private/accounts/ig-ai-tools/` has profile, voice, style (top reels,
   patterns). Dashboard `accounts/ig-ai-tools` status `setup`, postsPerWeek 3 (default). Composio Instagram link sent,
-  connection id `instagram_molt-inane` (status initiated). **Waiting on the user:** click the link + answer: on camera?,
-  spoken language, posts/week. Then: confirm ACTIVE -> composioAccountId -> status active -> sos-research first run.
+  connection `instagram_molt-inane` **ACTIVE** (31 Oct). User answers: on camera yes (this account), speaks Malayalam +
+  sometimes Manglish (captions English), 3 posts/week as the minimum (user may post more any time). Dashboard account
+  status `active`. **Next: sos-research first run for ig-ai-tools** (pillars/formats, competitors, outliers, ideas).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
