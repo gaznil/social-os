@@ -16,7 +16,7 @@ One loop, run for every account. Each stage has its own README in `engine/`.
 | studio | Turns a brief or clip into a Prompt Guy video prompt (+ optional all-platform pack) | `jobs`, clip, voice | prompt, pack drafts |
 | approve | The user says yes, edits, or rejects | drafts | approved queue |
 | publish | Posts approved items at their time | approved queue | post IDs, links |
-| analytics | Pulls numbers, names what worked and what to change | post IDs | weekly report, lessons |
+| analytics | `sos-results`: pulls numbers, best hours, ONE change a week, monthly council check | post IDs | `stats`, post `metrics`, `bestTimes`, lessons |
 
 ## Who does what
 - **Claude Code** (this repo) runs every stage. Cloud scheduled tasks run research, publish and analytics on a timer,
