@@ -32,8 +32,7 @@
   --claude-bg: #262624; --claude-fg: #ece9df; --claude-line: rgba(236, 233, 223, .14); color-scheme: dark }
 
 * { box-sizing: border-box; }
-html { overflow-x: clip; }
-body { background: var(--bg); color: var(--fg); font: 400 15px/1.5 var(--font-body); overflow-x: clip; }
+body { background: var(--bg); color: var(--fg); font: 400 15px/1.5 var(--font-body); overflow-x: hidden; }
 body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background: radial-gradient(40% 50% at 12% 8%, var(--wash-1), transparent 70%), radial-gradient(35% 45% at 92% 20%, var(--wash-2), transparent 70%), radial-gradient(45% 45% at 60% 100%, var(--wash-3), transparent 70%); }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
@@ -57,13 +56,12 @@ nav .n { font: 500 10px var(--font-mono); background: var(--ink); color: var(--i
 .mode button[aria-pressed="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 @media (max-width: 720px) { .bar { flex-wrap: wrap; } nav { order: 3; flex-basis: 100%; } .brand { flex: 1; } }
 
-main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+main { padding-block: 8px 72px; display: grid; gap: 28px; }
 
 /* hero */
 .hero { position: relative; min-height: min(560px, 76vh); display: grid; align-items: center; }
 .orb { position: absolute; inset: -40px -16px; z-index: 0; pointer-events: none; }
 .orb canvas { width: 100%; height: 100%; display: block; }
-@media (max-width: 860px) { .hero { min-height: 0; align-items: start; padding-top: 290px; } .orb { inset: -12px -16px auto; height: 320px; } }
 .hero-in { position: relative; z-index: 1; display: grid; gap: 22px; justify-items: start; max-width: 640px; }
 .kicker { font: 400 12px var(--font-mono); color: var(--muted); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); color: var(--ok); animation: ping 2s infinite; }
@@ -123,10 +121,10 @@ main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 
   box-shadow: 0 16px 48px -14px rgba(30, 20, 10, .35); animation: rise .18s ease-out; }
 .menu button { display: grid; grid-template-columns: 1fr 18px; gap: 1px 12px; text-align: left; padding: 8px 10px; border: 0; border-radius: 10px; background: none; color: var(--claude-fg); cursor: pointer; }
 .menu button:hover, .menu button:focus-visible { background: color-mix(in srgb, var(--claude-fg) 7%, transparent); outline: 0; }
-.menu b { font: 500 14px var(--font-body); grid-column: 1; } .menu small { grid-column: 1; font: 400 12px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 58%, transparent); }
+.menu b { font: 500 14px var(--font-body); } .menu small { font: 400 12px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 58%, transparent); }
 .menu .chk { grid-column: 2; grid-row: 1 / 3; align-self: center; color: var(--claude); width: 18px; height: 18px; }
 .hscroll { position: relative; }
-.hpin { position: sticky; top: var(--hdr, 60px); height: calc(100vh - var(--hdr, 60px)); display: grid; grid-template-columns: minmax(0, 1fr); align-content: center; gap: 18px; overflow: visible; }
+.hpin { position: sticky; top: var(--hdr, 60px); height: calc(100vh - var(--hdr, 60px)); display: grid; align-content: center; gap: 18px; overflow: hidden; }
 .hcount { font: 400 12px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .hbar { height: 1px; background: var(--line-2); position: relative; } .hbar i { position: absolute; left: 0; top: -1px; height: 3px; width: 0; background: var(--fg); border-radius: 3px; }
 .sheet { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; background: var(--surface); border-radius: 24px; padding: 24px; box-shadow: 0 0 0 1px var(--line), 0 40px 100px -30px rgba(20, 16, 60, .45); display: grid; gap: 18px; animation: rise .35s cubic-bezier(.2, .8, .2, 1); }
@@ -156,7 +154,7 @@ h2 { margin: 0; font: 400 28px/1.1 var(--font-body); letter-spacing: -.03em; }
 .arrows { display: flex; gap: 6px; }
 .arrows button { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--fg); cursor: pointer; font-size: 16px; }
 .rail { display: flex; gap: 14px; padding: 6px 2px 10px; will-change: transform; }
-.mon { --c: var(--accent); flex: none; width: 300px; height: 360px; scroll-snap-align: start; background: var(--surface); border-radius: 18px; box-shadow: 0 0 0 1px var(--line), 0 24px 48px -32px rgba(20, 20, 60, .35);
+.mon { --c: var(--accent); flex: none; width: 300px; height: 380px; scroll-snap-align: start; background: var(--surface); border-radius: 18px; box-shadow: 0 0 0 1px var(--line), 0 24px 48px -32px rgba(20, 20, 60, .35);
   display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; position: relative; transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s; }
 .mon:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--line-2), 0 30px 60px -30px color-mix(in srgb, var(--c) 55%, transparent); }
 .mon.big { width: 420px; }
@@ -193,7 +191,7 @@ h2 { margin: 0; font: 400 28px/1.1 var(--font-body); letter-spacing: -.03em; }
 .who { display: flex; gap: 10px; align-items: center; }
 .ava { width: 30px; height: 30px; border-radius: 50%; background: conic-gradient(from 120deg, #ffb59a, #c8b8ff, #9fe3d0, #ffb59a); flex: none; }
 .who div { display: grid; line-height: 1.2; } .who b { font: 500 13px var(--font-body); } .who span { font: 400 11px var(--font-mono); color: var(--muted); }
-.typed { font: 400 16px/1.5 var(--font-body); letter-spacing: -.01em; white-space: pre-wrap; overflow-wrap: anywhere; }
+.typed { font: 400 14px/1.5 var(--font-body); white-space: pre-wrap; overflow-wrap: anywhere; }
 .typed::after { content: ""; display: inline-block; width: 2px; height: 1em; vertical-align: -2px; margin-left: 1px; background: var(--c); animation: blink 1s steps(1) infinite; }
 .fb-img { height: 120px; border-radius: 12px; background: linear-gradient(120deg, #c9d3ff, #8ea2ff 55%, #f6c8d8); position: relative; overflow: hidden; }
 .fb-img::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent); transform: translateX(-100%); animation: shine 2.8s ease-in-out infinite; }
@@ -496,7 +494,7 @@ function pushLog() {
   while (box.children.length > 9) box.firstElementChild.remove();
   document.querySelectorAll(".st").forEach((s, i) => s.classList.toggle("on", STAGES[i] === stage));
 }
-const who = handle => `<div class="who"><span class="ava"></span><div><b>Your brand</b><span>${handle}</span></div></div>`;
+const who = name => `<div class="who"><span class="ava"></span><div><b>${name}</b><span>drafting now</span></div></div>`;
 
 function playShowcase(el, l) {
   const { body, st, prog, cap } = parts(el);
@@ -526,7 +524,7 @@ function playShowcase(el, l) {
       break;
     }
     case "x": case "linkedin": case "threads": case "facebook": {
-      const names = { x: "@yourbrand · 1/4", linkedin: "Founder · 2nd", threads: "@yourbrand", facebook: "Page · Public" };
+      const names = { x: "Thread", linkedin: "Post", threads: "Post", facebook: "Post" };
       body.innerHTML = `<div class="post">${who(names[l.id])}${l.id === "facebook" ? `<div class="fb-img"></div>` : ""}<div class="typed" data-t></div></div>`;
       const node = body.querySelector("[data-t]");
       const steps = { x: ["Writing", "Checking 280", "Ready"], linkedin: ["Writing", "Humanizing", "Needs you"], threads: ["Writing", "Tone check", "Ready"], facebook: ["Writing", "Image set", "7:00 PM"] }[l.id];
@@ -576,19 +574,17 @@ function startOrb() {
   const mat = new THREE.ShaderMaterial({ uniforms: uni, transparent: true,
     vertexShader: `uniform float t; varying vec3 vN; varying vec3 vP;
       void main(){ vec3 p = position; float d = sin(p.x*2.2+t*.9)*sin(p.y*2.6+t*1.1)*sin(p.z*2.0+t*.7);
-        p += normal * d * .09; vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(p,1.); vP = -mv.xyz; gl_Position = projectionMatrix * mv; }`,
+        p += normal * d * .16; vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(p,1.); vP = -mv.xyz; gl_Position = projectionMatrix * mv; }`,
     fragmentShader: `uniform float t; uniform float dark; varying vec3 vN; varying vec3 vP;
       void main(){ vec3 n = normalize(vN); vec3 v = normalize(vP); float f = pow(1. - max(dot(n,v),0.), 2.2);
         vec3 peach = vec3(1.,.72,.6), lilac = vec3(.76,.7,1.), mint = vec3(.62,.9,.82), deep = vec3(.36,.3,.96);
         float a = .5 + .5*sin(n.y*2.4 + t*.5), b = .5 + .5*sin(n.x*2.0 - t*.4);
         vec3 c = mix(mix(peach, lilac, a), mix(mint, deep, .35), b*.55);
-        vec3 L = normalize(vec3(-.55, .7, .6)); float diff = max(dot(n, L), 0.);
-        float spec = pow(max(dot(reflect(-L, n), v), 0.), 28.);
-        c *= .72 + .38 * diff; c += spec * .55; c = mix(c, vec3(1.), f * .7); c *= mix(1., .85, dark);
+        c = mix(c, vec3(1.), f*.85); c *= mix(1., .85, dark);
         gl_FragColor = vec4(c, .96); }` });
   const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(1.7, 40), mat);
   const group = new THREE.Group(); group.add(ball); scene.add(group);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.45, .004, 6, 200), new THREE.MeshBasicMaterial({ color: 0x8a80ff, transparent: true, opacity: .35 }));
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.7, .004, 6, 200), new THREE.MeshBasicMaterial({ color: 0x8a80ff, transparent: true, opacity: .35 }));
   ring.rotation.x = 1.25; group.add(ring);
   // the real platform logos orbit the orb
   const sprites = ["instagram", "linkedin", "x", "youtube", "facebook", "threads"].map((name, i) => {
@@ -597,13 +593,13 @@ function startOrb() {
     g.translate(34, 34); g.scale(2.5, 2.5); g.fillStyle = { instagram: "#e1306c", linkedin: "#0a66c2", youtube: "#ff0033", facebook: "#0866ff" }[name] || "#111222";
     g.fill(new Path2D(ICONS[name]));
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true }));
-    s.scale.setScalar(.38); s.position.set(Math.cos(i / 6 * Math.PI * 2) * 2.45, Math.sin(i / 6 * Math.PI * 2) * 2.45, 0); ring.add(s); return s;
+    s.scale.setScalar(.42); s.position.set(Math.cos(i / 6 * Math.PI * 2) * 2.7, Math.sin(i / 6 * Math.PI * 2) * 2.7, 0); ring.add(s); return s;
   });
   let mx = 0, my = 0;
   addEventListener("pointermove", e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
   const canvas = renderer.domElement;
   function resize() { const h = canvas.parentElement; if (!h) return; const w = h.clientWidth, ht = h.clientHeight; renderer.setSize(w, ht, false); cam.aspect = w / ht;
-    cam.updateProjectionMatrix(); const wide = w > 860; group.position.set(wide ? 1.9 : 0, 0, 0); group.scale.setScalar(wide ? .92 : .95); }
+    cam.updateProjectionMatrix(); const wide = w > 860; group.position.set(wide ? 2.2 : 0, wide ? 0 : 1.5, 0); group.scale.setScalar(wide ? 1 : .72); }
   addEventListener("resize", resize);
   const t0 = performance.now();
   function frame(now) {
@@ -662,12 +658,12 @@ function openVoice() {
     try {
       rec = new SR(); rec.continuous = true; rec.interimResults = true; rec.lang = navigator.language || "en-IN";
       rec.onresult = e => { if (phase !== "listen") return; let interim = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) finalText += r[0].transcript + " "; else interim += r[0].transcript; }
-        bump(.4); ta.value = (finalText + interim).trim(); say.textContent = "Listening…"; };
+        bump(.4); ta.value = (finalText + interim).trim(); say.textContent = ta.value.slice(-120) || "Listening…"; };
       rec.onerror = keyboardMode;
       rec.start();
     } catch { keyboardMode(); }
   } else keyboardMode();
-  ta.addEventListener("input", () => { bump(.35); say.textContent = "Listening…"; });
+  ta.addEventListener("input", () => { bump(.35); say.textContent = ta.value.slice(-120) || "Listening…"; });
   ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
   async function send() {
     const text = ta.value.trim(); if (!text || phase !== "listen") return;
