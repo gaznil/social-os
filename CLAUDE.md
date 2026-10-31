@@ -112,6 +112,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   sometimes Manglish (captions English), 3 posts/week as the minimum (user may post more any time). Dashboard account
   status `active`. **Next: sos-research first run for ig-ai-tools** (pillars/formats, competitors, outliers, ideas).
 
+- **31 Oct 2026: research run 1 for ig-ai-tools, step 1 DONE.** `pillars.md` (5 topics, Claude chose the mix from past
+  posts) + `formats.md` in `private/`. **User choice: more carousels -> 4 posts/week = 2 reels + 2 carousels**
+  (dashboard postsPerWeek 4). **Next: step 2** = fill `competitors.md`, then collect/rank outliers, ideas, calendar.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
