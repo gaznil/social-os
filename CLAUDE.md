@@ -51,6 +51,9 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   minmax(0,1fr)) which had hidden the orb and killed the sideways scroll; orb now lit/glossy, orb above text on phones,
   cards bleed edge to edge. How to preview locally: wrap the page in a doctype file and serve it with Playwright
   `page.route(url, r => r.fulfill({path}))` (file:// and local servers are blocked).
+- **31 Oct 2026 (v6, user choice):** LIGHT ONLY (user liked the light Playwright view; dark blocks removed). Control room
+  is ONE pinned horizontal strip: hero panel (orb + heading + Talk to Claude + pipeline) -> "Live channels" title ->
+  9 channel cards; vertical scroll moves it sideways. User reverted v5 then asked for it back (reapplied).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
