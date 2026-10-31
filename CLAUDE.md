@@ -71,6 +71,9 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   "TEST - do not publish" card, then `ArtifactData get posts/test-1` must show status "approved", approvedBy
   "dashboard", approvedAt set -> delete posts/test-1 -> Task 2 done. Then Task 3 (first account: platform + one niche).
 
+- **31 Oct 2026: TASK 2 DONE.** User tapped Approve on `posts/test-1`; verified status "approved", approvedBy "dashboard",
+  approvedAt set; test doc deleted. **Next = Task 3** (needs the user's first account: platform + one niche).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
