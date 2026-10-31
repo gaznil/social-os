@@ -114,7 +114,8 @@ main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 
 .voice-mid { position: relative; cursor: text; }
 .voice-top { position: relative; }
 .voice-top .pickwrap { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
-.voice-top .menu { left: auto; right: 0; max-height: 50vh; overflow-y: auto; }
+.voice-top .menu { left: auto; right: 0; max-height: 50vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+html.locked, html.locked body { overflow: hidden; }
 .voice .hint { display: inline-flex; gap: 6px; align-items: center; font: 400 13px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 60%, transparent); }
 .voice kbd { font: 500 12px var(--font-mono); border: 1px solid var(--claude-line); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; background: var(--surface); color: var(--claude-fg); }
 .voice .hint[hidden] { display: none; }
@@ -669,7 +670,7 @@ function voiceList() {
 }
 function pickedVoice() { const vs = voiceList(), want = store.get("sos.voice", ""); return vs.find(v => v.name === want) || vs[0] || null; }
 function refreshVoicePicks() {
-  PICKS.voice = { key: "sos.voice", def: pickedVoice()?.name || "", items: Object.fromEntries(voiceList().map(v => [v.name, [v.name.replace(/^Microsoft |^Google /, "").replace(/ Online \(Natural\)/, " · natural"), v.lang]])) };
+  PICKS.voice = { key: "sos.voice", def: pickedVoice()?.name || "", items: Object.fromEntries(voiceList().map(v => [v.name, [v.name.replace(/^Microsoft |^Google /, "").replace(/ Online \(Natural\)/, " · natural").split(" - ")[0], v.lang]])) };
   const b = document.querySelector('[data-pick="voice"]'); if (b) b.firstChild.textContent = (pickedVoice()?.name || "Voice").replace(/^Microsoft |^Google /, "").replace(/ Online \(Natural\).*/, "").split(" - ")[0];
 }
 if ("speechSynthesis" in window) { speechSynthesis.onvoiceschanged = refreshVoicePicks; refreshVoicePicks(); }
@@ -683,7 +684,7 @@ function openVoice() {
       <span class="hint" data-hint>${isTouch ? "Tap the mic on your keyboard and speak" : "Press <kbd>Win</kbd> + <kbd>H</kbd> and speak"}</span>
       <textarea id="voice-text" rows="1" aria-label="What you said" autocomplete="off"></textarea></div>
     <div class="voice-bot"><button class="vbtn" data-voice="end" aria-label="End voice">${XICON}</button></div>`;
-  document.body.append(el);
+  document.body.append(el); document.documentElement.classList.add("locked");
   refreshVoicePicks();
   const cv = el.querySelector("canvas"), g = cv.getContext("2d"), say = el.querySelector("[data-say]"), hint = el.querySelector("[data-hint]"), didEl = el.querySelector("[data-did]"), ta = el.querySelector("#voice-text");
   let level = .15, target = .15, phase = "listen", raf = 0, rec = null, finalText = "", pause = 0;
@@ -753,7 +754,7 @@ function openVoice() {
     } catch (err) { history.pop(); say.textContent = err.code === "rate_limited" ? "Too many questions just now. Wait a minute." : "That didn't work. Try again."; phase = "listen"; focusBox(); }
   }
   voice = { action(a) { if (a === "send") send(); else this.close(); },
-    close() { clearTimeout(pause); cancelAnimationFrame(raf); try { rec && rec.stop(); } catch {} try { speechSynthesis.cancel(); } catch {} el.remove(); voice = null; if (ui.claudeOpen) paintHero(); } };
+    close() { clearTimeout(pause); cancelAnimationFrame(raf); try { rec && rec.stop(); } catch {} try { speechSynthesis.cancel(); } catch {} el.remove(); voice = null; document.documentElement.classList.remove("locked"); if (ui.claudeOpen) paintHero(); } };
 }
 
 /* ---------- transcribe into the prompt box ---------- */
