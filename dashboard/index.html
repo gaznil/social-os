@@ -364,7 +364,7 @@ const PLATFORMS = { instagram: "Instagram", youtube: "YouTube", linkedin: "Linke
 const BRAND = { instagram: "#e1306c", youtube: "#ff0033", linkedin: "#0a66c2", x: "currentColor", facebook: "#0866ff", threads: "currentColor" };
 const logoOf = p => ICONS[p] ? `<span style="color:${BRAND[p] || "currentColor"};display:inline-flex">${svg(p)}</span>` : "";
 const plat = p => `<span class="plat">${logoOf(p)}${PLATFORMS[p] || p}</span>`;
-const MANUAL = { x: "https://x.com/compose/post", threads: "https://www.threads.net/" };
+const MANUAL = { x: "https://x.com/compose/post" };
 const TABS = [["wall", "Control room"], ["approve", "Approve"], ["calendar", "Calendar"], ["accounts", "Accounts"], ["ideas", "Ideas"], ["studio", "Studio"], ["schedules", "Schedules"]];
 const TZ = "Asia/Kolkata";
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -417,11 +417,12 @@ async function connect() {
   }
 }
 
-async function setStatus(post, to) {
+async function setStatus(post, to, now = false) {
   if (!canMove(post.status, to)) return showToast(`Can't move ${post.status} to ${to}`);
   const patch = { status: to, updatedAt: nowIso() };
   if (to === "approved") Object.assign(patch, { approvedBy: "dashboard", approvedAt: nowIso() });
-  try { await db.doc(`posts/${post.id}`).update(patch); showToast(to === "approved" ? "Approved" : to === "draft" ? "Sent back to draft" : "Rejected"); }
+  if (now) patch.plannedAt = nowIso(); // "Post now": due at once, the next publish run sends it
+  try { await db.doc(`posts/${post.id}`).update(patch); showToast(now ? "Approved. It goes out at the next publish run." : to === "approved" ? "Approved" : to === "draft" ? "Sent back to draft" : "Rejected"); }
   catch (e) { showToast(`Couldn't save: ${e.code || "error"}. Try again.`); }
 }
 
@@ -1066,6 +1067,7 @@ function viewApprove() {
       ${probs.length ? `<ul class="problems">${probs.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
       <div class="row">
         <button class="btn primary" data-act="approved" data-id="${esc(p.id)}" ${probs.length ? "disabled title=\"Fix the problems first\"" : ""}>Approve</button>
+        ${p.platform !== "x" ? `<button class="btn" data-act="now" data-id="${esc(p.id)}" ${probs.length ? "disabled" : ""}>Approve + post now</button>` : ""}
         <button class="btn" data-act="draft" data-id="${esc(p.id)}">Back to draft</button>
         <button class="btn danger" data-act="rejected" data-id="${esc(p.id)}">Reject</button>
       </div></article>`;
@@ -1257,7 +1259,7 @@ document.addEventListener("click", async e => {
     t.disabled = false;
     return;
   }
-  if (t.dataset.act) { const p = state.posts.find(x => x.id === t.dataset.id); if (p) { t.disabled = true; await setStatus(p, t.dataset.act); } return; }
+  if (t.dataset.act) { const p = state.posts.find(x => x.id === t.dataset.id); if (p) { t.disabled = true; await setStatus(p, t.dataset.act === "now" ? "approved" : t.dataset.act, t.dataset.act === "now"); } return; }
   if (t.dataset.copy) {
     const p = state.posts.find(x => x.id === t.dataset.copy); if (!p) return;
     try { await navigator.clipboard.writeText(p.caption); showToast("Copied. Paste it in the app."); }

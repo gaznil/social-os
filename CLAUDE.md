@@ -172,6 +172,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   4 tiles; checked at 390 px). Not run on real numbers yet: needs an active account with a Composio link.
   User asked: keep it inside Claude (no own domain); the Claude bar can't be removed. **Next = Phase 5** (more platforms).
 
+- **31 Oct 2026: PHASE 5 (more platforms) BUILT.** PUBLISH.md for YouTube, Facebook, Threads (Composio has a `threads`
+  toolkit, so Threads is automatic now; only X stays copy + open). Dashboard **v23**: "Approve + post now" (sets plannedAt
+  now; the next publish run sends it). **Not done, needs the user:** Composio connections for YouTube/Facebook/Threads
+  (only Instagram + LinkedIn are linked); the X Composio test (a real post = needs a yes in chat); "Porotta link"
+  (meaning unclear, ask). All roadmap phases now built; nothing has run on real numbers yet.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
