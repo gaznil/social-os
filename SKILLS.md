@@ -14,7 +14,7 @@ but never decided anything alone. Re-check when a pack updates or a new contende
 | Trend research | `mvanhorn/last30days-skill` (~66K stars) | Free sources: Reddit, Hacker News, GitHub, YouTube (yt-dlp), arXiv; stores findings and runs watchlists | `Panniantong/Agent-Reach` (free channels overlap; Instagram/X need it to copy your Chrome logins = account risk); `ScrapeCreators/social-media-research-skills` (needs a paid key) |
 | Strategy, copy, analytics | `coreyhaines31/marketingskills` (~57K stars) | Already installed globally: content-strategy, copywriting, analytics, ab-testing | `social-media-skills/skills`, `blacktwist/social-media-skills` (broader, shallower) |
 | Publishing | Composio connector (already in Claude) | Free plan 100,000 actions/month, managed logins, several accounts per platform, Instagram/Facebook/YouTube/LinkedIn/X tools | Postiz (needs a server + own developer apps), Publora (15 posts/month free), PostLake/PublishQ/1Social (paid APIs) |
-| Video | Motion King, Edit King, HyperFrames (already installed) | Local, free, already tuned to the user | `Jakeschincariol/video-production-skills` (same HyperFrames base, less tuned) |
+| Video | Prompt Guy ONLY (user rule 31 Oct): writes the prompt, never builds the video | Already tuned to the user; Edit King / Motion King stay outside Social OS | `Jakeschincariol/video-production-skills` (same HyperFrames base, less tuned) |
 | Instagram DMs/replies | Porotta (the user's own app) | Already live | — |
 
 ## Not found
@@ -49,10 +49,7 @@ Not installed whole; the useful parts are built into our own `sos-*` skills.
 |---|---|
 | `llm-council` | Big calls: picking a niche, a new format, a pivot (5 advisors argue it out) |
 | `niche-content-strategist` | Choosing each new account's niche and pillars |
-| `faceless-explainer` | Accounts where the user does not appear on camera |
-| `edit-king`, `talking-head-recut`, `embedded-captions` | The user's own footage: cut, graphics, captions |
-| `motion-king`, `music-to-video` | Videos made from nothing, beat-synced promos |
-| `prompt-guy` | A paste-ready video prompt instead of a finished video |
+| `prompt-guy` | The ONLY video tool: a paste-ready video prompt, never a finished video (user rule 31 Oct) |
 | `competitive-ads-extractor` | What competitors run as paid ads (Meta ad library) |
 | `blog-repurpose` | Best posts into gaznil.com blog articles |
 | `content-humanizer` (in `~/.agents/skills`) | Second humanizer for Facebook/Threads text |

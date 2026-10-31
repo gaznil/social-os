@@ -6,7 +6,7 @@
 |---|---|
 | Script with scored hook | `yt-script` |
 | Title + thumbnail as one pairing | `yt-package` |
-| Edit list from a transcript | `yt-edit` (then Edit King does the cut) |
+| Edit list from a transcript | `yt-edit` (then Prompt Guy writes the edit prompt) |
 | Shorts hidden in a long video | `yt-shorts` |
 | Description, tags, search queries | `yt-seo` |
 | Chapters | `yt-chapters` |

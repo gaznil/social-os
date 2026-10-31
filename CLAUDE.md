@@ -22,11 +22,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   Claude decides. **Task 1 DONE** (queue + preflight rules, 27 tests pass: `python -m unittest discover -s tests`).
   **Next: Task 2** (dashboard v1). Task 3 needs the user's account list (platforms + one niche each).
 - **30 Oct 2026 (round 2):** user asked for more. ChatGPT-chat repos opened and mined (SKILLS.md "Round 2"); added
-  Ideas tab + model/effort picker to Phase 1; new Phase 2 = video studio (Edit King / Motion King / Prompt Guy from the
+  Ideas tab + model/effort picker to Phase 1; new Phase 2 = video studio (Prompt Guy from the
   dashboard), Phase 3 = research (Apify no-login competitor radar, reel deep dive, Agent Reach no-login channels,
   last30days). yt-dlp not installed; ffmpeg is.
-- **30 Oct 2026 (round 3, user decisions):** (1) video editing = **Prompt Guy first**, then "Run it" with Edit King /
-  Motion King; (2) **zero accounts now**: the user will create ONE account later, so Task 3 waits and the dashboard must
+- **30 Oct 2026 (round 3, user decisions):** (1) video = **Prompt Guy ONLY** (31 Oct: no Edit King / Motion King, no "Run it"); (2) **zero accounts now**: the user will create ONE account later, so Task 3 waits and the dashboard must
   work empty; (3) every format (carousel, story, reel, image, text, thread) previews in the dashboard's Approve tab;
   `story` format added to the plan (Task 2 Step 0); (4) model picker uses Claude's names: Haiku 5.5 / Sonnet 5.5 /
   Opus 5.5 + Low / Medium / High. **Agent Reach: INSTALLED by the user 30 Oct**, tested OK (YouTube + Reddit search,
@@ -99,10 +98,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026: skills wired everywhere (user ask: "if a skill exists, use it").** Each `sos-*` skill now opens with a
   skills rule and names the skill per step (research: last30days, ig/yt/x-viral, firecrawl, ads extractor, planners,
   llm-council; account: niche-content-strategist, profile scorers, linkedin-interviewer; create: writers, repurposers,
-  humanizers incl. content-humanizer, frontend/canvas/banner design, prompt-guy -> edit/motion-king, faceless-explainer,
-  embedded-captions). **`last30days` vendored** (`.claude/skills/last30days`, MIT, commit in THIRD_PARTY.md) + yt-dlp
-  installed. **Not yet run once:** the auto-mode guard blocks running its downloaded scripts until the user allows it
-  (asked 31 Oct). First run: say no to cookies and paid keys.
+  humanizers incl. content-humanizer, frontend/canvas/banner design, prompt-guy for video). **`last30days` vendored** (`.claude/skills/last30days`, MIT, commit in THIRD_PARTY.md) + yt-dlp
+  installed. Test run passed 31 Oct (user allowed it). Always run with `--no-browser-cookies`.
+- **31 Oct 2026: USER RULE: video = Prompt Guy ONLY.** Social OS writes the video prompt and stops. It never runs
+  Edit King, Motion King, faceless-explainer or HyperFrames; no "Run it" button. All notes fixed. Phase 3 video studio =
+  brief/clip -> Prompt Guy prompt with Copy + "one video -> all-platform pack" for the text/image posts.
+  **last30days test run PASSED** (free sources, no cookies: Reddit 6 threads + HN 6 stories in 8 s).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
