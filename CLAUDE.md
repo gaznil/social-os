@@ -142,6 +142,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   (10 layouts), roboshivam1/dark-tech-carousel-templates, open-design social-carousel; compare by opening, copy best);
   (3) build 8-12 reusable HTML layouts + rules in `templates/carousel/`, wire into sos-create step 4; (4) re-render week 1 carousels.
 
+- **31 Oct 2026 HANDOFF:** carousel library WAITS for the user's references (they add them later). **Next build = Phase 3**
+  (video studio: brief/clip -> Prompt Guy prompt + "one video -> all-platform pack"), then Phase 4 `sos-results`.
+  Waiting on the user: Approve/Back to draft on week 1 drafts; film the 2 reels.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
