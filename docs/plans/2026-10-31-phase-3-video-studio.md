@@ -31,7 +31,7 @@
 
 Rules: job needs `accountId`, `kind` in (`prompt`, `pack`), and a non-empty `brief` or `clipUrl`. Pack plan: one target per *active* account (skip the job's own account's reel, it is the video itself); format per platform: instagram -> carousel, linkedin -> text, x -> thread, threads -> text, facebook -> text, youtube -> short-description (`text`). One target per account; accounts with status other than `active` skipped.
 
-- [ ] Step 1: write `tests/test_studio.py`:
+- [x] Step 1: write `tests/test_studio.py`:
 
 ```python
 import unittest
@@ -65,8 +65,8 @@ if __name__ == "__main__":
     unittest.main()
 ```
 
-- [ ] Step 2: run `python -m unittest tests.test_studio` -> FAIL (no module).
-- [ ] Step 3: write `tools/sos/studio.py`:
+- [x] Step 2: run `python -m unittest tests.test_studio` -> FAIL (no module).
+- [x] Step 3: write `tools/sos/studio.py`:
 
 ```python
 """Video studio jobs: check a job and plan the 'one video -> pack' drafts."""
@@ -94,8 +94,8 @@ def pack_plan(job, accounts):
             for a in accounts if a.get("status") == "active" and a.get("platform") in PACK_FORMAT]
 ```
 
-- [ ] Step 4: add to `tools/sos/cli.py` the two commands (read JSON files, print `json.dumps`), matching its existing `check` command style.
-- [ ] Step 5: `python -m unittest discover -s tests` -> all pass. Commit.
+- [x] Step 4: add to `tools/sos/cli.py` the two commands (read JSON files, print `json.dumps`), matching its existing `check` command style.
+- [x] Step 5: `python -m unittest discover -s tests` -> all pass. Commit.
 
 ### Task 2: `sos-studio` skill + wiring
 
