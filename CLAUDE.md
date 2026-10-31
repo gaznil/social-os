@@ -54,6 +54,9 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026 (v6, user choice):** LIGHT ONLY (user liked the light Playwright view; dark blocks removed). Control room
   is ONE pinned horizontal strip: hero panel (orb + heading + Talk to Claude + pipeline) -> "Live channels" title ->
   9 channel cards; vertical scroll moves it sideways. User reverted v5 then asked for it back (reapplied).
+- **31 Oct 2026 (v7):** voice agent: hidden input fed by Win+H / keyboard mic, blob reacts per word, 2 s pause auto-sends,
+  reply spoken with a free browser voice (female first: Neerja/Aria/Jenny/Sonia/Hazel..., picker top-right). Agent tools
+  (sample tools): save_idea, leave_note_for_claude. It can never approve/publish. Keeps last 8 turns per voice session.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).

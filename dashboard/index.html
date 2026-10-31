@@ -97,7 +97,15 @@ main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 
 .voice canvas { width: min(280px, 64vw); height: min(280px, 64vw); }
 .voice p { margin: 0; font: 300 24px/1.4 var(--font-serif); max-width: 30ch; min-height: 2.8em; max-height: 8.4em; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
 .voice small { font: 400 13px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 55%, transparent); max-width: 36ch; }
-.voice textarea { width: min(460px, 100%); min-height: 52px; max-height: 120px; resize: none; text-align: center; border: 0; border-bottom: 1px solid var(--claude-line); background: transparent; color: var(--claude-fg); font: 400 17px/1.5 var(--font-body); outline: 0; padding: 8px; }
+.voice textarea { position: absolute; left: 50%; bottom: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; resize: none; caret-color: transparent; }
+.voice-mid { position: relative; cursor: text; }
+.voice-top { position: relative; }
+.voice-top .pickwrap { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
+.voice-top .menu { left: auto; right: 0; max-height: 50vh; overflow-y: auto; }
+.voice .hint { display: inline-flex; gap: 6px; align-items: center; font: 400 13px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 60%, transparent); }
+.voice kbd { font: 500 12px var(--font-mono); border: 1px solid var(--claude-line); border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px; background: var(--surface); color: var(--claude-fg); }
+.voice .hint[hidden] { display: none; }
+.voice .did { font: 400 12px var(--font-mono); color: var(--claude); min-height: 1.4em; }
 .voice-bot { display: flex; justify-content: center; gap: 22px; }
 .vbtn { width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--claude-line); background: color-mix(in srgb, var(--claude-fg) 5%, transparent); color: var(--claude-fg); display: grid; place-items: center; cursor: pointer; }
 .vbtn svg { width: 22px; height: 22px; }
@@ -390,14 +398,35 @@ async function addAccount(a) {
   await db.collection("messages").add({ from: "user", text: `Set up the new account "${a.label}" (${PLATFORMS[a.platform]}, id ${id}).`, status: "new", reply: null, createdAt: nowIso() });
 }
 
-async function quickAnswer(text, modelKey, effort, onText) {
+async function quickAnswer(text, modelKey, effort, onText, agent) {
   const sample = window.claude ? await claude.use("sample") : null;
   if (!sample) { showToast("Quick answers are off for this page."); return null; }
   const m = MODELS[modelKey] || MODELS.sonnet;
-  const out = await sample([{ role: "user", content:
-    "You help a social media creator. Answer briefly and concretely.\n\n" + text }],
-    { cache: false, model: m.model, modelTier: m.modelTier, effort, ...(onText ? { onText } : {}) });
+  const opts = { cache: false, model: m.model, modelTier: m.modelTier, effort, ...(onText ? { onText } : {}) };
+  let input = [{ role: "user", content: "You help a social media creator. Answer briefly and concretely.\n\n" + text }];
+  if (agent) {
+    const caps = await sample.limits().catch(() => null);
+    if (caps?.tools && db) opts.tools = agentTools(agent.did);
+    const waiting = state.posts.filter(p => p.status === "waiting").slice(0, 5).map(p => `${PLATFORMS[p.platform] || p.platform}: ${(p.title || p.caption || "").slice(0, 60)}`);
+    const brief = `You are the voice of Social OS, the user's content system. You are speaking out loud: answer in one to three short, warm, natural sentences. No markdown, no lists, no emoji.
+Right now: ${state.accounts.length} accounts, ${waiting.length} posts waiting for approval${waiting.length ? " (" + waiting.join("; ") + ")" : ""}, ${state.posts.filter(p => p.status === "approved").length} scheduled, ${state.posts.filter(p => p.status === "failed").length} failed.
+${opts.tools ? "You can save ideas and leave notes for Claude's next work session with your tools; say briefly what you did." : ""}
+You can never approve, publish or delete posts; if asked, tell them to tap Approve in the dashboard.`;
+    input = [{ role: "user", content: brief + "\n\nUser: " + agent.history[0].content }, ...agent.history.slice(1)];
+  }
+  const out = await sample(input, opts);
   return { text: out.text, answeredBy: out.modelApplied ? m.label : "the fallback model" };
+}
+
+function agentTools(did) {
+  return [
+    { name: "save_idea", description: "Save a content idea to the Ideas list so Claude turns it into a draft later.",
+      inputSchema: { type: "object", properties: { text: { type: "string", description: "The idea, in the user's words" } }, required: ["text"] },
+      async execute(input) { const text = String(input?.text || "").slice(0, 1000); if (!text.trim()) throw new Error("empty idea"); await saveIdea(text, null); did("Idea saved"); return "saved"; } },
+    { name: "leave_note_for_claude", description: "Leave a note or task for Claude's next work session (it reads the inbox when it runs).",
+      inputSchema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] },
+      async execute(input) { const text = String(input?.text || "").slice(0, 2000); if (!text.trim()) throw new Error("empty note"); await sendMessage(text); did("Note left for Claude"); return "saved"; } },
+  ];
 }
 
 /* ---------- lanes ---------- */
@@ -613,29 +642,49 @@ function startOrb() {
 }
 
 /* ---------- voice mode ---------- */
-// Artifact pages get no microphone, so speech comes in through the phone keyboard's mic (or the browser's own
-// recogniser where it is allowed). Claude's reply streams in and is read aloud; the orb follows the voice.
+// Artifact pages get no microphone, so speech arrives through the OS dictation (Win+H) or the phone keyboard mic,
+// typed into a hidden box. The blob reacts to each word, a 2 s pause sends it, and the reply is spoken with a
+// browser voice the user picks. As an agent it can save ideas and leave notes; it can never approve or publish.
 let voice = null;
+const isTouch = matchMedia("(pointer: coarse)").matches;
+function voiceList() {
+  const all = ("speechSynthesis" in window ? speechSynthesis.getVoices() : []).filter(v => /^en/i.test(v.lang));
+  const female = /female|neerja|aria|jenny|sonia|libby|emma|ava|michelle|natasha|clara|samantha|zira|heera|karen|moira|tessa|serena|veena|susan|hazel/i;
+  const score = v => (female.test(v.name) ? 10 : 0) + (/natural|neural/i.test(v.name) ? 3 : 0) + (/neerja/i.test(v.name) ? 2 : 0) + (/google/i.test(v.name) ? 2 : 0) + (/en-(in|gb|us)/i.test(v.lang) ? 1 : 0);
+  return all.sort((x, y) => score(y) - score(x)).slice(0, 12);
+}
+function pickedVoice() { const vs = voiceList(), want = store.get("sos.voice", ""); return vs.find(v => v.name === want) || vs[0] || null; }
+function refreshVoicePicks() {
+  PICKS.voice = { key: "sos.voice", def: pickedVoice()?.name || "", items: Object.fromEntries(voiceList().map(v => [v.name, [v.name.replace(/^Microsoft |^Google /, "").replace(/ Online \(Natural\)/, " · natural"), v.lang]])) };
+  const b = document.querySelector('[data-pick="voice"]'); if (b) b.firstChild.textContent = (pickedVoice()?.name || "Voice").replace(/^Microsoft |^Google /, "").replace(/ Online \(Natural\).*/, "").split(" - ")[0];
+}
+if ("speechSynthesis" in window) { speechSynthesis.onvoiceschanged = refreshVoicePicks; refreshVoicePicks(); }
+
 function openVoice() {
+  refreshVoicePicks();
   const el = document.createElement("div"); el.className = "voice";
-  el.innerHTML = `<div class="voice-top">${svg("claude")}${(MODELS[store.get("sos.model", "sonnet")] || MODELS.sonnet).label} · voice</div>
-    <div class="voice-mid"><canvas width="560" height="560"></canvas><p data-say>Listening…</p>
-      <textarea id="voice-text" rows="1" placeholder="Tap the mic on your keyboard and speak"></textarea><small data-note></small></div>
-    <div class="voice-bot"><button class="vbtn" data-voice="end" aria-label="End voice">${XICON}</button><button class="vbtn send" data-voice="send" aria-label="Send">${svg("up")}</button></div>`;
+  el.innerHTML = `<div class="voice-top">${svg("claude")}${(MODELS[store.get("sos.model", "sonnet")] || MODELS.sonnet).label} · voice
+      ${PICKS.voice && Object.keys(PICKS.voice.items).length ? `<div class="pickwrap"><button class="pick" data-pick="voice" aria-haspopup="menu" aria-expanded="false">Voice${CHEV}</button></div>` : ""}</div>
+    <div class="voice-mid"><canvas width="560" height="560"></canvas><p data-say></p><span class="did" data-did></span>
+      <span class="hint" data-hint>${isTouch ? "Tap the mic on your keyboard and speak" : "Press <kbd>Win</kbd> + <kbd>H</kbd> and speak"}</span>
+      <textarea id="voice-text" rows="1" aria-label="What you said" autocomplete="off"></textarea></div>
+    <div class="voice-bot"><button class="vbtn" data-voice="end" aria-label="End voice">${XICON}</button><button class="vbtn send" data-voice="send" aria-label="Send now">${svg("up")}</button></div>`;
   document.body.append(el);
-  const cv = el.querySelector("canvas"), g = cv.getContext("2d"), say = el.querySelector("[data-say]"), note = el.querySelector("[data-note]"), ta = el.querySelector("#voice-text");
-  let level = .15, target = .15, phase = "listen", raf = 0, rec = null, finalText = "";
+  refreshVoicePicks();
+  const cv = el.querySelector("canvas"), g = cv.getContext("2d"), say = el.querySelector("[data-say]"), hint = el.querySelector("[data-hint]"), didEl = el.querySelector("[data-did]"), ta = el.querySelector("#voice-text");
+  let level = .15, target = .15, phase = "listen", raf = 0, rec = null, finalText = "", pause = 0;
+  const history = [];
   const W = 560, C = W / 2;
   const draw = now => {
     const t = now / 1000;
-    target = phase === "think" ? .25 + Math.sin(t * 3) * .12 : phase === "speak" ? Math.max(target * .96, .3) : Math.max(target * .97, .12);
-    level += (target - level) * .12;
+    target = phase === "think" ? .25 + Math.sin(t * 3) * .12 : phase === "speak" ? Math.max(target * .95, .28) : Math.max(target * .965, .12);
+    level += (target - level) * .14;
     g.clearRect(0, 0, W, W);
-    const base = 150 + level * 22;
+    const base = 150 + level * 26;
     for (const [col, ph, sc] of [["#7aa8ff", 0, 1], ["#c58bff", 2.1, .95], ["#ff9ac2", 4.2, .9], ["#8ff0d8", 1.1, .85]]) {
       g.beginPath();
       for (let a = 0; a <= Math.PI * 2 + .01; a += .04) {
-        const r = (base + Math.sin(a * 3 + t * 1.4 + ph) * (6 + level * 26) + Math.sin(a * 5 - t * 1.9 + ph) * (3 + level * 14)) * sc;
+        const r = (base + Math.sin(a * 3 + t * (1.4 + level) + ph) * (6 + level * 30) + Math.sin(a * 5 - t * (1.9 + level) + ph) * (3 + level * 16)) * sc;
         a === 0 ? g.moveTo(C + Math.cos(a) * r, C + Math.sin(a) * r) : g.lineTo(C + Math.cos(a) * r, C + Math.sin(a) * r);
       }
       g.closePath();
@@ -648,39 +697,49 @@ function openVoice() {
   };
   draw(0);
   const bump = k => { target = Math.min(1, target + k); };
-  const listen = () => { phase = "listen"; say.textContent = "Listening…"; ta.value = ""; finalText = ""; ta.focus(); };
-  const keyboardMode = () => { rec = null; note.textContent = "Tap the mic on your keyboard, speak, then press send."; ta.focus(); };
+  const focusBox = () => { if (phase === "listen") ta.focus({ preventScroll: true }); };
+  const listen = () => { phase = "listen"; say.textContent = ""; hint.hidden = false; ta.value = ""; finalText = ""; focusBox(); };
+  el.querySelector(".voice-mid").addEventListener("click", focusBox);
+  const heard = () => { const words = ta.value.trim(); hint.hidden = !!words; say.textContent = words.slice(-140); clearTimeout(pause); if (words) pause = setTimeout(send, 2000); };
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SR) {
     try {
       rec = new SR(); rec.continuous = true; rec.interimResults = true; rec.lang = navigator.language || "en-IN";
       rec.onresult = e => { if (phase !== "listen") return; let interim = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) finalText += r[0].transcript + " "; else interim += r[0].transcript; }
-        bump(.4); ta.value = (finalText + interim).trim(); say.textContent = "Listening…"; };
-      rec.onerror = keyboardMode;
+        bump(.4); ta.value = (finalText + interim).trim(); heard(); };
+      rec.onerror = () => { rec = null; };
       rec.start();
-    } catch { keyboardMode(); }
-  } else keyboardMode();
-  ta.addEventListener("input", () => { bump(.35); say.textContent = "Listening…"; });
+    } catch { rec = null; }
+  }
+  let prevLen = 0;
+  ta.addEventListener("input", () => { const n = ta.value.length; bump(Math.min(.8, .2 + Math.max(0, n - prevLen) * .04)); prevLen = n; heard(); });
   ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+  focusBox();
+  const did = msg => { didEl.textContent = "✓ " + msg; };
   async function send() {
+    clearTimeout(pause);
     const text = ta.value.trim(); if (!text || phase !== "listen") return;
-    phase = "think"; say.textContent = "Thinking…"; ta.value = ""; note.textContent = "";
+    phase = "think"; hint.hidden = true; say.textContent = "…"; ta.value = ""; prevLen = 0; didEl.textContent = "";
+    history.push({ role: "user", content: text }); if (history.length > 8) history.splice(0, history.length - 8);
+    if (history[0].role !== "user") history.shift();
     try {
-      const res = await quickAnswer(text, store.get("sos.model", "sonnet"), store.get("sos.effort", "medium"),
-        ({ text: so }) => { if (!voice) return; phase = "speak"; say.textContent = so.slice(-200); bump(.15); });
+      const res = await quickAnswer(text, store.get("sos.model", "sonnet"), store.get("sos.effort", "low"),
+        ({ text: so }) => { if (!voice) return; phase = "speak"; say.textContent = so.slice(-200); bump(.12); }, { history, did });
       if (!voice) return;
       if (!res) return listen();
+      history.push({ role: "assistant", content: res.text });
       ui.answer = res; say.textContent = res.text.slice(-200);
       if ("speechSynthesis" in window) {
         phase = "speak"; speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(res.text.replace(/[*#_`>]/g, ""));
-        u.rate = 1.03; u.onboundary = () => bump(.55); u.onend = () => voice && listen(); u.onerror = () => voice && listen();
+        const v = pickedVoice(); if (v) { u.voice = v; u.lang = v.lang; }
+        u.rate = 1.02; u.onboundary = () => bump(.55); u.onend = () => voice && listen(); u.onerror = () => voice && listen();
         speechSynthesis.speak(u);
       } else listen();
-    } catch (err) { say.textContent = err.code === "rate_limited" ? "Too many questions just now. Wait a minute." : "That didn't work. Try again."; phase = "listen"; }
+    } catch (err) { history.pop(); say.textContent = err.code === "rate_limited" ? "Too many questions just now. Wait a minute." : "That didn't work. Try again."; phase = "listen"; focusBox(); }
   }
   voice = { action(a) { if (a === "send") send(); else this.close(); },
-    close() { cancelAnimationFrame(raf); try { rec && rec.stop(); } catch {} try { speechSynthesis.cancel(); } catch {} el.remove(); voice = null; if (ui.claudeOpen) paintHero(); } };
+    close() { clearTimeout(pause); cancelAnimationFrame(raf); try { rec && rec.stop(); } catch {} try { speechSynthesis.cancel(); } catch {} el.remove(); voice = null; if (ui.claudeOpen) paintHero(); } };
 }
 
 /* ---------- Claude-style pickers ---------- */
@@ -932,7 +991,8 @@ document.addEventListener("click", async e => {
   if (t.dataset.mode) { mode = t.dataset.mode; store.set("sos.mode", mode); render(); return; }
   if (t.dataset.voice) { voice?.action(t.dataset.voice); return; }
   if (t.dataset.pick) { t.getAttribute("aria-expanded") === "true" ? closePick() : openPick(t); return; }
-  if (t.dataset.choose) { const [k, v] = t.dataset.choose.split(":"); store.set(PICKS[k].key, v); closePick(); paintHero(); return; }
+  if (t.dataset.choose) { const i = t.dataset.choose.indexOf(":"), k = t.dataset.choose.slice(0, i), v = t.dataset.choose.slice(i + 1); store.set(PICKS[k].key, v); closePick();
+    if (k === "voice") { refreshVoicePicks(); try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance("Hi, this is how I sound."); const pv = pickedVoice(); if (pv) { u.voice = pv; u.lang = pv.lang; } speechSynthesis.speak(u); } catch {} } else paintHero(); return; }
   if ("addAccount" in t.dataset) { openAddAccount(); return; }
   const c = t.dataset.claude;
   if (c === "open") { ui.claudeOpen = true; paintHero(); return; }
