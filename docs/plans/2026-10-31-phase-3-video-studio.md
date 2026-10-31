@@ -106,7 +106,7 @@ def pack_plan(job, accounts):
 Skill steps: skills rule + learning rule (same wording as other sos skills); 1) query `jobs` status `requested`, `update` -> `working`; 2) `studio-check` - problems -> `failed` + note; 3) clip -> `python -m tools.sos.deepdive` for transcript + frames; 4) load `prompt-guy`, write the paste-ready prompt from brief + transcript + the account's `voice.md`/`style.md`, update `prompt`; 5) kind pack -> `pack-plan`, run `sos-create` per target (own rewrite each, realism rule), collect `postIds`; 6) `update` status `done` + one-line note. Never runs any video tool.
 Inbox: after ideas, "Then run sos-studio."
 
-- [ ] Write files, grep check `grep -c "Learning rule" .claude/skills/sos-*/SKILL.md` shows sos-studio, commit.
+- [x] Write files, grep check `grep -c "Learning rule" .claude/skills/sos-*/SKILL.md` shows sos-studio, commit.
 
 ### Task 3: Dashboard Studio tab
 

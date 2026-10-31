@@ -12,7 +12,8 @@ One loop, run for every account. Each stage has its own README in `engine/`.
 |---|---|---|---|
 | research | Finds what is working now in each account's niche | niche + competitor list | trend notes, swipe file |
 | strategy | Turns research into a weekly plan per account | trends, past results, voice | calendar slots |
-| create | Writes scripts, captions, carousels, video | calendar slot, voice, platform skill | drafts + media |
+| create | Writes scripts, captions, carousels | calendar slot, voice, platform skill | drafts + media |
+| studio | Turns a brief or clip into a Prompt Guy video prompt (+ optional all-platform pack) | `jobs`, clip, voice | prompt, pack drafts |
 | approve | The user says yes, edits, or rejects | drafts | approved queue |
 | publish | Posts approved items at their time | approved queue | post IDs, links |
 | analytics | Pulls numbers, names what worked and what to change | post IDs | weekly report, lessons |
