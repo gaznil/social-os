@@ -154,6 +154,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   in "Profiles I like"; then Claude scrapes their slides into the carousel library and rebuilds the photo-codes idea
   (or drops it). Phase 3 still next after that.
 
+- **31 Oct 2026 HANDOFF:** "Competitors & profiles I like" box = full competitors (all content, not only carousels);
+  user adds picks later. **Phase 3 plan written:** `docs/plans/2026-10-31-phase-3-video-studio.md` (4 tasks, inline).
+  **Next = Task 1** (`tools/sos/studio.py` + tests). Nothing waiting on the user except Approve on week 1 drafts + filming.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
