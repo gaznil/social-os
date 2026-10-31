@@ -120,7 +120,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   sos-create drafts for the first week (2 reels + 2 carousels) from those ideas, waiting for the user's Approve.
   Note: ig-viral forbids scraping services; Social OS keeps Apify by design (public, no login, low volume) and uses ig-viral for picking + ranking.
 
-- **31 Oct 2026: SELF-LEARNING LOOP ADDED (user ask).** New `sos-learn` skill + `LESSONS.md` (5 lessons from today).
+- **31 Oct 2026: SELF-LEARNING LOOP ADDED (user ask).** New `sos-learn` skill + `LESSONS.md` (6 lessons from today).
   Method copied from claude-reflect / claude-reflect-system / okteto lessons (found via web search + GitHub connector);
   plugin NOT installed (review band is terminal-only, needs manual /reflect, changes Claude settings).
   Wired into EVERY sos skill (account, research, create, publish, schedules, inbox) + SYSTEM.md "Learning loop". sos-research loads ig-viral & co. for competitor picking + ranking. **Next still: research step 6** (first week's drafts).
