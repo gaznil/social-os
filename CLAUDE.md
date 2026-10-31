@@ -47,6 +47,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   (blue/violet/pink/mint), reacts to incoming words + Claude's spoken reply (speechSynthesis). Artifacts have NO mic
   permission on this account (checked capability list 31 Oct) -> keyboard mic. "Live channels" = pinned section:
   vertical scroll moves the cards sideways.
+- **31 Oct 2026 (v5, checked in Playwright desktop 1440 + phone 390):** fixed rail stretching the page (grid track
+  minmax(0,1fr)) which had hidden the orb and killed the sideways scroll; orb now lit/glossy, orb above text on phones,
+  cards bleed edge to edge. How to preview locally: wrap the page in a doctype file and serve it with Playwright
+  `page.route(url, r => r.fulfill({path}))` (file:// and local servers are blocked).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
