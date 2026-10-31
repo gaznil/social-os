@@ -682,7 +682,7 @@ function openVoice() {
     <div class="voice-mid"><canvas width="560" height="560"></canvas><p data-say></p><span class="did" data-did></span>
       <span class="hint" data-hint>${isTouch ? "Tap the mic on your keyboard and speak" : "Press <kbd>Win</kbd> + <kbd>H</kbd> and speak"}</span>
       <textarea id="voice-text" rows="1" aria-label="What you said" autocomplete="off"></textarea></div>
-    <div class="voice-bot"><button class="vbtn" data-voice="end" aria-label="End voice">${XICON}</button><button class="vbtn send" data-voice="send" aria-label="Send now">${svg("up")}</button></div>`;
+    <div class="voice-bot"><button class="vbtn" data-voice="end" aria-label="End voice">${XICON}</button></div>`;
   document.body.append(el);
   refreshVoicePicks();
   const cv = el.querySelector("canvas"), g = cv.getContext("2d"), say = el.querySelector("[data-say]"), hint = el.querySelector("[data-hint]"), didEl = el.querySelector("[data-did]"), ta = el.querySelector("#voice-text");
