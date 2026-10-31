@@ -124,6 +124,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   Method copied from claude-reflect / claude-reflect-system / okteto lessons (found via web search + GitHub connector);
   plugin NOT installed (review band is terminal-only, needs manual /reflect, changes Claude settings).
   Wired into EVERY sos skill (account, research, create, publish, schedules, inbox) + SYSTEM.md "Learning loop". sos-research loads ig-viral & co. for competitor picking + ranking. **Next still: research step 6** (first week's drafts).
+- **31 Oct 2026: USER ASK, design item 7 queued: Growth section** (after the horizontal scroll ends -> vertical, one still
+  section, account switch buttons, followers/views graph). Spec in the plan roadmap row "4b"; built with Phase 4 `sos-results`.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
