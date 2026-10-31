@@ -1016,12 +1016,12 @@ function viewAccounts() {
       <div>${pill(a.status, ACC_STATE[a.status] || a.status)}</div></article>`).join("")}
     <button class="acc add" data-add-account><span class="plus">+</span>Add account<small>Pick a platform and a topic. Claude does the rest.</small></button>
   </div>
-  <section class="card"><h2>Profiles I like</h2>
-    <p class="muted" style="margin:0 0 10px">Paste a profile you like. Claude studies it in the next research run.</p>
+  <section class="card"><h2>Competitors & profiles I like</h2>
+    <p class="muted" style="margin:0 0 10px">Paste any competitor or profile you like. Claude studies all of it in the next research run: reels, carousels, hooks, captions, what gets views.</p>
     <div class="field"><label class="label" for="comp-link">Profile link or @handle</label><input class="field-in" id="comp-link" placeholder="instagram.com/… or @name" maxlength="200"></div>
     <div class="two">
       <div class="field"><label class="label" for="comp-acct">For</label><select class="field-in" id="comp-acct">${accountOptions("")}</select></div>
-      <div class="field"><label class="label" for="comp-note">What you like (optional)</label><input class="field-in" id="comp-note" placeholder="e.g. their carousel design" maxlength="140"></div>
+      <div class="field"><label class="label" for="comp-note">What you like (optional)</label><input class="field-in" id="comp-note" placeholder="e.g. direct competitor, or I like their reels" maxlength="140"></div>
     </div>
     <div class="row" style="justify-content:flex-end"><button class="btn primary" id="comp-save">Add profile</button></div>
     ${state.competitors.filter(c => c.status !== "remove").map(c => `<div class="row" style="justify-content:space-between;border-top:1px solid rgba(0,0,0,.08);padding-top:10px;margin-top:10px">
