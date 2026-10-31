@@ -78,6 +78,13 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   screen; 3 = video studio + "one video -> all-platform pack"; 4 = results loop; 5 = more platforms. See plan Roadmap.
   **Next still = Task 3** (user gives first account: platform + niche).
 
+- **31 Oct 2026: USER RULE: build every part now; the user adds/connects accounts themselves when they want.**
+  Phase 1 skills written: `sos-account` (now also learns style from past posts -> voice.md + style.md, can save
+  status `setup` before Composio connects), `sos-create`, `sos-publish` + `platforms/{linkedin,instagram}/PUBLISH.md`,
+  `sos-inbox` (session-start rule added). Dry run: future approved post -> `due` returns [] (nothing posted). Tests OK.
+  **Waiting on accounts (not on build):** Task 3 Step 3, Task 4 Step 2, Task 5 Step 5. **Task 6 (cloud publisher)
+  needs the user's yes** to create a cloud scheduled task. **Next build = Phase 2 plan (research engine + schedules screen).**
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
@@ -97,6 +104,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **Posting only through official APIs** (via Composio). No browser automation, no password sharing, no scraping behind logins.
 - **Skills first:** before writing or building, load the skill named in the platform/stage README. If a better one appears, compare
   by opening both (not by stars) and record the result in `SKILLS.md`.
+- **Session start:** in every session in this project, run the `sos-inbox` skill first.
 - **Save as you go:** after every real step update STATUS above, commit and push both repos.
 
 ## 5. GOTCHAS
