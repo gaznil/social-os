@@ -3,6 +3,7 @@ name: sos-research
 description: Find what is viral and trending in one Social OS account's niche (competitors, top reels/carousels/posts, audience questions), learn from it, and turn the best into ideas and calendar drafts for approval. Use on "research", "find trending ideas", a scheduled research run, or right after a new account is set up.
 ---
 **Skills rule:** at each step load the skills named here (and in the platform README) before doing the work. If another installed skill fits a step better, use it too and add it to `SKILLS.md`.
+**Learning rule:** read `LESSONS.md` before starting (skip if already read this session). Any correction from the user, failed step, wasted spend or workaround found -> run `sos-learn` in that same turn (lesson + fix this skill + commit).
 
 Read `engine/research/README.md` first. Never log in anywhere; public data only.
 

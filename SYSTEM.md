@@ -33,3 +33,9 @@ Each account is a folder in `private/accounts/<account-id>/`: `profile.md` (plat
 - Private repo (`private/`): accounts, voices, drafts, calendar, analytics history.
 - Dashboard database: live working state (queue, approvals, messages). Claude mirrors anything durable into `private/`.
 - Secrets: never in git. Platform logins stay inside Composio.
+
+## Learning loop (every stage)
+Every stage (account setup, research, create, approve, publish, schedules, results) runs `sos-learn` when the user
+corrects something, a step fails or credit is wasted: the lesson goes into `LESSONS.md` and the skill that caused it is
+fixed in the same commit. Every session reads `LESSONS.md` first. Draft edits by the user also teach the account's
+`voice.md` / `style.md`. Results (Phase 4) feed `private/analytics/lessons.md` the same way.
