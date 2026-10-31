@@ -105,6 +105,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   brief/clip -> Prompt Guy prompt with Copy + "one video -> all-platform pack" for the text/image posts.
   **last30days test run PASSED** (free sources, no cookies: Reddit 6 threads + HN 6 stories in 8 s).
 
+- **31 Oct 2026: TASK 3 STARTED, first account = Instagram `ig-ai-tools`** (handle in `private/` only). Public profile +
+  22 posts read via Apify (~$0.09 of free credit); `private/accounts/ig-ai-tools/` has profile, voice, style (top reels,
+  patterns). Dashboard `accounts/ig-ai-tools` status `setup`, postsPerWeek 3 (default). Composio Instagram link sent,
+  connection id `instagram_molt-inane` (status initiated). **Waiting on the user:** click the link + answer: on camera?,
+  spoken language, posts/week. Then: confirm ACTIVE -> composioAccountId -> status active -> sos-research first run.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
