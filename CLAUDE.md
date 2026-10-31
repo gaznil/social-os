@@ -166,6 +166,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   **Next build = Phase 4 `sos-results`** (+ Growth section 4b). Waiting on the user: Approve on 3 week-1 drafts (first one
   Sun 1 Nov 19:00), film the 2 reels, add "Profiles I like".
 
+- **31 Oct 2026: PHASE 4 + 4b (results + Growth) DONE.** `tools/sos/results.py` (`best-times`, `growth`; 48 tests pass),
+  new `sos-results` skill (numbers via Composio, `stats` + post `metrics` + account `bestTimes`, ONE change a week,
+  monthly llm-council), dashboard **v22 Growth section** under the Control room scroll (account buttons, followers line,
+  4 tiles; checked at 390 px). Not run on real numbers yet: needs an active account with a Composio link.
+  User asked: keep it inside Claude (no own domain); the Claude bar can't be removed. **Next = Phase 5** (more platforms).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

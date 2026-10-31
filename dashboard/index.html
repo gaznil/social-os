@@ -298,6 +298,24 @@ textarea.field-in { min-height: 100px; resize: vertical; }
 @keyframes fade { from { opacity: 0; } }
 @keyframes bob { 50% { transform: translateY(-4px); opacity: .5; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+/* growth: one still section under the wall; followers line per account + 4 tiles (dataviz palette, fixed order) */
+.growth { max-width: 1100px; margin: 0 auto; padding: 72px 16px 96px; display: grid; gap: 18px; }
+.growth h2 { margin: 0; font: 400 34px/1.1 var(--font-serif); }
+.gbtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.gbtns button { border: 0; border-radius: 999px; padding: 7px 14px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); color: var(--fg); font: inherit; font-size: 14px; cursor: pointer; }
+.gbtns button[aria-pressed="true"] { background: var(--ink); color: var(--ink-fg); }
+.gchart { position: relative; background: var(--surface); border-radius: 18px; box-shadow: 0 0 0 1px var(--line); padding: 16px 16px 8px; }
+.gchart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.gchart .ax { font: 400 11px var(--font-mono); fill: var(--muted); }
+.gtip { position: absolute; pointer-events: none; background: var(--ink); color: var(--ink-fg); border-radius: 10px; padding: 8px 10px; font-size: 12px; line-height: 1.5; white-space: nowrap; opacity: 0; transition: opacity .12s; }
+.glegend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); padding: 6px 2px 0; }
+.glegend i { display: inline-block; width: 14px; height: 2px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.gtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.gtiles div { background: var(--surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--line); padding: 14px; }
+.gtiles b { display: block; font: 500 26px/1.1 var(--font-body); color: var(--ink); }
+.gtiles span { font-size: 13px; color: var(--muted); }
+.gempty { color: var(--muted); margin: 0; }
+@media (max-width: 640px) { .gtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .growth h2 { font-size: 28px; } }
 </style>
 
 <header>
@@ -326,8 +344,8 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [], competitors: [], jobs: [] };
-const ui = { loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
+const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [], competitors: [], jobs: [], stats: [] };
+const ui = { growth: "all", loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
 
 const MODELS = {
   haiku:  { model: "claude-haiku-5-5",  modelTier: "quick",   label: "Haiku 5.5" },
@@ -385,8 +403,8 @@ async function connect() {
   db = window.claude ? await claude.use("db") : null;
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  let pending = 7;
-  for (const name of ["accounts", "posts", "messages", "ideas", "schedules", "competitors", "jobs"]) {
+  let pending = 8;
+  for (const name of ["accounts", "posts", "messages", "ideas", "schedules", "competitors", "jobs", "stats"]) {
     let first = true;
     db.collection(name).onSnapshot(
       snap => {
@@ -949,8 +967,73 @@ function viewWall() {
         <div class="thread">${STAGES.map((s, i) => `<div class="st ${mode !== "showcase" && i === 3 && state.posts.some(p => p.status === "waiting") ? "on" : ""}"><b>${s}</b><span>${esc(pipeCounts()[i])}</span></div>`).join("")}</div></div>
       <div class="panel-title"><span class="hcount" id="hcount">01 / ${String(LANES.length).padStart(2, "0")}</span><h2>Live channels</h2><p>Every channel, working at the same time.</p></div>
       <div class="rail" id="rail"></div>
-    </div><div class="hbar"><i id="hbar"></i></div></div></section>`;
+    </div><div class="hbar"><i id="hbar"></i></div></div></section>
+    <section class="growth" id="growth">${growthHtml()}</section>`;
 }
+
+/* ---------- growth ---------- */
+const SERIES = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300"];
+const isoDay = d => d.toISOString().slice(0, 10);
+const fmtDay = d => new Date(d + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+const num = n => n == null ? "—" : n >= 1e4 ? (n / 1e3).toFixed(n >= 1e5 ? 0 : 1) + "K" : n.toLocaleString("en-IN");
+function growthData() {
+  if (mode === "showcase") {
+    const accs = [{ id: "demo-ig", label: "AI tools (Instagram)" }, { id: "demo-li", label: "Founder (LinkedIn)" }], stats = [];
+    for (let i = 29; i >= 0; i--) { const date = isoDay(new Date(Date.now() - i * 864e5));
+      stats.push({ accountId: "demo-ig", date, followers: 1200 + (29 - i) * 38 + (i % 4) * 9, views: 2400 + (i % 5) * 700, posts: i % 2 });
+      stats.push({ accountId: "demo-li", date, followers: 640 + (29 - i) * 11, views: 900 + (i % 3) * 220, posts: i % 3 ? 0 : 1 }); }
+    return { accs, stats };
+  }
+  return { accs: state.accounts.filter(a => a.status !== "setup"), stats: state.stats };
+}
+function growthTiles(stats, today) {
+  // same maths as tools/sos/results.py growth_tiles
+  const back = n => isoDay(new Date(Date.parse(today) - n * 864e5));
+  const wk = new Set([...Array(7)].map((_, i) => back(i)));
+  const upTo = day => { const last = {}; for (const r of [...stats].sort((a, b) => a.date < b.date ? -1 : 1)) if (r.date <= day && r.followers != null) last[r.accountId] = r.followers;
+    const v = Object.values(last); return v.length ? v.reduce((a, b) => a + b, 0) : null; };
+  const now = upTo(today), before = upTo(back(7));
+  return { followers: now, views: stats.filter(r => wk.has(r.date)).reduce((a, r) => a + (r.views || 0), 0),
+    posts: stats.filter(r => wk.has(r.date)).reduce((a, r) => a + (r.posts || 0), 0), change: now == null || before == null ? null : now - before };
+}
+function growthHtml() {
+  const { accs, stats } = growthData();
+  if (ui.growth !== "all" && !accs.some(a => a.id === ui.growth)) ui.growth = "all";
+  const pick = ui.growth, color = id => SERIES[Math.max(0, accs.findIndex(a => a.id === id)) % SERIES.length];
+  const shown = pick === "all" ? accs : accs.filter(a => a.id === pick);
+  const rows = stats.filter(r => shown.some(a => a.id === r.accountId));
+  const t = growthTiles(rows, isoDay(new Date()));
+  const btns = `<div class="gbtns" role="group" aria-label="Account">${[{ id: "all", label: "All" }, ...accs].map(a => `<button data-growth="${esc(a.id)}" aria-pressed="${a.id === pick}">${esc(a.label)}</button>`).join("")}</div>`;
+  const tiles = `<div class="gtiles"><div><b>${num(t.followers)}</b><span>Followers</span></div><div><b>${num(t.views)}</b><span>Views this week</span></div>
+    <div><b>${num(t.posts)}</b><span>Posts this week</span></div><div><b>${t.change == null ? "—" : (t.change >= 0 ? "+" : "−") + num(Math.abs(t.change))}</b><span>vs last week</span></div></div>`;
+  const pts = rows.filter(r => r.followers != null);
+  ui.gview = null;
+  if (!accs.length || pts.length < 2) return `<h2>Growth</h2>${accs.length > 1 ? btns : ""}<p class="gempty">${accs.length ? "The first numbers arrive after the next results run. The line starts on day two." : "Add an account to start tracking growth."}</p>${accs.length ? tiles : ""}`;
+  const days = [...new Set(pts.map(r => r.date))].sort(), W = Math.max(280, Math.min(1000, innerWidth - 66)), H = 260, L = 44, B = 24;
+  const vals = pts.map(r => r.followers), lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo) * .1 || 1;
+  const x = d => L + (days.indexOf(d) / Math.max(1, days.length - 1)) * (W - L - 8), y = v => 8 + (1 - (v - lo + pad) / (hi - lo + 2 * pad)) * (H - B - 8);
+  const ticks = [lo, (lo + hi) / 2, hi].map(v => Math.round(v));
+  const grid = ticks.map(v => `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" vector-effect="non-scaling-stroke"/><text class="ax" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${num(v)}</text>`).join("");
+  const xl = [days[0], days[days.length - 1]].map((d, i) => `<text class="ax" x="${x(d)}" y="${H - 4}" text-anchor="${i ? "end" : "start"}">${esc(fmtDay(d))}</text>`).join("");
+  const lines = shown.map(a => { const r = pts.filter(p => p.accountId === a.id).sort((p, q) => p.date < q.date ? -1 : 1); if (!r.length) return "";
+    return `<path d="${r.map((p, i) => (i ? "L" : "M") + x(p.date).toFixed(1) + " " + y(p.followers).toFixed(1)).join("")}" fill="none" stroke="${color(a.id)}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>`; }).join("");
+  const legend = shown.length > 1 ? `<div class="glegend">${shown.map(a => `<span><i style="background:${color(a.id)}"></i>${esc(a.label)}</span>`).join("")}</div>` : "";
+  ui.gview = { days, x, y, W, shown: shown.map(a => ({ id: a.id, label: a.label, c: color(a.id) })), pts };
+  return `<h2>Growth</h2>${btns}
+    <div class="gchart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Followers over time">${grid}${xl}${lines}<g id="gcross"></g><rect id="ghit" x="${L}" y="0" width="${W - L}" height="${H - B}" fill="transparent"/></svg>
+      <div class="gtip" id="gtip"></div>${legend}</div>${tiles}`;
+}
+function onGrowthMove(e) {
+  const v = ui.gview, svgEl = $("#growth svg"); if (!v || !svgEl) return;
+  const box = svgEl.getBoundingClientRect(), sx = (e.clientX - box.left) * (v.W / box.width);
+  const day = v.days.reduce((b, d) => Math.abs(v.x(d) - sx) < Math.abs(v.x(b) - sx) ? d : b, v.days[0]);
+  const at = v.shown.map(a => ({ ...a, p: v.pts.find(p => p.accountId === a.id && p.date === day) })).filter(a => a.p);
+  $("#gcross").innerHTML = `<line x1="${v.x(day)}" x2="${v.x(day)}" y1="8" y2="236" stroke="var(--line-2)"/>` +
+    at.map(a => `<circle cx="${v.x(day)}" cy="${v.y(a.p.followers)}" r="4" fill="${a.c}" stroke="#fff" stroke-width="2"/>`).join("");
+  const tip = $("#gtip"); tip.innerHTML = `<b>${esc(fmtDay(day))}</b>` + at.map(a => `<div>${esc(a.label)}: ${num(a.p.followers)}</div>`).join("");
+  const px = 16 + (v.x(day) / v.W) * box.width; tip.style.left = Math.min(box.width - tip.offsetWidth, px + 12) + "px"; tip.style.top = "12px"; tip.style.opacity = 1;
+}
+document.addEventListener("pointermove", e => { if (e.target.id === "ghit") onGrowthMove(e); else if (ui.gview && $("#gtip")?.style.opacity === "1") { $("#gtip").style.opacity = 0; $("#gcross").innerHTML = ""; } });
 
 function preview(p) {
   const media = p.mediaUrls || [];
@@ -1104,7 +1187,7 @@ function render(dataChanged) {
     // keep the wall, the orb and anything being typed; refresh only what changed
     if (dataChanged && tab === "wall") { const f = document.querySelector("[data-figs]"); if (f) f.innerHTML = figuresHtml();
       document.querySelectorAll(".st span").forEach((n, i) => n.textContent = pipeCounts()[i]);
-      if (mode === "live") paintRail(false); if (ui.claudeOpen && document.activeElement?.id !== "prompt") paintHero(); }
+      if (mode === "live") paintRail(false); const g = $("#growth"); if (g) g.innerHTML = growthHtml(); if (ui.claudeOpen && document.activeElement?.id !== "prompt") paintHero(); }
     if (dataChanged && tab === "ideas") { const keep = ["idea-text", "idea-acct"].map(id => [id, document.getElementById(id)?.value]); $("#view").innerHTML = VIEWS.ideas(); for (const [id, v] of keep) { const el = document.getElementById(id); if (el && v != null) el.value = v; } }
     if (dataChanged && tab === "studio") { const keep = ["job-acct", "job-brief", "job-clip"].map(id => [id, document.getElementById(id)?.value]); $("#view").innerHTML = VIEWS.studio(); for (const [id, v] of keep) { const el = document.getElementById(id); if (el && v) el.value = v; } }
     return;
@@ -1129,6 +1212,7 @@ document.addEventListener("click", async e => {
   if (!e.target.closest(".pickwrap")) closePick();
   const t = e.target.closest("button, a"); if (!t || t.closest(".sheet-bg")) return;
   if (t.dataset.tab) { tab = t.dataset.tab; store.set("sos.tab3", tab); render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.growth) { ui.growth = t.dataset.growth; $("#growth").innerHTML = growthHtml(); return; }
   if (t.dataset.mode) { mode = t.dataset.mode; store.set("sos.mode", mode); render(); return; }
   if (t.dataset.voice) { voice?.action(t.dataset.voice); return; }
   if (t.dataset.pick) { t.getAttribute("aria-expanded") === "true" ? closePick() : openPick(t); return; }

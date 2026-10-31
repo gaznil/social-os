@@ -2,6 +2,8 @@
 
 A private Claude artifact page: the user's one screen, phone or PC. No domain, no server.
 
+**Growth (v22):** under the Control room scroll; account buttons, followers line, 4 tiles, fed by `stats` (sos-results).
+
 **Tabs:** Today · Ideas · Approve · Calendar · Studio · Research · Accounts · Talk.
 
 **How it works**
