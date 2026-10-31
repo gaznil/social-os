@@ -19,8 +19,8 @@ Each item: the wish, the free way to get it, and what was checked. Status: ALL A
 | 13 | "Never repeat myself by accident" | Topic memory: before drafting, check the account's last 60 days of posts and research for the same topic | Our own design | 1 (with sos-create) |
 
 ## Wanted but no free, safe way exists (checked or known)
-- **Trending audio list for Reels:** no official API; scraping it needs logins. Skip.
-- **Your own AI voice for faceless videos:** good voices are paid; local voices were rejected on 4 Oct 2026 ("worst").
+- **Trending audio:** SOLVED 31 Oct, see "User decisions" (Apify audio names + manual sound add in the app).
+- **AI voice:** SOLVED 31 Oct, ElevenLabs free plan (see "User decisions").
 - **Shadowban checker:** no reliable source; tools that claim it guess.
 - **AI-generated video clips:** Higgsfield/Krea credits are near zero; revisit once there is income.
 
