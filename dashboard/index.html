@@ -1,0 +1,372 @@
+<title>Social OS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a newsroom desk - sticky tab rail on top, one column of work cards, summary first. */
+:root {
+  --bg: #f5f6f8; --surface: #ffffff; --line: #dde1e8; --fg: #161b26; --muted: #5c6577;
+  --accent: #2346d8; --accent-ink: #ffffff; --accent-soft: #e6ebff;
+  --ok: #17803d; --ok-soft: #e3f4e8; --warn: #a15c00; --warn-soft: #fbefd9;
+  --bad: #c42b2b; --bad-soft: #fbe5e5; --idle: #6b7280; --idle-soft: #eceef2;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f131b; --surface: #171c27; --line: #2a3242; --fg: #e8ebf2; --muted: #9aa3b5;
+  --accent: #7d95ff; --accent-ink: #0f131b; --accent-soft: #232c4d;
+  --ok: #5fd08a; --ok-soft: #173325; --warn: #f0b155; --warn-soft: #3a2a12;
+  --bad: #ff7b7b; --bad-soft: #3d1c1f; --idle: #9aa3b5; --idle-soft: #232936; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f131b; --surface: #171c27; --line: #2a3242; --fg: #e8ebf2; --muted: #9aa3b5;
+  --accent: #7d95ff; --accent-ink: #0f131b; --accent-soft: #232c4d;
+  --ok: #5fd08a; --ok-soft: #173325; --warn: #f0b155; --warn-soft: #3a2a12;
+  --bad: #ff7b7b; --bad-soft: #3d1c1f; --idle: #9aa3b5; --idle-soft: #232936; color-scheme: dark }
+
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-block: 14px 6px; }
+h1 { font: 700 22px/1.1 var(--font-display); margin: 0; letter-spacing: -0.01em; }
+.sync { font: 12px var(--font-mono); color: var(--muted); }
+nav { display: flex; gap: 4px; overflow-x: auto; padding-block: 4px 0; scrollbar-width: none; }
+nav button { flex: none; border: 0; background: none; color: var(--muted); font: 500 14px var(--font-body); padding: 8px 10px 10px; border-bottom: 2px solid transparent; cursor: pointer; display: flex; gap: 6px; align-items: center; }
+nav button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+nav .n { font: 500 11px var(--font-mono); background: var(--accent-soft); color: var(--accent); border-radius: 99px; padding: 0 6px; }
+main { padding-block: 20px 48px; display: grid; gap: 20px; }
+h2 { font: 600 18px/1.2 var(--font-display); margin: 0; text-wrap: balance; }
+.label { font: 500 11px var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.muted { color: var(--muted); }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 560px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 2px; }
+.tile b { font: 600 28px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.tile.attn b { color: var(--warn); } .tile.bad b { color: var(--bad); }
+.list { display: grid; gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: grid; gap: 10px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.time { font-family: var(--font-mono); font-size: 12px; }
+.pill { font: 500 12px var(--font-body); border-radius: 99px; padding: 1px 9px; background: var(--idle-soft); color: var(--idle); }
+.s-waiting { background: var(--warn-soft); color: var(--warn); } .s-approved, .s-posting { background: var(--accent-soft); color: var(--accent); }
+.s-posted { background: var(--ok-soft); color: var(--ok); } .s-failed, .s-rejected { background: var(--bad-soft); color: var(--bad); }
+.plat { font-weight: 600; color: var(--fg); }
+.caption { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+.problems { margin: 0; padding: 10px 12px 10px 28px; background: var(--bad-soft); color: var(--bad); border-radius: 8px; font-size: 14px; }
+.strip { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+.strip > * { flex: none; scroll-snap-align: start; border-radius: 8px; background: var(--idle-soft); object-fit: cover; }
+.strip.square > * { width: min(70%, 260px); aspect-ratio: 1; }
+.strip.story > * { width: min(42%, 150px); aspect-ratio: 9 / 16; }
+.preview-media { width: 100%; max-height: 420px; border-radius: 8px; background: #000; object-fit: contain; }
+.textpost { border-left: 3px solid var(--line); padding-left: 12px; }
+button.btn { font: 500 14px var(--font-body); border-radius: 8px; padding: 8px 14px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); cursor: pointer; }
+button.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button.btn.danger { color: var(--bad); }
+button.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+a.btn { font: 500 14px var(--font-body); color: var(--accent); text-decoration: none; padding: 8px 4px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; padding: 20px; color: var(--muted); }
+.day { display: grid; gap: 8px; }
+.day h3 { font: 600 14px var(--font-body); margin: 0; display: flex; gap: 8px; align-items: baseline; }
+.calpost { display: grid; grid-template-columns: 4px 1fr; gap: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px 10px 0; overflow: hidden; }
+.calpost .bar { background: var(--idle); } .calpost .bar.s-waiting { background: var(--warn); } .calpost .bar.s-approved, .calpost .bar.s-posting { background: var(--accent); }
+.calpost .bar.s-posted { background: var(--ok); } .calpost .bar.s-failed, .calpost .bar.s-rejected { background: var(--bad); }
+.calpost > div:last-child { min-width: 0; display: grid; gap: 4px; }
+.clip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.table { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 500 11px var(--font-body); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+textarea, select { font: 15px var(--font-body); color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+textarea { min-height: 96px; resize: vertical; }
+.pickers { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.field { display: grid; gap: 4px; }
+.answer { white-space: pre-wrap; background: var(--accent-soft); border-radius: 10px; padding: 12px 14px; overflow-wrap: anywhere; }
+.msg { display: grid; gap: 6px; }
+.msg .reply { border-left: 3px solid var(--accent); padding-left: 10px; white-space: pre-wrap; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 16px; border-radius: 8px; font-size: 14px; max-width: calc(100% - 32px); z-index: 20; }
+.banner { background: var(--warn-soft); color: var(--warn); border-radius: 10px; padding: 12px 14px; }
+@media (prefers-reduced-motion: no-preference) { .card, .calpost { transition: border-color .15s; } }
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="brand"><h1>Social OS</h1><span class="sync" id="sync">Connecting…</span></div>
+    <nav id="tabs" role="tablist"></nav>
+  </div>
+</header>
+<div class="wrap"><main id="view"></main></div>
+<div class="toast" id="toast" hidden></div>
+
+<script type="module">
+const ALLOWED = {
+  draft: ["waiting", "rejected"], waiting: ["approved", "rejected", "draft"],
+  approved: ["posting", "waiting", "rejected"], posting: ["posted", "failed"],
+  failed: ["approved", "rejected"], posted: [], rejected: ["draft"],
+};
+const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
+const nowIso = () => new Date().toISOString();
+const state = { accounts: [], posts: [], messages: [], ideas: [] };
+const ui = { loaded: false, offline: false, errors: {}, answer: null, answering: false };
+
+const MODELS = {
+  haiku:  { model: "claude-haiku-5-5",  modelTier: "quick",   label: "Haiku 5.5" },
+  sonnet: { model: "claude-sonnet-5-5", modelTier: "default", label: "Sonnet 5.5" },
+  opus:   { model: "claude-opus-5-5",   modelTier: "complex", label: "Opus 5.5" },
+};
+const EFFORTS = { low: "Low", medium: "Medium", high: "High" };
+const PLATFORMS = { instagram: "Instagram", youtube: "YouTube", linkedin: "LinkedIn", x: "X", facebook: "Facebook", threads: "Threads" };
+const MANUAL = { x: "https://x.com/compose/post", threads: "https://www.threads.net/" };
+const TABS = [["today", "Today"], ["approve", "Approve"], ["calendar", "Calendar"], ["accounts", "Accounts"], ["ideas", "Ideas"], ["talk", "Talk"]];
+const TZ = "Asia/Kolkata";
+
+const store = {
+  get(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} },
+};
+let tab = store.get("sos.tab", "today");
+if (!TABS.some(t => t[0] === tab)) tab = "today";
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const dayKey = iso => new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(iso));
+const fmtTime = iso => iso ? new Intl.DateTimeFormat("en-IN", { timeZone: TZ, weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }).format(new Date(iso)) : "No time set";
+const fmtHour = iso => new Intl.DateTimeFormat("en-IN", { timeZone: TZ, hour: "numeric", minute: "2-digit" }).format(new Date(iso));
+const accountLabel = id => state.accounts.find(a => a.id === id)?.label || "Unknown account";
+const byTime = (a, b) => String(a.plannedAt || "").localeCompare(String(b.plannedAt || ""));
+const pill = s => `<span class="pill s-${esc(s)}">${esc(s)}</span>`;
+
+let toastTimer;
+function showToast(text) {
+  const t = $("#toast"); t.textContent = text; t.hidden = false;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 3000);
+}
+function showOffline() { ui.offline = true; $("#sync").textContent = "Offline"; render(); }
+const ERR_WORDS = { unavailable: "the data service is not answering right now", "invalid-argument": "the page sent something the database refused" };
+function showError(name, err) { ui.errors[name] = ERR_WORDS[err?.code] || `error "${err?.code || "unknown"}"`; render(); }
+
+/* ---------- data ---------- */
+let db = null;
+async function connect() {
+  db = await claude.use("db");
+  if (!db) return showOffline();
+  const timer = setTimeout(() => { if (!ui.loaded) { $("#sync").textContent = "Still loading…"; } }, 10000);
+  let pending = 4;
+  for (const name of ["accounts", "posts", "messages", "ideas"]) {
+    let first = true;
+    db.collection(name).onSnapshot(
+      snap => {
+        state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (first) { first = false; if (--pending === 0) { ui.loaded = true; clearTimeout(timer); } }
+        $("#sync").textContent = ui.loaded ? "Live" : "Loading…";
+        render();
+      },
+      err => { clearTimeout(timer); showError(name, err); });
+  }
+}
+
+async function setStatus(post, to) {
+  if (!canMove(post.status, to)) return showToast(`Can't move ${post.status} to ${to}`);
+  const patch = { status: to, updatedAt: nowIso() };
+  if (to === "approved") Object.assign(patch, { approvedBy: "dashboard", approvedAt: nowIso() });
+  try { await db.doc(`posts/${post.id}`).update(patch); showToast(to === "approved" ? "Approved" : to === "draft" ? "Sent back to draft" : "Rejected"); }
+  catch (e) { showToast(`Couldn't save: ${e.code || "error"}. Try again.`); }
+}
+
+async function sendMessage(text) {
+  if (!text.trim()) return false;
+  await db.collection("messages").add({ from: "user", text, status: "new", reply: null, createdAt: nowIso() });
+  return true;
+}
+
+async function saveIdea(text, accountId) {
+  if (!text.trim()) return false;
+  await db.collection("ideas").add({ text, accountId: accountId || null, source: "user", status: "new", createdAt: nowIso() });
+  return true;
+}
+
+async function quickAnswer(text, modelKey, effort) {
+  const sample = await claude.use("sample");
+  if (!sample) { showToast("Quick answers are off for this page."); return null; }
+  const m = MODELS[modelKey] || MODELS.sonnet;
+  const out = await sample([{ role: "user", content:
+    "You help a social media creator. Answer briefly and concretely.\n\n" + text }],
+    { cache: false, model: m.model, modelTier: m.modelTier, effort });
+  return { text: out.text, answeredBy: out.modelApplied ? m.label : "the fallback model" };
+}
+
+/* ---------- views ---------- */
+function preview(p) {
+  const media = p.mediaUrls || [];
+  const isVid = u => /\.(mp4|mov|webm)(\?|$)/i.test(u);
+  const one = u => isVid(u) ? `<video src="${esc(u)}" controls playsinline preload="metadata"></video>` : `<img src="${esc(u)}" alt="" loading="lazy">`;
+  switch (p.format) {
+    case "carousel": return `<div class="strip square">${media.map(one).join("")}</div>`;
+    case "story": return `<div class="strip story">${media.map(one).join("")}</div>`;
+    case "reel": case "video": case "short":
+      return media[0] ? `<video class="preview-media" src="${esc(media[0])}" controls playsinline preload="metadata"></video>` : "";
+    case "image": return media[0] ? `<img class="preview-media" src="${esc(media[0])}" alt="">` : "";
+    default: return "";
+  }
+}
+
+function postMeta(p) {
+  return `<div class="meta"><span class="plat">${esc(PLATFORMS[p.platform] || p.platform)}</span>
+    <span>${esc(accountLabel(p.accountId))}</span><span>${esc(p.format)}</span>
+    <span class="time">${esc(fmtTime(p.plannedAt))}</span>${pill(p.status)}</div>`;
+}
+
+function viewToday() {
+  const weekAgo = Date.now() - 7 * 864e5, now = Date.now();
+  const c = s => state.posts.filter(p => p.status === s).length;
+  const postedWeek = state.posts.filter(p => p.status === "posted" && p.postedAt && Date.parse(p.postedAt) >= weekAgo).length;
+  const next = state.posts.filter(p => p.status === "approved" && p.plannedAt && Date.parse(p.plannedAt) >= now).sort(byTime).slice(0, 5);
+  return `<section class="tiles">
+      <div class="tile ${c("waiting") ? "attn" : ""}"><span class="label">Waiting for you</span><b>${c("waiting")}</b></div>
+      <div class="tile"><span class="label">Approved, scheduled</span><b>${c("approved")}</b></div>
+      <div class="tile"><span class="label">Posted, last 7 days</span><b>${postedWeek}</b></div>
+      <div class="tile ${c("failed") ? "bad" : ""}"><span class="label">Failed</span><b>${c("failed")}</b></div>
+    </section>
+    <section class="list"><h2>Next up</h2>
+      ${next.length ? next.map(p => `<div class="card">${postMeta(p)}<p class="caption clip">${esc(p.title || p.caption)}</p></div>`).join("")
+        : `<div class="empty">Nothing scheduled yet. Approved posts show up here with their time.</div>`}
+    </section>`;
+}
+
+function viewApprove() {
+  const w = state.posts.filter(p => p.status === "waiting").sort(byTime);
+  if (!w.length) return `<div class="empty">No drafts waiting. Claude adds them here.</div>`;
+  return `<h2>${w.length} waiting for your yes</h2><div class="list">${w.map(p => {
+    const probs = p.problems || [];
+    const body = ["text", "thread"].includes(p.format) || !(p.mediaUrls || []).length
+      ? `<div class="textpost">${p.title ? `<b>${esc(p.title)}</b>` : ""}<p class="caption">${esc(p.caption)}</p></div>`
+      : `${preview(p)}${p.title ? `<b>${esc(p.title)}</b>` : ""}<p class="caption">${esc(p.caption)}</p>`;
+    return `<article class="card">${postMeta(p)}${body}
+      ${probs.length ? `<ul class="problems">${probs.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+      <div class="row">
+        <button class="btn primary" data-act="approved" data-id="${esc(p.id)}" ${probs.length ? "disabled title=\"Fix the problems first\"" : ""}>Approve</button>
+        <button class="btn" data-act="draft" data-id="${esc(p.id)}">Back to draft</button>
+        <button class="btn danger" data-act="rejected" data-id="${esc(p.id)}">Reject</button>
+      </div></article>`;
+  }).join("")}</div>`;
+}
+
+function viewCalendar() {
+  const days = [];
+  for (let i = 0; i < 14; i++) days.push(dayKey(new Date(Date.now() + i * 864e5).toISOString()));
+  const groups = Object.fromEntries(days.map(d => [d, []]));
+  for (const p of state.posts) if (p.plannedAt && groups[dayKey(p.plannedAt)] && p.status !== "rejected") groups[dayKey(p.plannedAt)].push(p);
+  const any = days.some(d => groups[d].length);
+  const dayName = d => new Intl.DateTimeFormat("en-IN", { timeZone: TZ, weekday: "long", day: "numeric", month: "short" }).format(new Date(d + "T12:00:00+05:30"));
+  return `<h2>Next 14 days</h2>
+    ${any ? "" : `<div class="empty">No posts planned in the next two weeks.</div>`}
+    ${days.filter(d => groups[d].length).map(d => `<section class="day"><h3>${esc(dayName(d))}<span class="muted">${groups[d].length}</span></h3>
+      ${groups[d].sort(byTime).map(p => `<div class="calpost"><div class="bar s-${esc(p.status)}"></div><div>
+        <div class="meta"><span class="time">${esc(fmtHour(p.plannedAt))}</span><span class="plat">${esc(PLATFORMS[p.platform] || p.platform)}</span><span>${esc(accountLabel(p.accountId))}</span>${pill(p.status)}</div>
+        <div class="clip">${esc(p.title || p.caption)}</div>
+        ${MANUAL[p.platform] ? `<div class="row"><button class="btn" data-copy="${esc(p.id)}">Copy text</button><a class="btn" href="${MANUAL[p.platform]}" target="_blank" rel="noopener">Open ${esc(PLATFORMS[p.platform])}</a></div>` : ""}
+      </div></div>`).join("")}</section>`).join("")}`;
+}
+
+function viewAccounts() {
+  if (!state.accounts.length) return `<div class="empty">No accounts yet. Tell Claude in chat: add an account.</div>`;
+  return `<h2>Accounts</h2><div class="table"><table><thead><tr><th>Account</th><th>Platform</th><th>Niche</th><th>Posts / week</th><th>Connected</th><th>Status</th></tr></thead><tbody>
+    ${state.accounts.map(a => `<tr><td>${esc(a.label)}</td><td>${esc(PLATFORMS[a.platform] || a.platform)}</td><td>${esc(a.niche)}</td><td>${esc(a.postsPerWeek)}</td><td>${a.composioAccountId ? "Yes" : "No"}</td><td>${pill(a.status === "active" ? "posted" : "draft").replace(/>[^<]*</, `>${esc(a.status)}<`)}</td></tr>`).join("")}
+    </tbody></table></div>`;
+}
+
+function accountOptions(sel) {
+  return `<option value="">Any account</option>` + state.accounts.map(a => `<option value="${esc(a.id)}" ${a.id === sel ? "selected" : ""}>${esc(a.label)} · ${esc(PLATFORMS[a.platform] || a.platform)}</option>`).join("");
+}
+
+function viewIdeas() {
+  const ideas = [...state.ideas].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  return `<section class="card"><h2>New idea</h2>
+      <div class="field"><label class="label" for="idea-text">Idea</label><textarea id="idea-text" placeholder="A post about…"></textarea>
+      <span class="muted">Tip: tap the mic on your phone keyboard to speak.</span></div>
+      <div class="field"><label class="label" for="idea-acct">For</label><select id="idea-acct">${accountOptions("")}</select></div>
+      <div class="row"><button class="btn primary" id="idea-save">Save idea</button></div></section>
+    <section class="list"><h2>Ideas</h2>
+      ${ideas.length ? ideas.map(i => `<div class="card"><div class="meta"><span>${esc(i.accountId ? accountLabel(i.accountId) : "Any account")}</span><span>${esc(i.source)}</span>${pill(i.status === "drafted" ? "posted" : i.status === "dropped" ? "rejected" : "waiting").replace(/>[^<]*</, `>${esc(i.status)}<`)}</div><p class="caption">${esc(i.text)}</p></div>`).join("")
+        : `<div class="empty">No ideas saved yet. Write one above and Claude turns it into a draft.</div>`}
+    </section>`;
+}
+
+function viewTalk() {
+  const mk = store.get("sos.model", "sonnet"), ef = store.get("sos.effort", "medium");
+  const msgs = [...state.messages].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  return `<section class="card"><h2>Talk to Claude</h2>
+      <div class="field"><label class="label" for="talk-text">Message</label><textarea id="talk-text" placeholder="Ask or tell Claude something…"></textarea>
+      <span class="muted">Tip: tap the mic on your phone keyboard to speak.</span></div>
+      <div class="pickers">
+        <div class="field"><label class="label" for="talk-model">Model</label><select id="talk-model">${Object.entries(MODELS).map(([k, m]) => `<option value="${k}" ${k === mk ? "selected" : ""}>${m.label}</option>`).join("")}</select></div>
+        <div class="field"><label class="label" for="talk-effort">Effort</label><select id="talk-effort">${Object.entries(EFFORTS).map(([k, l]) => `<option value="${k}" ${k === ef ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+      </div>
+      <div class="row"><button class="btn primary" id="talk-send">Send to Claude</button><button class="btn" id="talk-quick" ${ui.answering ? "disabled" : ""}>Quick answer</button></div>
+      <span class="muted">Send saves it for Claude to handle in its next run. Quick answer replies now and is not saved.</span>
+      ${ui.answering ? `<div class="answer">Thinking…</div>` : ui.answer ? `<div class="answer">${esc(ui.answer.text)}<div class="label" style="margin-top:8px">Answered by ${esc(ui.answer.answeredBy)}</div></div>` : ""}
+    </section>
+    <section class="list"><h2>Messages</h2>
+      ${msgs.length ? msgs.map(m => `<div class="card msg"><div class="meta"><span>${m.from === "claude" ? "Claude" : "You"}</span><span class="time">${esc(fmtTime(m.createdAt))}</span>${pill(m.status === "done" ? "posted" : "waiting").replace(/>[^<]*</, `>${m.status === "done" ? "answered" : "new"}<`)}</div>
+        <p class="caption">${esc(m.text)}</p>${m.reply ? `<div class="reply">${esc(m.reply)}</div>` : ""}</div>`).join("")
+        : `<div class="empty">No messages yet. Claude answers saved messages here.</div>`}
+    </section>`;
+}
+
+const VIEWS = { today: viewToday, approve: viewApprove, calendar: viewCalendar, accounts: viewAccounts, ideas: viewIdeas, talk: viewTalk };
+
+function render() {
+  const waiting = state.posts.filter(p => p.status === "waiting").length;
+  $("#tabs").innerHTML = TABS.map(([k, l]) => `<button role="tab" aria-selected="${k === tab}" data-tab="${k}">${l}${k === "approve" && waiting ? `<span class="n">${waiting}</span>` : ""}</button>`).join("");
+  // keep what the person is typing across live updates
+  const keep = ["idea-text", "talk-text", "idea-acct"].map(id => [id, document.getElementById(id)?.value]);
+  const focused = document.activeElement?.id;
+  let html = "";
+  if (ui.offline) html += `<div class="banner">Open this page signed in to claude.ai to see your data.</div>`;
+  for (const [name, why] of Object.entries(ui.errors)) html += `<div class="banner">Couldn't load ${esc(name)}: ${esc(why)}. Reopen the page to retry.</div>`;
+  $("#view").innerHTML = html + VIEWS[tab]();
+  for (const [id, v] of keep) { const el = document.getElementById(id); if (el && v != null) el.value = v; }
+  if (focused) document.getElementById(focused)?.focus();
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button, a"); if (!t) return;
+  if (t.dataset.tab) { tab = t.dataset.tab; store.set("sos.tab", tab); render(); window.scrollTo(0, 0); return; }
+  if (!db && (t.dataset.act || t.id === "idea-save" || t.id === "talk-send")) return showToast("Sign in to claude.ai to save.");
+  if (t.dataset.act) { const p = state.posts.find(x => x.id === t.dataset.id); if (p) { t.disabled = true; await setStatus(p, t.dataset.act); } return; }
+  if (t.dataset.copy) {
+    const p = state.posts.find(x => x.id === t.dataset.copy); if (!p) return;
+    try { await navigator.clipboard.writeText(p.caption); showToast("Copied. Paste it in the app."); }
+    catch { showToast("Copy was blocked. Press and hold the text to copy it."); }
+    return;
+  }
+  if (t.id === "idea-save") {
+    try { if (await saveIdea($("#idea-text").value, $("#idea-acct").value)) { $("#idea-text").value = ""; showToast("Idea saved"); render(); } else showToast("Write the idea first."); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.id === "talk-send") {
+    try { if (await sendMessage($("#talk-text").value)) { $("#talk-text").value = ""; showToast("Sent. Claude answers here."); render(); } else showToast("Write a message first."); }
+    catch (err) { showToast(`Couldn't send: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.id === "talk-quick") {
+    const text = $("#talk-text").value; if (!text.trim()) return showToast("Write a question first.");
+    ui.answering = true; ui.answer = null; render();
+    try { ui.answer = await quickAnswer(text, $("#talk-model").value, $("#talk-effort").value); }
+    catch (err) { ui.answer = { text: err.code === "rate_limited" ? "Too many quick answers just now. Wait a minute." : err.code === "not_granted" ? "Quick answers are switched off for this page." : (err.text || "That didn't work. Try again."), answeredBy: "nobody" }; }
+    ui.answering = false; render();
+  }
+});
+document.addEventListener("change", e => {
+  if (e.target.id === "talk-model") store.set("sos.model", e.target.value);
+  if (e.target.id === "talk-effort") store.set("sos.effort", e.target.value);
+});
+
+render();
+connect();
+</script>

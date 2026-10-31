@@ -34,6 +34,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026:** all 20 wishlist items APPROVED (docs/WISHLIST.md, with the user's music/voice/AI-video rules). Shorts generator copied as a method, not installed.
   **HANDOFF 30 Oct:** user switched chats. **Next = Task 2** (Step 0 story rule, then dashboard v1). Nothing else pending.
 
+- **31 Oct 2026:** Task 2 Steps 0-4 + 6 DONE: story rule (28 tests), `docs/DATA.md`, dashboard v1 published
+  (URL in `private/README.md`), settings/main + test post `posts/test-1` seeded. **Waiting on the user:** press Approve on
+  the test card on their phone; then Claude checks `posts/test-1` shows approvedBy "dashboard" and deletes it. Then Task 3 (needs first account).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
