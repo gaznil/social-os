@@ -112,7 +112,7 @@ main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 
 .voice small { font: 400 13px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 55%, transparent); max-width: 36ch; }
 .voice textarea { position: absolute; left: 50%; bottom: 0; width: 1px; height: 1px; opacity: 0; border: 0; padding: 0; resize: none; caret-color: transparent; }
 .voice-mid { position: relative; cursor: text; }
-.voice-top { position: relative; }
+.voice-top { position: relative; z-index: 2; }
 .voice-top .pickwrap { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
 .voice-top .menu { left: auto; right: 0; max-height: 50vh; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 html.locked, html.locked body { overflow: hidden; }
