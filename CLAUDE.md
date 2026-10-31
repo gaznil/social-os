@@ -146,6 +146,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   (video studio: brief/clip -> Prompt Guy prompt + "one video -> all-platform pack"), then Phase 4 `sos-results`.
   Waiting on the user: Approve/Back to draft on week 1 drafts; film the 2 reels.
 
+- **31 Oct 2026: user rejected `w1-photo-codes` ("weak and unrealistic in every way": "codes" were 3-line prompts, no real
+  examples). Realism rule added to sos-create + LESSONS. Dashboard v19: Accounts tab has **"Profiles I like"** (`competitors`
+  collection, docs/DATA.md); sos-research adds those picks first, always kept. Carousel scraping works
+  (`apify/instagram-scraper` `images` = all slides) but our 12 competitors post no real carousels and free hashtag search
+  gives only new posts (~$0.87 spent today, lesson saved). **Waiting on the user:** add 2-3 carousel profiles they like
+  in "Profiles I like"; then Claude scrapes their slides into the carousel library and rebuilds the photo-codes idea
+  (or drops it). Phase 3 still next after that.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

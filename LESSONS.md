@@ -3,6 +3,14 @@
 Written by the `sos-learn` skill. Read at every session start (sos-inbox step 0). Newest first. One lesson per entry;
 repeats get `seen xN`, not a new entry. Rules here are already copied into the skill named in "Fixed in".
 
+## 2026-10-31 · MEDIUM · Where to find good carousels
+- **Mistake:** scraped the 12 competitors for carousels (~$0.65): they post reels, their "carousels" were event photo dumps.
+  Then hashtag search (~$0.22): the free Apify plan returns only the newest posts (0-7 likes), never the top ones.
+- **Rule:** carousel references come from carousel-first accounts: the user's "Profiles I like" picks, or accounts whose
+  last 12 posts are mostly Sidecar (check with `apidojo` cover-only data first, cheap) before paying for slides.
+  Never use hashtag search for "best" posts on the free plan.
+- **Fixed in:** `.claude/skills/sos-research/SKILL.md` step 2.
+
 ## 2026-10-31 · HIGH · Carousels must be real, not invented
 - **Mistake:** "5 ChatGPT photo codes" carousel was rejected: weak in every way. Called them "codes" but each slide showed
   a 3-line prompt; no real result shown; the idea was a pattern copied loosely, not something we tested.
