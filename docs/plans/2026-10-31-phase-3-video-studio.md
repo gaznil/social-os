@@ -112,7 +112,7 @@ Inbox: after ideas, "Then run sos-studio."
 
 **Files:** Modify `dashboard/index.html`: add `jobs` to state + snapshot list (pending +1), tab `["studio", "Studio"]`, `viewStudio()`: form (account select via `accountOptions`, brief textarea, clip link input, two buttons "Get prompt" / "Prompt + all-platform pack") -> `db.collection("jobs").add({... status: "requested"})`; list of jobs newest first: status pill, brief, prompt in a `<pre>` with **Copy prompt** button (clipboard, same fallback toast as `data-copy`), pack -> "N drafts in Approve". Keep input values on re-render (same pattern as Ideas tab).
 
-- [ ] Edit, publish to the dashboard URL, check in Playwright at 390 px wide that the tab renders empty and with one job. Commit.
+- [x] Edit, publish to the dashboard URL, check in Playwright at 390 px wide that the tab renders empty and with one job. Commit.
 
 ### Task 4: End-to-end dry run
 

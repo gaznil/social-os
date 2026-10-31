@@ -326,7 +326,7 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [], competitors: [] };
+const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [], competitors: [], jobs: [] };
 const ui = { loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
 
 const MODELS = {
@@ -347,7 +347,7 @@ const BRAND = { instagram: "#e1306c", youtube: "#ff0033", linkedin: "#0a66c2", x
 const logoOf = p => ICONS[p] ? `<span style="color:${BRAND[p] || "currentColor"};display:inline-flex">${svg(p)}</span>` : "";
 const plat = p => `<span class="plat">${logoOf(p)}${PLATFORMS[p] || p}</span>`;
 const MANUAL = { x: "https://x.com/compose/post", threads: "https://www.threads.net/" };
-const TABS = [["wall", "Control room"], ["approve", "Approve"], ["calendar", "Calendar"], ["accounts", "Accounts"], ["ideas", "Ideas"], ["schedules", "Schedules"]];
+const TABS = [["wall", "Control room"], ["approve", "Approve"], ["calendar", "Calendar"], ["accounts", "Accounts"], ["ideas", "Ideas"], ["studio", "Studio"], ["schedules", "Schedules"]];
 const TZ = "Asia/Kolkata";
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -385,8 +385,8 @@ async function connect() {
   db = window.claude ? await claude.use("db") : null;
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  let pending = 6;
-  for (const name of ["accounts", "posts", "messages", "ideas", "schedules", "competitors"]) {
+  let pending = 7;
+  for (const name of ["accounts", "posts", "messages", "ideas", "schedules", "competitors", "jobs"]) {
     let first = true;
     db.collection(name).onSnapshot(
       snap => {
@@ -1047,6 +1047,29 @@ function viewIdeas() {
     </section>`;
 }
 
+// Video = Prompt Guy only: the page records the request, Claude's next run (sos-studio) writes the prompt back here.
+const JOB_STATE = { requested: "Waiting for Claude", working: "Working", done: "Ready", failed: "Problem" };
+function viewStudio() {
+  const jobs = [...state.jobs].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  const accts = accountOptions(state.accounts[0]?.id || "").replace(`<option value="">Any account</option>`, state.accounts.length ? "" : `<option value="">No accounts yet</option>`);
+  return `<section class="card"><h2>New video</h2>
+      <div class="field"><label class="label" for="job-acct">For</label><select class="field-in" id="job-acct">${accts}</select></div>
+      <div class="field"><label class="label" for="job-brief">What's the video?</label><textarea class="field-in" id="job-brief" placeholder="30 s reel: one Claude Code command that saves an hour"></textarea>
+      <span class="muted">Tip: tap the mic on your phone keyboard to speak.</span></div>
+      <div class="field"><label class="label" for="job-clip">Clip (optional)</label><input class="field-in" id="job-clip" placeholder="A public link, or the file name in social-os-media\\inbox">
+      <span class="muted">A reel or video to copy the style of, or your own clip to edit.</span></div>
+      <div class="row"><button class="btn primary" id="job-prompt">Get prompt</button><button class="btn" id="job-pack">Prompt + all-platform pack</button></div>
+      <span class="muted">Claude writes the prompt in its next chat; copy it into any video tool. A pack also drafts a post for every account, waiting in Approve.</span></section>
+    <section class="list"><h2>Videos</h2>
+      ${jobs.length ? jobs.map(j => `<div class="card"><div class="meta"><span>${esc(accountLabel(j.accountId))}</span><span>${j.kind === "pack" ? "Prompt + pack" : "Prompt"}</span>${pill(j.status === "working" ? "posting" : j.status, JOB_STATE[j.status] || j.status)}</div>
+        <p class="caption">${esc(j.brief || "")}</p>${j.clipUrl ? `<span class="muted">Clip: ${esc(j.clipUrl)}</span>` : ""}
+        ${j.prompt ? `<div class="answer">${esc(j.prompt)}</div><div class="row"><button class="btn primary" data-copy-job="${esc(j.id)}">Copy prompt</button>
+          ${j.postIds?.length ? `<button class="btn" data-tab="approve">${j.postIds.length} drafts in Approve</button>` : ""}</div>` : ""}
+        ${j.note ? `<span class="muted">${esc(j.note)}</span>` : ""}</div>`).join("")
+        : `<div class="empty">No videos yet. Describe one above and Claude writes the prompt.</div>`}
+    </section>`;
+}
+
 // The page only records what the user wants; Claude's next run creates, pauses or removes the real cloud job
 // (that step needs the user's yes in chat) and marks the row "active".
 const SCHED_KIND = { research: "Find trending ideas", publish: "Post approved items", results: "Check results" };
@@ -1069,7 +1092,7 @@ function viewSchedules() {
     </section>`;
 }
 
-const VIEWS = { wall: viewWall, approve: viewApprove, calendar: viewCalendar, accounts: viewAccounts, ideas: viewIdeas, schedules: viewSchedules };
+const VIEWS = { wall: viewWall, approve: viewApprove, calendar: viewCalendar, accounts: viewAccounts, ideas: viewIdeas, studio: viewStudio, schedules: viewSchedules };
 
 let lastKey = "";
 function render(dataChanged) {
@@ -1077,12 +1100,13 @@ function render(dataChanged) {
   $("#tabs").innerHTML = TABS.map(([k, l]) => `<button role="tab" aria-selected="${k === tab}" data-tab="${k}">${l}${k === "approve" && waiting ? `<span class="n">${waiting}</span>` : ""}</button>`).join("");
   document.querySelectorAll("#mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === (mode || "showcase"))));
   const key = tab + "|" + mode;
-  if (key === lastKey && (tab === "wall" || tab === "ideas")) {
+  if (key === lastKey && (tab === "wall" || tab === "ideas" || tab === "studio")) {
     // keep the wall, the orb and anything being typed; refresh only what changed
     if (dataChanged && tab === "wall") { const f = document.querySelector("[data-figs]"); if (f) f.innerHTML = figuresHtml();
       document.querySelectorAll(".st span").forEach((n, i) => n.textContent = pipeCounts()[i]);
       if (mode === "live") paintRail(false); if (ui.claudeOpen && document.activeElement?.id !== "prompt") paintHero(); }
     if (dataChanged && tab === "ideas") { const keep = ["idea-text", "idea-acct"].map(id => [id, document.getElementById(id)?.value]); $("#view").innerHTML = VIEWS.ideas(); for (const [id, v] of keep) { const el = document.getElementById(id); if (el && v != null) el.value = v; } }
+    if (dataChanged && tab === "studio") { const keep = ["job-acct", "job-brief", "job-clip"].map(id => [id, document.getElementById(id)?.value]); $("#view").innerHTML = VIEWS.studio(); for (const [id, v] of keep) { const el = document.getElementById(id); if (el && v) el.value = v; } }
     return;
   }
   lastKey = key;
@@ -1130,7 +1154,25 @@ document.addEventListener("click", async e => {
     catch (err) { ui.answer = { text: err.code === "rate_limited" ? "Too many quick answers just now. Wait a minute." : err.code === "not_granted" ? "Quick answers are switched off for this page." : (err.text || "That didn't work. Try again."), answeredBy: "nobody" }; }
     ui.answering = false; paintHero(); return;
   }
-  if (!db && (t.dataset.act || t.dataset.sch || t.id === "idea-save" || t.id === "sch-save" || t.id === "comp-save" || t.dataset.compRemove)) return showToast("Sign in to claude.ai to save.");
+  if (t.dataset.copyJob) {
+    const j = state.jobs.find(x => x.id === t.dataset.copyJob); if (!j?.prompt) return;
+    try { await navigator.clipboard.writeText(j.prompt); showToast("Copied. Paste it in your video tool."); }
+    catch { showToast("Copy was blocked. Press and hold the text to copy it."); }
+    return;
+  }
+  if (!db && (t.dataset.act || t.dataset.sch || t.id === "idea-save" || t.id === "sch-save" || t.id === "comp-save" || t.dataset.compRemove || t.id === "job-prompt" || t.id === "job-pack")) return showToast("Sign in to claude.ai to save.");
+  if (t.id === "job-prompt" || t.id === "job-pack") {
+    const accountId = $("#job-acct").value, brief = $("#job-brief").value.trim(), clipUrl = $("#job-clip").value.trim();
+    if (!accountId) return showToast("Add an account first (Accounts tab).");
+    if (!brief && !clipUrl) return showToast("Describe the video or add a clip first.");
+    t.disabled = true;
+    try { await db.collection("jobs").add({ accountId, kind: t.id === "job-pack" ? "pack" : "prompt", brief, clipUrl: clipUrl || null, model: null, effort: null,
+        status: "requested", prompt: null, postIds: [], note: null, createdAt: nowIso(), updatedAt: nowIso() });
+      $("#job-brief").value = ""; $("#job-clip").value = ""; showToast("Saved. Claude writes the prompt in its next chat."); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    t.disabled = false;
+    return;
+  }
   if (t.dataset.act) { const p = state.posts.find(x => x.id === t.dataset.id); if (p) { t.disabled = true; await setStatus(p, t.dataset.act); } return; }
   if (t.dataset.copy) {
     const p = state.posts.find(x => x.id === t.dataset.copy); if (!p) return;
