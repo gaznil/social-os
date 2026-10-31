@@ -130,7 +130,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026: research step 6 DONE, week 1 drafts in Approve** (posts `w1-claude-commands` carousel Sun 1 Nov,
   `w1-stop-scrolling` reel Tue 3, `w1-photo-codes` carousel Thu 5, `w1-setup` reel Sat 7; all 19:00). Carousel PNGs in
   `C:\Gaznil\social-os-media\ig-ai-tools\` and uploaded as dashboard assets (`/_blob/<id>` in mediaUrls). Dashboard v16
-  now declares `assets` (capabilities db, sample, user, assets) + carousel previews 4:5. Reels show the Manglish script in
+  now declares `assets` (capabilities db, sample, user, assets) + carousel previews 4:5. v17: Live channel cards animate like Showcase (real slides slide, unfilmed reel plays its script as captions, text posts type out). Reels show the Manglish script in
   `problems` until the user films them. **Note for sos-publish:** `/_blob` URLs are not public; publish from the local PNGs
   (Composio staged files). **Next:** user taps Approve/Back to draft; films the 2 reels.
 

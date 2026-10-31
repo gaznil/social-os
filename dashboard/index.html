@@ -518,12 +518,35 @@ function paintLive(el, l) {
     cap.textContent = state.accounts.length ? "Claude adds work here" : "Add an account to start"; return;
   }
   const [label, pct] = LIVE_STATE[p.status];
-  st.textContent = label; prog.style.width = pct + "%";
-  const m = (p.mediaUrls || [])[0];
-  body.innerHTML = m && !/\.(mp4|mov|webm)/i.test(m)
-    ? `<div class="post"><img src="${esc(m)}" alt="" style="width:100%;height:150px;object-fit:cover;border-radius:12px"><div class="live-cap" style="-webkit-line-clamp:4">${esc(p.title || p.caption)}</div></div>`
-    : `<div class="live-cap">${esc(p.title || p.caption)}</div>`;
   cap.textContent = `${accountLabel(p.accountId)} · ${fmtTime(p.plannedAt)}`;
+  // same moving previews as the showcase, fed by the real post; rebuilt only when the post itself changes
+  const key = p.id + "|" + p.updatedAt + "|" + p.status;
+  if (el.dataset.key === key) return;
+  el.dataset.key = key; clearInterval(el._t);
+  st.textContent = label; prog.style.width = pct + "%";
+  const loop = (ms, fn) => { fn(); if (!REDUCED) el._t = setInterval(() => { if (!el.isConnected) return clearInterval(el._t); if (!document.hidden) fn(); }, ms); };
+  const media = p.mediaUrls || [], isVid = u => /\.(mp4|mov|webm)(\?|$)/i.test(u);
+  const text = p.title || p.caption || "";
+  if (["carousel", "story"].includes(p.format) && media.length && !isVid(media[0])) {
+    body.innerHTML = `<div class="slides">${media.map(u => `<img class="slide" style="padding:0;object-fit:cover;background:var(--surface-2)${p.format === "story" ? ";aspect-ratio:9/16" : ""}" src="${esc(u)}" alt="">`).join("")}</div>`;
+    const strip = body.querySelector(".slides"); let i = 0;
+    loop(2200, () => { const w = strip.firstElementChild.getBoundingClientRect().width + 10; strip.style.transform = `translateX(${-i * w}px)`;
+      st.textContent = `${label} · ${i + 1}/${media.length}`; i = (i + 1) % media.length; });
+  } else if (["reel", "video", "short"].includes(p.format)) {
+    if (media[0]) { body.innerHTML = `<div class="reel-frame" style="background:#000"><video src="${esc(media[0])}" muted autoplay loop playsinline style="width:100%;height:100%;object-fit:cover"></video></div>`; return; }
+    // not filmed yet: play the script (or caption) as burned-in captions
+    const script = (p.problems || []).find(x => /script/i.test(x));
+    const words = (script ? script.split("\n").slice(1).join(" ") : text).split(/\s+/).filter(Boolean).slice(0, 80);
+    body.innerHTML = `<div class="reel-frame"><div class="word"></div><div class="tl"><i></i></div></div>`;
+    const word = body.querySelector(".word"), tl = body.querySelector(".tl i"); let t = 0;
+    loop(450, () => { const k = t % words.length; word.innerHTML = (k ? esc(words[k - 1]) + " " : "") + `<mark>${esc(words[k])}</mark>`;
+      tl.style.width = (k / words.length * 100) + "%"; t++; });
+  } else {
+    body.innerHTML = `<div class="post">${who(accountLabel(p.accountId))}${media[0] && !isVid(media[0]) ? `<img src="${esc(media[0])}" alt="" style="width:100%;height:120px;object-fit:cover;border-radius:12px">` : ""}<div class="typed" data-t></div></div>`;
+    const node = body.querySelector("[data-t]"); let i = 0;
+    if (REDUCED) node.textContent = text;
+    else el._t = setInterval(() => { if (document.hidden) return; i += 2; node.textContent = text.slice(0, i); if (i >= text.length) clearInterval(el._t); }, 35);
+  }
 }
 
 const timers = [];
