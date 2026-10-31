@@ -175,6 +175,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - Skill choices and rejected options with reasons: `SKILLS.md`. Licences of vendored skills: `THIRD_PARTY.md`.
 
 ## 4. RULES
+- **Build mode (user, 31 Oct):** build every planned part end to end without waiting; the user uses it later and says what to improve. Never pause the build for their approvals or tests.
 - **Approval gate:** nothing is published until the user approves that exact post (dashboard "Approve" or a yes in chat).
 - **Public repo hygiene:** no account names, handles, voices, drafts, numbers, IDs or secrets in this repo. They go in `private/`.
   Secrets go nowhere in git: platform logins live in Composio, keys in git-ignored `.env` files only.

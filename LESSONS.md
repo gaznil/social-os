@@ -3,6 +3,11 @@
 Written by the `sos-learn` skill. Read at every session start (sos-inbox step 0). Newest first. One lesson per entry;
 repeats get `seen xN`, not a new entry. Rules here are already copied into the skill named in "Fixed in".
 
+## 2026-10-31 · HIGH · Build the whole system; the user tests it later
+- **Mistake:** ended a turn pointing the user at approvals instead of building on.
+- **Rule:** the job is to build every planned part now, end to end. The user uses it and says what to improve. Never stop to ask them to test; keep building the next phase. Their own actions (approve, film, add accounts) are theirs, done whenever.
+- **Fixed in:** `CLAUDE.md` rules.
+
 ## 2026-10-31 · HIGH · A test checks the plumbing; it never makes creative work
 - **Mistake:** the Phase 3 dry run (a TEST job) started a full Prompt Guy run: read the 703 prompts and MOTION.md and wrote
   a whole reel prompt, built on the Cluely v2 prompt. User: "who said to give prompt now?" and "v2 is 0/100".
