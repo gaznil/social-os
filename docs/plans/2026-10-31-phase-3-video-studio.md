@@ -116,4 +116,4 @@ Inbox: after ideas, "Then run sos-studio."
 
 ### Task 4: End-to-end dry run
 
-- [ ] ArtifactData `set jobs/test-studio` (kind `prompt`, ig account, brief "30 s reel: one Claude Code command that saves an hour"). Run sos-studio. Check `prompt` filled + status `done`, visible in Studio tab. Delete the test job. Update CLAUDE.md STATUS, commit + push both repos.
+- [x] ArtifactData `set jobs/test-studio` (kind `prompt`, ig account, brief "30 s reel: one Claude Code command that saves an hour"). Run sos-studio: it must NOT run Prompt Guy for a test job (user 31 Oct: "who said to give prompt now?"), only the one-line placeholder. Check `prompt` filled + status `done`, visible in Studio tab. Delete the test job. Update CLAUDE.md STATUS, commit + push both repos.

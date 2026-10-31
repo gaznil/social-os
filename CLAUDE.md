@@ -158,6 +158,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   user adds picks later. **Phase 3 plan written:** `docs/plans/2026-10-31-phase-3-video-studio.md` (4 tasks, inline).
   **Next = Task 1** (`tools/sos/studio.py` + tests). Nothing waiting on the user except Approve on week 1 drafts + filming.
 
+- **31 Oct 2026: PHASE 3 (video studio) DONE.** `tools/sos/studio.py` (`studio-check`, `pack-plan`; 42 tests pass), new
+  `sos-studio` skill (wired into sos-inbox, SYSTEM.md, docs/DATA.md `jobs`, engine/create README), dashboard **v21 Studio tab**
+  (brief + optional clip -> "Get prompt" / "Prompt + all-platform pack"; prompt shows with Copy). Dry run passed with a TEST
+  placeholder; test job deleted. **User corrections:** a test never writes a real prompt ("who said to give prompt now?");
+  Cluely reel prompt **v2 = 0/100** (logged in prompt-guy + MOTION.md; unscored prompts are unproven). LESSONS updated.
+  **Next build = Phase 4 `sos-results`** (+ Growth section 4b). Waiting on the user: Approve on 3 week-1 drafts (first one
+  Sun 1 Nov 19:00), film the 2 reels, add "Profiles I like".
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

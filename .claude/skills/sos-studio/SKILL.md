@@ -13,7 +13,8 @@ description: Turn a Studio request from the Social OS dashboard (a brief and/or 
    Instagram, etc.) = `yt-dlp -o <folder>\video.mp4 <link>`; public Instagram reel that yt-dlp can't fetch ->
    `apify/instagram-scraper` with `directUrls` for its `videoUrl` (free credit, one post). Then
    `python -m tools.sos.deepdive <file> --out <folder>` for frames + timestamped transcript (read `frames.jpg` and `transcript.json`).
-4. Load `prompt-guy`. Write ONE paste-ready prompt from the brief + transcript/frames + the account's
+4. Test jobs (id starts `test-`) never run Prompt Guy: `update` `prompt` = "TEST - placeholder, no prompt written" and go to step 6.
+   Real jobs (made by the user in Studio): load `prompt-guy`. Write ONE paste-ready prompt from the brief + transcript/frames + the account's
    `private/accounts/<accountId>/voice.md`, `style.md` and `formats.md` (on camera? language? length?). Realism rule
    (LESSONS 31 Oct): only claims we can show working. `model` set on the job -> do this step in a subagent on that model.
    `update` `prompt` = the prompt text (plain, no code fences).

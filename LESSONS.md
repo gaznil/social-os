@@ -3,6 +3,14 @@
 Written by the `sos-learn` skill. Read at every session start (sos-inbox step 0). Newest first. One lesson per entry;
 repeats get `seen xN`, not a new entry. Rules here are already copied into the skill named in "Fixed in".
 
+## 2026-10-31 · HIGH · A test checks the plumbing; it never makes creative work
+- **Mistake:** the Phase 3 dry run (a TEST job) started a full Prompt Guy run: read the 703 prompts and MOTION.md and wrote
+  a whole reel prompt, built on the Cluely v2 prompt. User: "who said to give prompt now?" and "v2 is 0/100".
+- **Rule:** dry runs use a one-line placeholder marked TEST. A real prompt (or any creative output) is made only when the
+  user asks for that piece. Never build on a prompt with no score in prompt-guy `log.md`; it is unproven.
+- **Fixed in:** `.claude/skills/sos-studio/SKILL.md` step 4; Phase 3 plan Task 4; prompt-guy `SKILL.md` (unscored = unproven);
+  v2 score in prompt-guy `log.md` + MOTION.md "Learned".
+
 ## 2026-10-31 · MEDIUM · Where to find good carousels
 - **Mistake:** scraped the 12 competitors for carousels (~$0.65): they post reels, their "carousels" were event photo dumps.
   Then hashtag search (~$0.22): the free Apify plan returns only the newest posts (0-7 likes), never the top ones.
