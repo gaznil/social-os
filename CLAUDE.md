@@ -134,6 +134,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   `problems` until the user films them. **Note for sos-publish:** `/_blob` URLs are not public; publish from the local PNGs
   (Composio staged files). **Next:** user taps Approve/Back to draft; films the 2 reels.
 
+- **31 Oct 2026 (v18):** Live cards show a post with status `draft` as a blurred, shimmering card in its own format
+  (carousel slides slide, reel frame, text skeleton). sos-create step 0 now writes the `draft` doc first so this shows.
+  **USER ASK, NEXT BUILD: carousel design library** (user: current slides are too plain). Plan: (1) user drops reference
+  carousels in `C:\Gaznil\social-os-media\carousel-library\from-gaznil\`; (2) Claude collects more (top carousels from the
+  12 competitors via Apify, plus GitHub: Hainrixz/open-carrusel, FranciscoMoretti/carousel-generator, jtian7823-ux/infographic-carousel
+  (10 layouts), roboshivam1/dark-tech-carousel-templates, open-design social-carousel; compare by opening, copy best);
+  (3) build 8-12 reusable HTML layouts + rules in `templates/carousel/`, wire into sos-create step 4; (4) re-render week 1 carousels.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

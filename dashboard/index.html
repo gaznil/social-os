@@ -234,6 +234,11 @@ h2 { margin: 0; font: 400 28px/1.1 var(--font-body); letter-spacing: -.03em; }
 .log em { font-style: normal; color: var(--fg); } .log .p { color: var(--accent); }
 .idle-note { height: 100%; display: grid; place-content: center; text-align: center; gap: 6px; color: var(--muted); font: 400 13px var(--font-body); }
 .idle-note svg { width: 40px; height: 40px; margin: 0 auto 6px; color: var(--dim); }
+.building { position: relative; filter: blur(5px) saturate(.9); opacity: .8; animation: breathe 2.4s ease-in-out infinite; }
+.mon-body:has(.building)::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.65) 50%, transparent 70%); background-size: 250% 100%; animation: sweep 1.8s linear infinite; pointer-events: none; }
+.skel { height: 14px; border-radius: 7px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--line); }
+@keyframes breathe { 50% { filter: blur(3px) saturate(1); opacity: 1; } }
+@keyframes sweep { from { background-position: 150% 0; } to { background-position: -100% 0; } }
 .live-cap { font: 400 14px/1.5 var(--font-body); display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* accounts */
@@ -527,6 +532,17 @@ function paintLive(el, l) {
   const loop = (ms, fn) => { fn(); if (!REDUCED) el._t = setInterval(() => { if (!el.isConnected) return clearInterval(el._t); if (!document.hidden) fn(); }, ms); };
   const media = p.mediaUrls || [], isVid = u => /\.(mp4|mov|webm)(\?|$)/i.test(u);
   const text = p.title || p.caption || "";
+  if (p.status === "draft") {
+    // Claude is still making it: the format's own shape, blurred, with light sweeping across
+    const n = Math.max(3, media.length || 5);
+    body.innerHTML = ["carousel", "story"].includes(p.format)
+      ? `<div class="slides building">${Array.from({ length: n }, (_, k) => `<div class="slide" style="background:${["#ffe0d2", "#e3ddff", "#d4f1e8", "#fff0c2", "#ffd9e6"][k % 5]}${p.format === "story" ? ";aspect-ratio:9/16" : ""}"><small>${String(k + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}</small><b>${k ? "" : esc(text.split("\n")[0].slice(0, 40))}</b></div>`).join("")}</div>`
+      : ["reel", "video", "short"].includes(p.format) ? `<div class="reel-frame building"></div>`
+      : `<div class="post building">${who(accountLabel(p.accountId))}<div class="skel"></div><div class="skel"></div><div class="skel" style="width:60%"></div></div>`;
+    if (["carousel", "story"].includes(p.format)) { const strip = body.querySelector(".slides"); let i = 0;
+      loop(1600, () => { const w = strip.firstElementChild.getBoundingClientRect().width + 10; strip.style.transform = `translateX(${-i * w}px)`; st.textContent = `Building ${i + 1}/${n}`; i = (i + 1) % n; }); }
+    return;
+  }
   if (["carousel", "story"].includes(p.format) && media.length && !isVid(media[0])) {
     body.innerHTML = `<div class="slides">${media.map(u => `<img class="slide" style="padding:0;object-fit:cover;background:var(--surface-2)${p.format === "story" ? ";aspect-ratio:9/16" : ""}" src="${esc(u)}" alt="">`).join("")}</div>`;
     const strip = body.querySelector(".slides"); let i = 0;
