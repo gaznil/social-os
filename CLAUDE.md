@@ -60,6 +60,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026 (v8):** prompt box has TWO buttons: mic = plain transcribe into the box (no auto-send); round
   gradient "voice mode" button = the voice agent. Bigger orb in its own area above the pipeline; hero keeps its height
   when Claude opens. Background "threads": fixed canvas, 7 faint lines that bend with scroll, one platform-coloured dot rides each.
+- **31 Oct 2026: DASHBOARD DESIGN SIGNED OFF by the user ("done dashboard design build and we move on").** v9 = voice
+  screen fits short screens. Don't redesign unless asked. **Next:** finish Task 2 Step 5 (user presses Approve on
+  `posts/test-1`, Claude verifies approvedBy "dashboard" then deletes it), then Task 3 (needs the user's first account:
+  platform + one niche).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
