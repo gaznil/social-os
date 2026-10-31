@@ -62,3 +62,7 @@ user's review carry the weight.
 ## Installed where
 Vendored into this repo's `.claude/skills/` so every session and every cloud run has the same versions.
 Sources and commits: `THIRD_PARTY.md`.
+
+## Self-learning (31 Oct 2026)
+- **Chosen: own `sos-learn` skill + `LESSONS.md`**, method copied from BayramAnnakov/claude-reflect (MIT; catches corrections in any language, rules into CLAUDE.md), haddock-development/claude-reflect-system (MIT, 384 stars; corrections edit the skill itself, HIGH/MEDIUM/LOW confidence) and the okteto lessons skill (one lesson per entry, no duplicates).
+- **Rejected: installing claude-reflect.** Its mod review band is terminal-only (user works in VS Code); the plugin needs a manual `/reflect`; installing changes Claude settings. Also seen: compounded, self-improving-brain, cerebral (0-5 stars).

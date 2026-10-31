@@ -120,6 +120,11 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   sos-create drafts for the first week (2 reels + 2 carousels) from those ideas, waiting for the user's Approve.
   Note: ig-viral forbids scraping services; Social OS keeps Apify by design (public, no login, low volume) and uses ig-viral for picking + ranking.
 
+- **31 Oct 2026: SELF-LEARNING LOOP ADDED (user ask).** New `sos-learn` skill + `LESSONS.md` (5 lessons from today).
+  Method copied from claude-reflect / claude-reflect-system / okteto lessons (found via web search + GitHub connector);
+  plugin NOT installed (review band is terminal-only, needs manual /reflect, changes Claude settings).
+  sos-research now loads ig-viral & co. for competitor picking + ranking. **Next still: research step 6** (first week's drafts).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
@@ -140,7 +145,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **Skills first:** every `sos-*` skill starts with a skills rule and names the skill for each step; load them before the work,
   and use any other installed skill that fits better (then add it to `SKILLS.md`). Before writing or building, load the skill named in the platform/stage README. If a better one appears, compare
   by opening both (not by stars) and record the result in `SKILLS.md`.
-- **Session start:** in every session in this project, run the `sos-inbox` skill first.
+- **Session start:** in every session in this project, run the `sos-inbox` skill first (it reads `LESSONS.md`).
+- **Learn from every mistake:** any user correction, failed step or wasted spend -> `sos-learn` in the same turn: lesson in
+  `LESSONS.md` + fix the skill that caused it + commit. The system improves itself; the user never repeats a correction.
+- **Finding a system/skill to copy:** web search AND the GitHub connector (`search_repositories`, by stars); open the top 2-3, copy the best of each.
 - **Save as you go:** after every real step update STATUS above, commit and push both repos.
 
 ## 5. GOTCHAS
