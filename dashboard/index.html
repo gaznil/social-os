@@ -326,7 +326,7 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [] };
+const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [], competitors: [] };
 const ui = { loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
 
 const MODELS = {
@@ -385,14 +385,14 @@ async function connect() {
   db = window.claude ? await claude.use("db") : null;
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  let pending = 5;
-  for (const name of ["accounts", "posts", "messages", "ideas", "schedules"]) {
+  let pending = 6;
+  for (const name of ["accounts", "posts", "messages", "ideas", "schedules", "competitors"]) {
     let first = true;
     db.collection(name).onSnapshot(
       snap => {
         state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         if (first) { first = false; if (--pending === 0) { ui.loaded = true; clearTimeout(timer); if (!mode) { mode = state.posts.length ? "live" : "showcase"; lastKey = ""; } } }
-        if (name === "accounts" && tab === "accounts") lastKey = "";
+        if ((name === "accounts" || name === "competitors") && tab === "accounts") lastKey = "";
         render(true);
       },
       err => { clearTimeout(timer); showError(name, err); });
@@ -1015,7 +1015,19 @@ function viewAccounts() {
         <dt>Connected</dt><dd>${a.composioAccountId ? "Yes" : "Not yet"}</dd></dl>
       <div>${pill(a.status, ACC_STATE[a.status] || a.status)}</div></article>`).join("")}
     <button class="acc add" data-add-account><span class="plus">+</span>Add account<small>Pick a platform and a topic. Claude does the rest.</small></button>
-  </div>`;
+  </div>
+  <section class="card"><h2>Profiles I like</h2>
+    <p class="muted" style="margin:0 0 10px">Paste a profile you like. Claude studies it in the next research run.</p>
+    <div class="field"><label class="label" for="comp-link">Profile link or @handle</label><input class="field-in" id="comp-link" placeholder="instagram.com/… or @name" maxlength="200"></div>
+    <div class="two">
+      <div class="field"><label class="label" for="comp-acct">For</label><select class="field-in" id="comp-acct">${accountOptions("")}</select></div>
+      <div class="field"><label class="label" for="comp-note">What you like (optional)</label><input class="field-in" id="comp-note" placeholder="e.g. their carousel design" maxlength="140"></div>
+    </div>
+    <div class="row" style="justify-content:flex-end"><button class="btn primary" id="comp-save">Add profile</button></div>
+    ${state.competitors.filter(c => c.status !== "remove").map(c => `<div class="row" style="justify-content:space-between;border-top:1px solid rgba(0,0,0,.08);padding-top:10px;margin-top:10px">
+      <div><b>${esc(c.link)}</b><br><span class="muted">${esc(c.note || "")}</span></div>
+      <div class="row">${pill(c.status === "tracked" ? "active" : "setup", c.status === "tracked" ? "Studied" : "Waiting")}<button class="btn" data-comp-remove="${esc(c.id)}">Remove</button></div></div>`).join("")}
+  </section>`;
 }
 
 function accountOptions(sel) {
@@ -1118,12 +1130,25 @@ document.addEventListener("click", async e => {
     catch (err) { ui.answer = { text: err.code === "rate_limited" ? "Too many quick answers just now. Wait a minute." : err.code === "not_granted" ? "Quick answers are switched off for this page." : (err.text || "That didn't work. Try again."), answeredBy: "nobody" }; }
     ui.answering = false; paintHero(); return;
   }
-  if (!db && (t.dataset.act || t.dataset.sch || t.id === "idea-save" || t.id === "sch-save")) return showToast("Sign in to claude.ai to save.");
+  if (!db && (t.dataset.act || t.dataset.sch || t.id === "idea-save" || t.id === "sch-save" || t.id === "comp-save" || t.dataset.compRemove)) return showToast("Sign in to claude.ai to save.");
   if (t.dataset.act) { const p = state.posts.find(x => x.id === t.dataset.id); if (p) { t.disabled = true; await setStatus(p, t.dataset.act); } return; }
   if (t.dataset.copy) {
     const p = state.posts.find(x => x.id === t.dataset.copy); if (!p) return;
     try { await navigator.clipboard.writeText(p.caption); showToast("Copied. Paste it in the app."); }
     catch { showToast("Copy was blocked. Press and hold the text to copy it."); }
+    return;
+  }
+  if (t.id === "comp-save") {
+    const link = $("#comp-link").value.trim(); if (!link) return showToast("Paste a profile link first.");
+    const platform = /youtube|youtu\.be/i.test(link) ? "youtube" : /linkedin/i.test(link) ? "linkedin" : /x\.com|twitter/i.test(link) ? "x" : /threads/i.test(link) ? "threads" : /facebook/i.test(link) ? "facebook" : "instagram";
+    try { await db.collection("competitors").add({ link, platform, accountId: $("#comp-acct").value || null, note: $("#comp-note").value.trim() || null, source: "user", status: "new", createdAt: nowIso() }); showToast("Saved. Claude studies it in the next research run."); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.compRemove) {
+    t.disabled = true;
+    try { await db.doc(`competitors/${t.dataset.compRemove}`).update({ status: "remove" }); showToast("Removed."); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
     return;
   }
   if (t.id === "sch-save") {

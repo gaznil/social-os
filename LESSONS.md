@@ -3,6 +3,15 @@
 Written by the `sos-learn` skill. Read at every session start (sos-inbox step 0). Newest first. One lesson per entry;
 repeats get `seen xN`, not a new entry. Rules here are already copied into the skill named in "Fixed in".
 
+## 2026-10-31 · HIGH · Carousels must be real, not invented
+- **Mistake:** "5 ChatGPT photo codes" carousel was rejected: weak in every way. Called them "codes" but each slide showed
+  a 3-line prompt; no real result shown; the idea was a pattern copied loosely, not something we tested.
+- **Rule:** a carousel promises exactly what each slide shows (a "code"/"command" = one short line you can type).
+  Every tip must be tested by us, with a real example (real screenshot or real before/after output). No result we
+  didn't produce. Design from real competitor carousels in `C:\Gaznil\social-os-media\carousel-library\`, not from scratch.
+  If we can't show it working, it isn't a post.
+- **Fixed in:** `.claude/skills/sos-create/SKILL.md` step 2 + 4; `.claude/skills/sos-research/SKILL.md` step 5.
+
 ## 2026-10-31 · HIGH · A system-wide rule goes into every stage
 - **Mistake:** the learning loop was first wired only into research + inbox; user: "wire it to the system".
 - **Rule:** when the user asks for a behaviour for "the system", add it to every `sos-*` skill and `SYSTEM.md`, not just
