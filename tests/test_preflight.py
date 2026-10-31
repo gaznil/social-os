@@ -52,6 +52,11 @@ class Instagram(unittest.TestCase):
         self.assertIn("Caption is 2201 characters; instagram allows 2200.",
                       preflight.check(self.ig(caption="a" * 2201)))
 
+    def test_story_needs_exactly_one_media(self):
+        p = self.ig(format="story")
+        p["mediaUrls"] = ["https://cdn.example.com/a.jpg", "https://cdn.example.com/b.jpg"]
+        self.assertIn("A story is one image or video; this has 2.", preflight.check(p))
+
     def test_carousel_size(self):
         p = self.ig(format="carousel")
         p["mediaUrls"] = ["https://cdn.example.com/a.jpg"]

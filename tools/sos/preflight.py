@@ -48,6 +48,8 @@ def check(post):
                 problems.append(f"Media link has '?' in it; Instagram often refuses those: {url}")
         if fmt == "carousel" and not 2 <= len(media) <= 10:
             problems.append(f"A carousel needs 2 to 10 images; this has {len(media)}.")
+        if fmt == "story" and len(media) != 1:
+            problems.append(f"A story is one image or video; this has {len(media)}.")
 
     if platform == "youtube":
         title = post.get("title") or ""
