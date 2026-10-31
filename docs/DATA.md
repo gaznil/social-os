@@ -3,7 +3,7 @@
 The dashboard and every `sos-*` skill read and write exactly these fields.
 
 
-- `accounts/{accountId}`: `platform`, `label` (shown in the dashboard, no handle needed), `niche`, `language`, `postsPerWeek` (number), `composioAccountId` (string or null), `status` (`active`|`paused`), `updatedAt` (ISO).
+- `accounts/{accountId}`: `platform`, `label` (shown in the dashboard, no handle needed), `niche`, `language`, `postsPerWeek` (number), `composioAccountId` (string or null), `status` (`setup` = added from the dashboard, Claude still has to make its private folder + Composio link | `active` | `paused`), `updatedAt` (ISO). Adding from the dashboard also writes a `messages` doc asking Claude to set it up.
 - `posts/{postId}`: `accountId`, `platform`, `format` (`text`|`image`|`carousel`|`story`|`reel`|`video`|`short`|`thread`), `title` (YouTube only, else `""`), `caption`, `mediaUrls` (array of strings), `plannedAt` (ISO), `status` (see queue), `approvedBy` (`dashboard`|`chat`|null), `approvedAt` (ISO|null), `postedAt` (ISO|null), `platformPostId` (string|null), `permalink` (string|null), `error` (string|null), `problems` (array of strings from preflight), `updatedAt` (ISO).
 - `messages/{messageId}`: `from` (`user`|`claude`), `text`, `status` (`new`|`done`), `reply` (string|null), `createdAt` (ISO).
 - `ideas/{ideaId}`: `text`, `accountId` (string|null = any account), `source` (`user`|`research`|`plan`), `status` (`new`|`drafted`|`dropped`), `createdAt` (ISO).
