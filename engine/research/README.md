@@ -15,7 +15,7 @@ Command: `C:\Users\gazni\.local\bin\agent-reach.exe` (not on PATH). Output is JS
 account's own median → keep outliers (>= 5x followers on views, or >= 3x the account median).
 
 **Deep dive (on the top 3 outliers per week):** download the video (Apify link or yt-dlp), ffmpeg 6-frame contact
-sheet, faster-whisper transcript (first line must start at 0.0 s), strip it to a formula with blanks, write our version
+sheet, transcript via ElevenLabs Scribe v2 (local faster-whisper fallback; tool: `tools/sos/deepdive.py`), strip it to a formula with blanks, write our version
 in the account's voice. One card per reel.
 
 **Out:** `private/research/<date>-<account-id>.md`, and `research` docs in the dashboard (Research tab: frames,

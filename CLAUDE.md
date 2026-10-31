@@ -89,8 +89,13 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   docs/DATA.md): user adds/pauses/removes; Claude syncs real cloud tasks via new `sos-schedules` skill (creating one
   still needs the user's yes in chat). New `sos-research` skill (foundation files, Apify `apidojo/instagram-scraper`
   verified $0.50/1,000 posts on the FREE tier 31 Oct; free plan = $5/month credit, stops when used, no charge; Agent
-  Reach for the rest; outliers -> ideas with "Why" -> calendar drafts). **Not yet built:** deep-dive scripts
-  (ffmpeg + faster-whisper), Phase 3 video studio + "one video -> pack", Phase 4 results (`sos-results` named but not written).
+  Reach for the rest; outliers -> ideas with "Why" -> calendar drafts). **Not yet built:** Phase 3 video studio + "one video -> pack", Phase 4 results (`sos-results` named but not written).
+
+- **31 Oct 2026 (Phase 2, part 2): deep-dive tool DONE** (`tools/sos/deepdive.py`, 33 tests pass). Video file or
+  direct link -> 6-frame contact sheet + timestamped transcript + card.md (Hook / Formula / Our version for Claude to
+  fill). **User decision: transcription = ElevenLabs** (Scribe v2, key `ELEVENLABS_API_KEY` user variable, free plan
+  ~12 min STT/month shared with voiceovers); local faster-whisper `small` (cached) is the automatic fallback. Live
+  test passed via ElevenLabs. **Next build = Phase 3** (video studio + "one video -> all-platform pack"), then Phase 4 `sos-results`.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
