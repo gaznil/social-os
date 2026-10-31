@@ -20,8 +20,9 @@
 * { box-sizing: border-box; }
 html { overflow-x: clip; }
 body { background: var(--bg); color: var(--fg); font: 400 15px/1.5 var(--font-body); overflow-x: clip; }
-body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+body::after { content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
   background: radial-gradient(40% 50% at 12% 8%, var(--wash-1), transparent 70%), radial-gradient(35% 45% at 92% 20%, var(--wash-2), transparent 70%), radial-gradient(45% 45% at 60% 100%, var(--wash-3), transparent 70%); }
+#threads { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
 .wrap { max-width: 1280px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 ::selection { background: var(--accent); color: #fff; }
@@ -47,10 +48,10 @@ main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 
 
 /* hero */
 .hero { position: relative; }
-.orb { position: absolute; inset: -24px -16px; z-index: 0; pointer-events: none; }
+.orb { position: absolute; inset: -12px -16px 96px; z-index: 0; pointer-events: none; }
 .orb canvas { width: 100%; height: 100%; display: block; }
 @media (max-width: 860px) { .panel-hero { align-content: end; } .orb { inset: -8px -16px auto; height: 40%; } }
-@media (max-width: 640px) { .panel-hero .thread { display: none; } .panel-hero .hero-in { gap: 16px; } }
+@media (max-width: 640px) { .panel-hero .thread { display: none; } .panel-hero .hero-in { gap: 16px; min-height: 0; } .hero-in .figures { display: grid; grid-template-columns: repeat(4, auto); gap: 14px; } .hero-in .figures b { font-size: 22px; } }
 .hero-in { position: relative; z-index: 1; display: grid; gap: 22px; justify-items: start; max-width: 640px; }
 .kicker { font: 400 12px var(--font-mono); color: var(--muted); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); color: var(--ok); animation: ping 2s infinite; }
@@ -78,6 +79,18 @@ main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 
 .ibtn svg { width: 17px; height: 17px; }
 .ibtn.send { background: var(--claude); border-color: var(--claude); color: #fff; }
 .ibtn:disabled { opacity: .45; cursor: not-allowed; }
+.ibtn.on { color: var(--claude); border-color: var(--claude); box-shadow: 0 0 0 3px color-mix(in srgb, var(--claude) 18%, transparent); }
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.ibtn.vmode { width: 38px; height: 38px; border-radius: 50%; border: 0; color: #fff; position: relative; isolation: isolate;
+  background: conic-gradient(from var(--spin), #7aa8ff, #c58bff, #ff9ac2, #8ff0d8, #7aa8ff); animation: vspin 5s linear infinite;
+  box-shadow: 0 4px 14px -4px rgba(140, 110, 255, .55), inset 0 0 0 1px rgba(255, 255, 255, .35); transition: transform .2s; }
+.ibtn.vmode::after { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), transparent 60%); z-index: -1; }
+.ibtn.vmode:hover { transform: scale(1.06); }
+.ibtn.vmode svg { width: 18px; height: 18px; }
+.ibtn.vmode rect { transform-box: fill-box; transform-origin: center; animation: bars 1.1s ease-in-out infinite; }
+.ibtn.vmode rect:nth-child(2) { animation-delay: .15s; } .ibtn.vmode rect:nth-child(3) { animation-delay: .3s; } .ibtn.vmode rect:nth-child(4) { animation-delay: .45s; }
+@keyframes vspin { to { --spin: 360deg; } }
+@keyframes bars { 50% { transform: scaleY(.45); } }
 .txtbtn { border: 0; background: none; color: var(--muted); font: 400 13px var(--font-body); cursor: pointer; padding: 6px 8px; border-radius: 8px; }
 .txtbtn:hover { color: var(--fg); background: var(--surface-2); }
 .answer { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; white-space: pre-wrap; overflow-wrap: anywhere; display: grid; gap: 8px; }
@@ -124,7 +137,7 @@ main { padding-block: 8px 72px; display: grid; grid-template-columns: minmax(0, 
 .hpin { position: sticky; top: var(--hdr, 60px); height: calc(100vh - var(--hdr, 60px)); display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 14px; padding-block: 12px 22px; overflow: visible; }
 .track { display: flex; align-items: stretch; gap: 56px; height: 100%; min-height: 0; will-change: transform; }
 .panel-hero { flex: none; width: var(--pw, 100%); height: 100%; display: grid; align-content: center; gap: 40px; }
-.panel-hero .hero-in { max-height: 100%; overflow-y: auto; scrollbar-width: none; }
+.panel-hero .hero-in { min-height: min(430px, 60vh); align-content: center; max-height: 100%; overflow-y: auto; scrollbar-width: none; }
 .panel-title { flex: none; width: 210px; display: grid; align-content: center; gap: 10px; }
 .panel-title p { margin: 0; color: var(--muted); font-size: 14px; }
 .track .rail { align-self: center; }
@@ -278,6 +291,7 @@ textarea.field-in { min-height: 100px; resize: vertical; }
   </div>
 </header>
 <div class="wrap"><main id="view"></main></div>
+<canvas id="threads" aria-hidden="true"></canvas>
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -625,7 +639,7 @@ function startOrb() {
   addEventListener("pointermove", e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
   const canvas = renderer.domElement;
   function resize() { const h = canvas.parentElement; if (!h) return; const w = h.clientWidth, ht = h.clientHeight; renderer.setSize(w, ht, false); cam.aspect = w / ht;
-    cam.updateProjectionMatrix(); const wide = w > 860; group.position.set(wide ? 1.75 : 0, wide ? .35 : 0, 0); group.scale.setScalar(wide ? .7 : .78); }
+    cam.updateProjectionMatrix(); const wide = w > 860; group.position.set(wide ? 1.7 : 0, 0, 0); group.scale.setScalar(wide ? .94 : .78); }
   addEventListener("resize", resize);
   const t0 = performance.now();
   function frame(now) {
@@ -742,6 +756,22 @@ function openVoice() {
     close() { clearTimeout(pause); cancelAnimationFrame(raf); try { rec && rec.stop(); } catch {} try { speechSynthesis.cancel(); } catch {} el.remove(); voice = null; if (ui.claudeOpen) paintHero(); } };
 }
 
+/* ---------- transcribe into the prompt box ---------- */
+let dictating = null;
+function startDictate(btn) {
+  const box = $("#prompt"); if (!box) return;
+  btn.classList.add("on"); btn.setAttribute("aria-pressed", "true");
+  const before = box.placeholder; box.placeholder = isTouch ? "Listening… tap the mic on your keyboard" : "Listening… press Win + H and speak";
+  box.focus();
+  let rec = null; const start = box.value;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SR) { try { let fin = ""; rec = new SR(); rec.continuous = true; rec.interimResults = true; rec.lang = navigator.language || "en-IN";
+    rec.onresult = e => { let interim = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) fin += r[0].transcript + " "; else interim += r[0].transcript; } box.value = ((start ? start + " " : "") + fin + interim).trim(); };
+    rec.onerror = () => { rec = null; }; rec.start(); } catch { rec = null; } }
+  dictating = { stop() { try { rec && rec.stop(); } catch {} btn.classList.remove("on"); btn.setAttribute("aria-pressed", "false"); box.placeholder = before; } };
+}
+function stopDictate() { dictating?.stop(); dictating = null; }
+
 /* ---------- Claude-style pickers ---------- */
 function openPick(btn) {
   closePick();
@@ -849,7 +879,8 @@ function heroInner() {
           <div class="pickwrap"><button class="pick" data-pick="effort" aria-haspopup="menu" aria-expanded="false">${EFFORTS[ef] || "Medium"} effort${CHEV}</button></div>
           <span class="sp"></span>
           <button class="txtbtn" data-claude="save" title="Save it for Claude's next run">Save for later</button>
-          <button class="ibtn" data-claude="voice" aria-label="Transcribe" title="Transcribe">${svg("mic")}</button>
+          <button class="ibtn" data-claude="dictate" aria-label="Transcribe" title="Transcribe" aria-pressed="false">${svg("mic")}</button>
+          <button class="ibtn vmode" data-claude="voice" aria-label="Voice mode" title="Voice mode"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="9" width="2.6" height="6" rx="1.3"/><rect x="8.6" y="5" width="2.6" height="14" rx="1.3"/><rect x="13.2" y="7" width="2.6" height="10" rx="1.3"/><rect x="17.8" y="10" width="2.6" height="4" rx="1.3"/></svg></button>
           <button class="ibtn send" data-claude="ask" aria-label="Ask now" ${ui.answering ? "disabled" : ""}>${svg("up")}</button>
         </div>
       </div>
@@ -996,8 +1027,9 @@ document.addEventListener("click", async e => {
   if ("addAccount" in t.dataset) { openAddAccount(); return; }
   const c = t.dataset.claude;
   if (c === "open") { ui.claudeOpen = true; paintHero(); return; }
-  if (c === "close") { ui.claudeOpen = false; paintHero(); return; }
-  if (c === "voice") { openVoice(); return; }
+  if (c === "close") { stopDictate(); ui.claudeOpen = false; paintHero(); return; }
+  if (c === "voice") { stopDictate(); openVoice(); return; }
+  if (c === "dictate") { dictating ? stopDictate() : startDictate(t); return; }
   if (c === "save") {
     if (!db) return showToast("Sign in to claude.ai to save.");
     try { if (await sendMessage($("#prompt").value)) { $("#prompt").value = ""; showToast("Saved. Claude answers in its next run."); } else showToast("Write something first."); }
@@ -1007,7 +1039,7 @@ document.addEventListener("click", async e => {
   if (c === "ask") {
     const text = $("#prompt").value; if (!text.trim()) return showToast("Write a question first.");
     const mk = store.get("sos.model", "sonnet"), ef = store.get("sos.effort", "medium");
-    ui.answering = true; ui.answer = null; paintHero();
+    stopDictate(); ui.answering = true; ui.answer = null; paintHero();
     try { ui.answer = await quickAnswer(text, mk, ef); }
     catch (err) { ui.answer = { text: err.code === "rate_limited" ? "Too many quick answers just now. Wait a minute." : err.code === "not_granted" ? "Quick answers are switched off for this page." : (err.text || "That didn't work. Try again."), answeredBy: "nobody" }; }
     ui.answering = false; paintHero(); return;
@@ -1029,6 +1061,45 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") { if (document.querySelector(".menu")) closePick(); else if (voice) voice.close(); else if (sheet) closeSheet(); }
   if (e.key === "Enter" && !e.shiftKey && e.target.id === "prompt") { e.preventDefault(); document.querySelector('[data-claude="ask"]')?.click(); }
 });
+/* ---------- background threads: silk lines that bend with the scroll, one dot per platform rides each ---------- */
+(function threads() {
+  const cv = $("#threads"), g = cv.getContext("2d");
+  const COLS = ["#e1306c", "#0a66c2", "#111222", "#ff0033", "#0866ff", "#5b4cf5", "#d97757"];
+  let w = 0, h = 0, dpr = 1, sy = scrollY, vy = scrollY, last = 0;
+  const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); w = innerWidth; h = innerHeight; cv.width = w * dpr; cv.height = h * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); };
+  addEventListener("resize", size); size();
+  addEventListener("scroll", () => { sy = scrollY; }, { passive: true });
+  const yAt = (i, x, t, s) => {
+    const base = h * (.16 + i * .115), k = x / w;
+    return base + Math.sin(k * 3.1 + t * .18 + i * .9 + s * .0021) * (26 + i * 5) + Math.sin(k * 7.3 - t * .11 + i * 1.7 - s * .0013) * (10 + i * 2) + Math.sin(s * .0009 + i) * 34 * k;
+  };
+  function frame(now) {
+    const t = now / 1000;
+    vy += (sy - vy) * .08;                          // eased scroll so the lines glide
+    if (Math.abs(sy - vy) < .5 && now - last < 66 && !REDUCED) { requestAnimationFrame(frame); return; }   // idle: ~15 fps
+    last = now;
+    g.clearRect(0, 0, w, h);
+    const maxS = Math.max(1, document.documentElement.scrollHeight - h), prog = Math.min(1, vy / maxS);
+    for (let i = 0; i < 7; i++) {
+      const grad = g.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0, "rgba(91,76,245,0)"); grad.addColorStop(.35, "rgba(91,76,245,.16)"); grad.addColorStop(.7, "rgba(217,119,87,.13)"); grad.addColorStop(1, "rgba(217,119,87,0)");
+      g.strokeStyle = grad; g.lineWidth = i % 3 === 0 ? 1.2 : .8;
+      g.beginPath();
+      for (let x = -20; x <= w + 20; x += 14) { const y = yAt(i, x, t, vy); x === -20 ? g.moveTo(x, y) : g.lineTo(x, y); }
+      g.stroke();
+      // a rider per thread, carried along by the scroll
+      const rx = ((prog * 1.6 + i * .137 + t * .004) % 1) * w, ry = yAt(i, rx, t, vy);
+      const glow = g.createRadialGradient(rx, ry, 0, rx, ry, 14);
+      glow.addColorStop(0, COLS[i] + "55"); glow.addColorStop(1, COLS[i] + "00");
+      g.fillStyle = glow; g.beginPath(); g.arc(rx, ry, 14, 0, Math.PI * 2); g.fill();
+      g.fillStyle = COLS[i]; g.beginPath(); g.arc(rx, ry, 2.2, 0, Math.PI * 2); g.fill();
+    }
+    if (!REDUCED) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  if (REDUCED) addEventListener("scroll", () => { vy = sy; requestAnimationFrame(frame); }, { passive: true });
+})();
+
 render();
 connect();
 </script>
