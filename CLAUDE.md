@@ -37,6 +37,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **31 Oct 2026:** Task 2 Steps 0-4 + 6 DONE: story rule (28 tests), `docs/DATA.md`, dashboard v1 published
   (URL in `private/README.md`), settings/main + test post `posts/test-1` seeded. **Waiting on the user:** press Approve on
   the test card on their phone; then Claude checks `posts/test-1` shows approvedBy "dashboard" and deletes it. Then Task 3 (needs first account).
+- **31 Oct 2026 (redesign, user ask):** dashboard v2 = "control room" for showcasing to followers: three.js engine core,
+  pipeline strip, live wall of 9 platform monitors (Showcase = labelled demo loop, Live = real queue), desk tabs below.
+  Dark-only by choice. Taste source: itsmarga "live screens" (C:\Gaznil	aste). Not yet seen on a real screen by Claude
+  (local preview blocked); user checks it on phone.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
