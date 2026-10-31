@@ -114,7 +114,11 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **31 Oct 2026: research run 1 for ig-ai-tools, step 1 DONE.** `pillars.md` (5 topics, Claude chose the mix from past
   posts) + `formats.md` in `private/`. **User choice: more carousels -> 4 posts/week = 2 reels + 2 carousels**
-  (dashboard postsPerWeek 4). **Next: step 2** = fill `competitors.md`, then collect/rank outliers, ideas, calendar.
+  (dashboard postsPerWeek 4). Steps 2-5 DONE: 12 competitors in `competitors.md` (ig-viral mix: direct/adjacent/outsized),
+  outliers ranked (ig-viral method, Apify ~$0.55), note `private/research/2026-10-31-ig-ai-tools.md`, 6 ideas `ideas/r1031-*`
+  in the dashboard (3 carousels, 3 reels). Top pattern: "N secret ChatGPT codes/prompts" (264x). **Next: step 6** =
+  sos-create drafts for the first week (2 reels + 2 carousels) from those ideas, waiting for the user's Approve.
+  Note: ig-viral forbids scraping services; Social OS keeps Apify by design (public, no login, low volume) and uses ig-viral for picking + ranking.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
