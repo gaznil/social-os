@@ -99,12 +99,34 @@ main { padding-block: 8px 72px; display: grid; gap: 28px; }
 .inbox div { display: flex; gap: 8px; min-width: 0; } .inbox span:last-child { color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* overlays: voice + sheet */
-.voice, .sheet-bg { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(24px); animation: fade .3s; padding: 16px; }
-.voice-in { display: grid; justify-items: center; gap: 18px; padding: 24px; text-align: center; max-width: 520px; width: 100%; }
-.voice canvas { width: min(300px, 70vw); height: min(300px, 70vw); }
-.voice p { margin: 0; font: 300 22px/1.35 var(--font-serif); min-height: 2.7em; }
-.voice small { font: 400 12px var(--font-mono); color: var(--muted); max-width: 40ch; }
-.voice .row { justify-content: center; }
+.sheet-bg { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(24px); animation: fade .3s; padding: 16px; }
+.voice { position: fixed; inset: 0; z-index: 80; background: var(--claude-bg); color: var(--claude-fg); display: grid; grid-template-rows: auto 1fr auto; animation: fade .35s;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.voice-top { display: flex; justify-content: center; align-items: center; gap: 8px; font: 400 13px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 60%, transparent); }
+.voice-top svg { width: 16px; height: 16px; color: var(--claude); }
+.voice-mid { display: grid; place-items: center; align-content: center; gap: 22px; text-align: center; min-height: 0; }
+.voice canvas { width: min(280px, 64vw); height: min(280px, 64vw); }
+.voice p { margin: 0; font: 300 24px/1.4 var(--font-serif); max-width: 30ch; min-height: 2.8em; max-height: 8.4em; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
+.voice small { font: 400 13px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 55%, transparent); max-width: 36ch; }
+.voice textarea { width: min(460px, 100%); min-height: 52px; max-height: 120px; resize: none; text-align: center; border: 0; border-bottom: 1px solid var(--claude-line); background: transparent; color: var(--claude-fg); font: 400 17px/1.5 var(--font-body); outline: 0; padding: 8px; }
+.voice-bot { display: flex; justify-content: center; gap: 22px; }
+.vbtn { width: 60px; height: 60px; border-radius: 50%; border: 1px solid var(--claude-line); background: color-mix(in srgb, var(--claude-fg) 5%, transparent); color: var(--claude-fg); display: grid; place-items: center; cursor: pointer; }
+.vbtn svg { width: 22px; height: 22px; }
+.vbtn.send { background: var(--claude); border-color: var(--claude); color: #fff; }
+.pickwrap { position: relative; }
+.pick { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--claude-line); background: transparent; color: var(--claude-fg); font: 400 13px var(--font-body); padding: 6px 8px 6px 10px; border-radius: 10px; cursor: pointer; }
+.pick:hover, .pick[aria-expanded="true"] { background: color-mix(in srgb, var(--claude-fg) 6%, transparent); }
+.pick svg { width: 14px; height: 14px; opacity: .6; }
+.menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 260px; max-width: calc(100vw - 32px); background: var(--claude-bg); border: 1px solid var(--claude-line); border-radius: 14px; padding: 6px; display: grid; gap: 2px;
+  box-shadow: 0 16px 48px -14px rgba(30, 20, 10, .35); animation: rise .18s ease-out; }
+.menu button { display: grid; grid-template-columns: 1fr 18px; gap: 1px 12px; text-align: left; padding: 8px 10px; border: 0; border-radius: 10px; background: none; color: var(--claude-fg); cursor: pointer; }
+.menu button:hover, .menu button:focus-visible { background: color-mix(in srgb, var(--claude-fg) 7%, transparent); outline: 0; }
+.menu b { font: 500 14px var(--font-body); } .menu small { font: 400 12px var(--font-body); color: color-mix(in srgb, var(--claude-fg) 58%, transparent); }
+.menu .chk { grid-column: 2; grid-row: 1 / 3; align-self: center; color: var(--claude); width: 18px; height: 18px; }
+.hscroll { position: relative; }
+.hpin { position: sticky; top: var(--hdr, 60px); height: calc(100vh - var(--hdr, 60px)); display: grid; align-content: center; gap: 18px; overflow: hidden; }
+.hcount { font: 400 12px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.hbar { height: 1px; background: var(--line-2); position: relative; } .hbar i { position: absolute; left: 0; top: -1px; height: 3px; width: 0; background: var(--fg); border-radius: 3px; }
 .sheet { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; background: var(--surface); border-radius: 24px; padding: 24px; box-shadow: 0 0 0 1px var(--line), 0 40px 100px -30px rgba(20, 16, 60, .45); display: grid; gap: 18px; animation: rise .35s cubic-bezier(.2, .8, .2, 1); }
 .sheet h2 { font-size: 26px; }
 .plats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
@@ -131,9 +153,7 @@ main { padding-block: 8px 72px; display: grid; gap: 28px; }
 h2 { margin: 0; font: 400 28px/1.1 var(--font-body); letter-spacing: -.03em; }
 .arrows { display: flex; gap: 6px; }
 .arrows button { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface); color: var(--fg); cursor: pointer; font-size: 16px; }
-.rail { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 6px 2px 20px; cursor: grab; overscroll-behavior-x: contain; }
-.rail.drag { cursor: grabbing; scroll-snap-type: none; }
-.rail::-webkit-scrollbar { display: none; }
+.rail { display: flex; gap: 14px; padding: 6px 2px 10px; will-change: transform; }
 .mon { --c: var(--accent); flex: none; width: 300px; height: 380px; scroll-snap-align: start; background: var(--surface); border-radius: 18px; box-shadow: 0 0 0 1px var(--line), 0 24px 48px -32px rgba(20, 20, 60, .35);
   display: grid; grid-template-rows: auto 1fr auto; overflow: hidden; position: relative; transition: transform .3s cubic-bezier(.2, .8, .2, 1), box-shadow .3s; }
 .mon:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--line-2), 0 30px 60px -30px color-mix(in srgb, var(--c) 55%, transparent); }
@@ -281,6 +301,13 @@ const MODELS = {
   opus:   { model: "claude-opus-5-5",   modelTier: "complex", label: "Opus 5.5" },
 };
 const EFFORTS = { low: "Low", medium: "Medium", high: "High" };
+const PICKS = {
+  model: { key: "sos.model", def: "sonnet", items: { haiku: ["Haiku 5.5", "Fastest for quick answers"], sonnet: ["Sonnet 5.5", "Smart, efficient for everyday tasks"], opus: ["Opus 5.5", "Most capable for complex work"] } },
+  effort: { key: "sos.effort", def: "medium", items: { low: ["Low", "Answers right away"], medium: ["Medium", "Thinks a little first"], high: ["High", "Thinks longest, best for hard questions"] } },
+};
+const CHEV = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
+const CHECK = `<svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"/></svg>`;
+const XICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
 const PLATFORMS = { instagram: "Instagram", youtube: "YouTube", linkedin: "LinkedIn", x: "X", facebook: "Facebook", threads: "Threads" };
 const BRAND = { instagram: "#e1306c", youtube: "#ff0033", linkedin: "#0a66c2", x: "currentColor", facebook: "#0866ff", threads: "currentColor" };
 const logoOf = p => ICONS[p] ? `<span style="color:${BRAND[p] || "currentColor"};display:inline-flex">${svg(p)}</span>` : "";
@@ -368,13 +395,13 @@ async function addAccount(a) {
   await db.collection("messages").add({ from: "user", text: `Set up the new account "${a.label}" (${PLATFORMS[a.platform]}, id ${id}).`, status: "new", reply: null, createdAt: nowIso() });
 }
 
-async function quickAnswer(text, modelKey, effort) {
+async function quickAnswer(text, modelKey, effort, onText) {
   const sample = window.claude ? await claude.use("sample") : null;
   if (!sample) { showToast("Quick answers are off for this page."); return null; }
   const m = MODELS[modelKey] || MODELS.sonnet;
   const out = await sample([{ role: "user", content:
     "You help a social media creator. Answer briefly and concretely.\n\n" + text }],
-    { cache: false, model: m.model, modelTier: m.modelTier, effort });
+    { cache: false, model: m.model, modelTier: m.modelTier, effort, ...(onText ? { onText } : {}) });
   return { text: out.text, answeredBy: out.modelApplied ? m.label : "the fallback model" };
 }
 
@@ -588,55 +615,107 @@ function startOrb() {
   host.append(canvas); resize(); requestAnimationFrame(frame);
 }
 
-/* ---------- voice (transcribe) ---------- */
+/* ---------- voice mode ---------- */
+// Artifact pages get no microphone, so speech comes in through the phone keyboard's mic (or the browser's own
+// recogniser where it is allowed). Claude's reply streams in and is read aloud; the orb follows the voice.
 let voice = null;
 function openVoice() {
-  const box = $("#prompt"); if (!box) return;
   const el = document.createElement("div"); el.className = "voice";
-  el.innerHTML = `<div class="voice-in"><canvas width="600" height="600"></canvas><p data-heard>Listening…</p><small data-note></small>
-    <div class="row"><button class="btn" data-voice="cancel">Cancel</button><button class="btn primary" data-voice="done">Done</button></div></div>`;
+  el.innerHTML = `<div class="voice-top">${svg("claude")}${(MODELS[store.get("sos.model", "sonnet")] || MODELS.sonnet).label} · voice</div>
+    <div class="voice-mid"><canvas width="560" height="560"></canvas><p data-say>Listening…</p>
+      <textarea id="voice-text" rows="1" placeholder="Tap the mic on your keyboard and speak"></textarea><small data-note></small></div>
+    <div class="voice-bot"><button class="vbtn" data-voice="end" aria-label="End voice">${XICON}</button><button class="vbtn send" data-voice="send" aria-label="Send">${svg("up")}</button></div>`;
   document.body.append(el);
-  const cv = el.querySelector("canvas"), g = cv.getContext("2d"), heard = el.querySelector("[data-heard]"), note = el.querySelector("[data-note]");
-  const start = box.value; let level = .25, raf = 0, rec = null, finalText = "";
+  const cv = el.querySelector("canvas"), g = cv.getContext("2d"), say = el.querySelector("[data-say]"), note = el.querySelector("[data-note]"), ta = el.querySelector("#voice-text");
+  let level = .15, target = .15, phase = "listen", raf = 0, rec = null, finalText = "";
+  const W = 560, C = W / 2;
   const draw = now => {
-    const t = now / 1000; g.clearRect(0, 0, 600, 600); level += (.22 - level) * .03;
-    g.globalCompositeOperation = "lighter";
-    for (const [col, ph] of [["#7aa8ff", 0], ["#c58bff", 2.1], ["#ff9ac2", 4.2], ["#8ff0d8", 1.1]]) {
+    const t = now / 1000;
+    target = phase === "think" ? .25 + Math.sin(t * 3) * .12 : phase === "speak" ? Math.max(target * .96, .3) : Math.max(target * .97, .12);
+    level += (target - level) * .12;
+    g.clearRect(0, 0, W, W);
+    const base = 150 + level * 22;
+    for (const [col, ph, sc] of [["#7aa8ff", 0, 1], ["#c58bff", 2.1, .95], ["#ff9ac2", 4.2, .9], ["#8ff0d8", 1.1, .85]]) {
       g.beginPath();
-      for (let a = 0; a <= Math.PI * 2 + .01; a += .05) {
-        const r = (150 + Math.sin(a * 3 + t * 1.6 + ph) * 18 * (1 + level * 3) + Math.sin(a * 5 - t * 2.2 + ph) * 10 * (1 + level * 4)) * (1 + level * .25);
-        const x = 300 + Math.cos(a) * r, y = 300 + Math.sin(a) * r;
-        a === 0 ? g.moveTo(x, y) : g.lineTo(x, y);
+      for (let a = 0; a <= Math.PI * 2 + .01; a += .04) {
+        const r = (base + Math.sin(a * 3 + t * 1.4 + ph) * (6 + level * 26) + Math.sin(a * 5 - t * 1.9 + ph) * (3 + level * 14)) * sc;
+        a === 0 ? g.moveTo(C + Math.cos(a) * r, C + Math.sin(a) * r) : g.lineTo(C + Math.cos(a) * r, C + Math.sin(a) * r);
       }
-      const gr = g.createRadialGradient(300 + Math.cos(t + ph) * 40, 300 + Math.sin(t + ph) * 40, 10, 300, 300, 220);
-      gr.addColorStop(0, col); gr.addColorStop(1, "rgba(255,255,255,0)");
-      g.fillStyle = gr; g.globalAlpha = .55; g.fill();
+      g.closePath();
+      const gr = g.createRadialGradient(C - 40 + Math.cos(t * .7 + ph) * 30, C - 50 + Math.sin(t * .7 + ph) * 30, 10, C, C, base * 1.2);
+      gr.addColorStop(0, "#ffffff"); gr.addColorStop(.45, col); gr.addColorStop(1, col + "00");
+      g.fillStyle = gr; g.globalAlpha = .62; g.fill();
     }
-    g.globalAlpha = 1; g.globalCompositeOperation = "source-over";
-    raf = requestAnimationFrame(draw);
+    g.globalAlpha = 1;
+    if (!REDUCED) raf = requestAnimationFrame(draw);
   };
-  raf = requestAnimationFrame(draw);
-  const bump = () => { level = Math.min(1, level + .35); };
-  const fallback = why => {
-    if (el.querySelector("#voice-text")) return;
-    note.textContent = `${why} Tap the mic on your phone keyboard and speak. Your words go straight into the prompt box.`;
-    heard.textContent = "Speak with your keyboard mic";
-    const ta = document.createElement("textarea"); ta.className = "field-in"; ta.id = "voice-text"; ta.placeholder = "Your words land here…"; ta.style.minHeight = "70px";
-    el.querySelector(".voice-in").insertBefore(ta, el.querySelector(".row")); ta.focus();
-    ta.addEventListener("input", () => { bump(); box.value = (start ? start + " " : "") + ta.value; heard.textContent = ta.value.slice(-90) || "Speak with your keyboard mic"; });
-  };
+  draw(0);
+  const bump = k => { target = Math.min(1, target + k); };
+  const listen = () => { phase = "listen"; say.textContent = "Listening…"; ta.value = ""; finalText = ""; ta.focus(); };
+  const keyboardMode = () => { rec = null; note.textContent = "Tap the mic on your keyboard, speak, then press send."; ta.focus(); };
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SR) {
     try {
       rec = new SR(); rec.continuous = true; rec.interimResults = true; rec.lang = navigator.language || "en-IN";
-      rec.onresult = e => { let interim = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) finalText += r[0].transcript + " "; else interim += r[0].transcript; }
-        bump(); const all = (finalText + interim).trim(); heard.textContent = all.slice(-90); box.value = (start ? start + " " : "") + all; };
-      rec.onerror = () => { rec = null; fallback("This page can't reach your microphone."); };
+      rec.onresult = e => { if (phase !== "listen") return; let interim = ""; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) finalText += r[0].transcript + " "; else interim += r[0].transcript; }
+        bump(.4); ta.value = (finalText + interim).trim(); say.textContent = ta.value.slice(-120) || "Listening…"; };
+      rec.onerror = keyboardMode;
       rec.start();
-    } catch { rec = null; fallback("This page can't reach your microphone."); }
-  } else fallback("This browser has no built-in transcription.");
-  voice = { close(keep) { cancelAnimationFrame(raf); try { rec && rec.stop(); } catch {} if (!keep) box.value = start; el.remove(); voice = null; box.focus(); } };
+    } catch { keyboardMode(); }
+  } else keyboardMode();
+  ta.addEventListener("input", () => { bump(.35); say.textContent = ta.value.slice(-120) || "Listening…"; });
+  ta.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } });
+  async function send() {
+    const text = ta.value.trim(); if (!text || phase !== "listen") return;
+    phase = "think"; say.textContent = "Thinking…"; ta.value = ""; note.textContent = "";
+    try {
+      const res = await quickAnswer(text, store.get("sos.model", "sonnet"), store.get("sos.effort", "medium"),
+        ({ text: so }) => { if (!voice) return; phase = "speak"; say.textContent = so.slice(-200); bump(.15); });
+      if (!voice) return;
+      if (!res) return listen();
+      ui.answer = res; say.textContent = res.text.slice(-200);
+      if ("speechSynthesis" in window) {
+        phase = "speak"; speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(res.text.replace(/[*#_`>]/g, ""));
+        u.rate = 1.03; u.onboundary = () => bump(.55); u.onend = () => voice && listen(); u.onerror = () => voice && listen();
+        speechSynthesis.speak(u);
+      } else listen();
+    } catch (err) { say.textContent = err.code === "rate_limited" ? "Too many questions just now. Wait a minute." : "That didn't work. Try again."; phase = "listen"; }
+  }
+  voice = { action(a) { if (a === "send") send(); else this.close(); },
+    close() { cancelAnimationFrame(raf); try { rec && rec.stop(); } catch {} try { speechSynthesis.cancel(); } catch {} el.remove(); voice = null; if (ui.claudeOpen) paintHero(); } };
 }
+
+/* ---------- Claude-style pickers ---------- */
+function openPick(btn) {
+  closePick();
+  const P = PICKS[btn.dataset.pick], cur = store.get(P.key, P.def);
+  btn.setAttribute("aria-expanded", "true");
+  btn.insertAdjacentHTML("afterend", `<div class="menu" role="menu">${Object.entries(P.items).map(([k, [name, desc]]) =>
+    `<button role="menuitemradio" aria-checked="${k === cur}" data-choose="${btn.dataset.pick}:${k}"><b>${name}</b><small>${desc}</small>${k === cur ? CHECK : ""}</button>`).join("")}</div>`);
+  btn.nextElementSibling.querySelector('[aria-checked="true"]')?.focus();
+}
+function closePick() { document.querySelectorAll(".menu").forEach(m => m.remove()); document.querySelectorAll(".pick").forEach(b => b.setAttribute("aria-expanded", "false")); }
+
+/* ---------- pinned horizontal section ---------- */
+function layoutPin() {
+  const hdr = document.querySelector("header")?.offsetHeight || 60;
+  document.documentElement.style.setProperty("--hdr", hdr + "px");
+  const sec = $("#hscroll"), rail = $("#rail"); if (!sec || !rail) return;
+  const dist = Math.max(0, rail.scrollWidth - rail.clientWidth);
+  sec.style.height = `calc(100vh - ${hdr}px + ${dist}px)`; sec.dataset.dist = dist;
+  onPinScroll();
+}
+function onPinScroll() {
+  const sec = $("#hscroll"), rail = $("#rail"); if (!sec || !rail) return;
+  const hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hdr")) || 60, dist = +sec.dataset.dist || 0;
+  const p = dist ? Math.min(1, Math.max(0, (hdr - sec.getBoundingClientRect().top) / dist)) : 0;
+  rail.style.transform = `translate3d(${-p * dist}px,0,0)`;
+  const bar = $("#hbar"); if (bar) bar.style.width = (p * 100) + "%";
+  const c = $("#hcount"); if (c) c.textContent = `${String(Math.min(LANES.length, 1 + Math.round(p * (LANES.length - 1)))).padStart(2, "0")} / ${String(LANES.length).padStart(2, "0")}`;
+}
+addEventListener("scroll", onPinScroll, { passive: true });
+addEventListener("resize", layoutPin);
 
 /* ---------- add account sheet ---------- */
 let sheet = null;
@@ -708,8 +787,8 @@ function heroInner() {
       <div class="pbox">
         <textarea id="prompt" rows="2" placeholder="How can I help you today?"></textarea>
         <div class="ptools">
-          <select id="talk-model" aria-label="Model">${Object.entries(MODELS).map(([k, m]) => `<option value="${k}" ${k === mk ? "selected" : ""}>${m.label}</option>`).join("")}</select>
-          <select id="talk-effort" aria-label="Effort">${Object.entries(EFFORTS).map(([k, l]) => `<option value="${k}" ${k === ef ? "selected" : ""}>${l}</option>`).join("")}</select>
+          <div class="pickwrap"><button class="pick" data-pick="model" aria-haspopup="menu" aria-expanded="false">${(MODELS[mk] || MODELS.sonnet).label}${CHEV}</button></div>
+          <div class="pickwrap"><button class="pick" data-pick="effort" aria-haspopup="menu" aria-expanded="false">${EFFORTS[ef] || "Medium"} effort${CHEV}</button></div>
           <span class="sp"></span>
           <button class="txtbtn" data-claude="save" title="Save it for Claude's next run">Save for later</button>
           <button class="ibtn" data-claude="voice" aria-label="Transcribe" title="Transcribe">${svg("mic")}</button>
@@ -726,10 +805,11 @@ function heroInner() {
 function viewWall() {
   return `<section class="hero"><div class="orb" aria-hidden="true"></div><div class="hero-in" id="hero">${heroInner()}</div></section>
     <section class="thread">${STAGES.map((s, i) => `<div class="st ${mode !== "showcase" && i === 3 && state.posts.some(p => p.status === "waiting") ? "on" : ""}"><b>${s}</b><span>${esc(pipeCounts()[i])}</span></div>`).join("")}</section>
-    <section style="display:grid;gap:14px">
-      <div class="rail-head"><h2>Live channels</h2><div class="arrows"><button data-scroll="-1" aria-label="Scroll left">←</button><button data-scroll="1" aria-label="Scroll right">→</button></div></div>
+    <section class="hscroll" id="hscroll"><div class="hpin">
+      <div class="rail-head"><h2>Live channels</h2><span class="hcount" id="hcount">01 / ${String(LANES.length).padStart(2, "0")}</span></div>
       <div class="rail" id="rail"></div>
-    </section>`;
+      <div class="hbar"><i id="hbar"></i></div>
+    </div></section>`;
 }
 
 function preview(p) {
@@ -837,7 +917,7 @@ function render(dataChanged) {
   for (const [name, why] of Object.entries(ui.errors)) html += `<div class="banner">Couldn't load ${esc(name)}: ${esc(why)}. Reopen the page to retry.</div>`;
   stopLoops();
   $("#view").innerHTML = html + VIEWS[tab]();
-  if (tab === "wall") { paintRail(true); startOrb(); }
+  if (tab === "wall") { paintRail(true); startOrb(); requestAnimationFrame(layoutPin); }
 }
 function paintHero() {
   const h = $("#hero"); if (!h) return;
@@ -848,11 +928,13 @@ function paintHero() {
 
 /* ---------- events ---------- */
 document.addEventListener("click", async e => {
+  if (!e.target.closest(".pickwrap")) closePick();
   const t = e.target.closest("button, a"); if (!t || t.closest(".sheet-bg")) return;
   if (t.dataset.tab) { tab = t.dataset.tab; store.set("sos.tab3", tab); render(); window.scrollTo(0, 0); return; }
   if (t.dataset.mode) { mode = t.dataset.mode; store.set("sos.mode", mode); render(); return; }
-  if (t.dataset.scroll) { const r = $("#rail"); r.scrollBy({ left: +t.dataset.scroll * r.clientWidth * .8, behavior: "smooth" }); return; }
-  if (t.dataset.voice) { voice?.close(t.dataset.voice === "done"); return; }
+  if (t.dataset.voice) { voice?.action(t.dataset.voice); return; }
+  if (t.dataset.pick) { t.getAttribute("aria-expanded") === "true" ? closePick() : openPick(t); return; }
+  if (t.dataset.choose) { const [k, v] = t.dataset.choose.split(":"); store.set(PICKS[k].key, v); closePick(); paintHero(); return; }
   if ("addAccount" in t.dataset) { openAddAccount(); return; }
   const c = t.dataset.claude;
   if (c === "open") { ui.claudeOpen = true; paintHero(); return; }
@@ -866,7 +948,7 @@ document.addEventListener("click", async e => {
   }
   if (c === "ask") {
     const text = $("#prompt").value; if (!text.trim()) return showToast("Write a question first.");
-    const mk = $("#talk-model").value, ef = $("#talk-effort").value;
+    const mk = store.get("sos.model", "sonnet"), ef = store.get("sos.effort", "medium");
     ui.answering = true; ui.answer = null; paintHero();
     try { ui.answer = await quickAnswer(text, mk, ef); }
     catch (err) { ui.answer = { text: err.code === "rate_limited" ? "Too many quick answers just now. Wait a minute." : err.code === "not_granted" ? "Quick answers are switched off for this page." : (err.text || "That didn't work. Try again."), answeredBy: "nobody" }; }
@@ -886,19 +968,9 @@ document.addEventListener("click", async e => {
   }
 });
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { if (voice) voice.close(false); else if (sheet) closeSheet(); }
+  if (e.key === "Escape") { if (document.querySelector(".menu")) closePick(); else if (voice) voice.close(); else if (sheet) closeSheet(); }
   if (e.key === "Enter" && !e.shiftKey && e.target.id === "prompt") { e.preventDefault(); document.querySelector('[data-claude="ask"]')?.click(); }
 });
-document.addEventListener("change", e => {
-  if (e.target.id === "talk-model") store.set("sos.model", e.target.value);
-  if (e.target.id === "talk-effort") store.set("sos.effort", e.target.value);
-});
-// drag the rail with a mouse
-let drag = null;
-document.addEventListener("pointerdown", e => { const r = e.target.closest?.(".rail"); if (!r || e.pointerType !== "mouse") return; drag = { r, x: e.clientX, s: r.scrollLeft }; });
-document.addEventListener("pointermove", e => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) > 4) drag.r.classList.add("drag"); drag.r.scrollLeft = drag.s - dx; });
-document.addEventListener("pointerup", () => { if (drag) drag.r.classList.remove("drag"); drag = null; });
-
 render();
 connect();
 </script>

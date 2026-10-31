@@ -43,6 +43,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   channel cards (Showcase = labelled demo, Live = real queue), real brand logos (simple-icons 13.21.0) everywhere.
   Accounts tab has "Add account" -> writes `accounts/<id>` status `setup` + a `messages` doc; Claude's next run finishes
   setup (sos-account skill, Task 3). Not yet seen on a real screen by Claude; user checks on phone.
+- **31 Oct 2026 (v4):** Claude-style model/effort menus (no native selects); voice mode = full screen, user's blob kept
+  (blue/violet/pink/mint), reacts to incoming words + Claude's spoken reply (speechSynthesis). Artifacts have NO mic
+  permission on this account (checked capability list 31 Oct) -> keyboard mic. "Live channels" = pinned section:
+  vertical scroll moves the cards sideways.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
