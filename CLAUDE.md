@@ -178,6 +178,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   (only Instagram + LinkedIn are linked); the X Composio test (a real post = needs a yes in chat); "Porotta link"
   (meaning unclear, ask). All roadmap phases now built; nothing has run on real numbers yet.
 
+- **1 Nov 2026: YouTube account `yt-ai-tools` started (user ask).** Claude cannot create a Google account or channel, so the
+  user makes the channel (steps given in chat); Claude wrote the channel kit + Shorts rules in `private/accounts/yt-ai-tools/`
+  and the dashboard account (status `setup`). Phase 1 = the user's Instagram reels posted as Shorts one at a time by hand
+  (3-minute Shorts verified in Google Help); Phase 2 = long videos later. Composio YouTube link started (pending the user).
+  **Next:** user makes the channel and finishes the Composio link -> set account `active`, `composioAccountId`; then sos-publish can upload.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
