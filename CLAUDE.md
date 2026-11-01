@@ -184,6 +184,13 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   (3-minute Shorts verified in Google Help); Phase 2 = long videos later. Composio YouTube ACTIVE (1 Nov), dashboard account active.
   **Next:** user makes the channel and finishes the Composio link -> set account `active`, `composioAccountId`; then sos-publish can upload.
 
+- **1 Nov 2026: IDEA PARKED (user will say when ready): "run everything from the dashboard".** Findings: the page can call the user's
+  connectors (`mcp` capability: Composio, Apify, Canva, Higgsfield) and has its own Claude (`sample`), so posting, research and text
+  drafting can run from the page while it is open. The top bar is Claude's own frame, cannot be removed from page code (no hide
+  option found; own hosting = loses free runtime, costs an API key). Untested: Composio YouTube upload from the page, video staging,
+  browser ffmpeg for simple edits, Composio cloud sandbox for ffmpeg, a VS Code session as worker. Plan if resumed: test button first, Run log strip, Pause-everything button.
+  **Nothing to build until the user says.** YouTube account `yt-ai-tools` is connected; the user posts Shorts by hand meanwhile.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
