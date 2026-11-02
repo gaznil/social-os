@@ -191,6 +191,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   browser ffmpeg for simple edits, Composio cloud sandbox for ffmpeg, a VS Code session as worker. Plan if resumed: test button first, Run log strip, Pause-everything button.
   **Nothing to build until the user says.** YouTube account `yt-ai-tools` is connected; the user posts Shorts by hand meanwhile.
 
+- **2 Nov 2026:** Apify free credit is USED UP for this billing cycle ($0.0006 left; search-scraper run refused). Until it
+  resets, research uses free sources only: last30days (needs `LAST30DAYS_ALLOW_ENGINE_PLAN=1 ... --auto-resolve` when run
+  inside Claude Code), Firecrawl, Agent Reach. Used today for the explainer page's first topic (Prompt Guy project).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
