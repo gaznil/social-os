@@ -200,7 +200,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   (1) user idea / topic / GitHub repo -> research -> script -> **user approves the SCRIPT** -> versions for every platform
   incl. **carousel**; (2) user video -> Prompt Guy -> all versions; (3) self-found ideas from IG + GitHub trends + X trends
   (X free route unverified) using story formats; (4) week + month plan, every slot swappable for the user's own content.
-  **Dashboard gets an account switch at the top: pick one account, the whole dashboard works only for it.** Next: plan this redesign.
+  **Dashboard gets an account switch at the top: pick one account, the whole dashboard works only for it.** Plan v2 written: `docs/plans/2026-11-08-v2-social-partner.md` (waiting for user yes). Also asked: research 4 sources, options->script, EN + Malayalam-English toggle, Codex image_gen + OpenMontage (no Canva), thumbnails, full skill audit + own plugin.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
