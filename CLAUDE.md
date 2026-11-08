@@ -195,6 +195,13 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   resets, research uses free sources only: last30days (needs `LAST30DAYS_ALLOW_ENGINE_PLAN=1 ... --auto-resolve` when run
   inside Claude Code), Firecrawl, Agent Reach. Used today for the explainer page's first topic (Prompt Guy project).
 
+- **8 Nov 2026: STORY FORMATS + NEW MAIN IDEA (user notes, discussing, not built yet).** Kallaway 10 story formats in
+  `private/knowledge/` (wired into sos-create + sos-studio). User's purpose = "social partner", idea-first:
+  (1) user idea / topic / GitHub repo -> research -> script -> **user approves the SCRIPT** -> versions for every platform
+  incl. **carousel**; (2) user video -> Prompt Guy -> all versions; (3) self-found ideas from IG + GitHub trends + X trends
+  (X free route unverified) using story formats; (4) week + month plan, every slot swappable for the user's own content.
+  **Dashboard gets an account switch at the top: pick one account, the whole dashboard works only for it.** Next: plan this redesign.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
