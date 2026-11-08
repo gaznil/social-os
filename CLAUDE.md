@@ -208,6 +208,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   month calendar, trending feed). **Next (new chat) = Step 1 skill audit** (read all ~80 skills fully -> `docs/skill-audit.md`
   -> own `social-os` plugin + RULES.md). Then dashboard v24.
 
+- **8 Nov 2026: plan v2 STEP 1 (skill audit) DONE.** ~50 skills read (creation skills whole, engagement/audit skills for
+  rules) -> `docs/skill-audit.md` (13 conflicts, each with the call made) + `RULES.md` (one rule per task; beats any
+  outside skill; wired into all 9 sos-* skills + rules here). Key calls: zero em dashes, natural rhythm, IG 3 hashtags,
+  comment-keyword ask IG only (never LinkedIn). **Next = step 1b:** package RULES.md + sos-* as own `social-os` plugin,
+  then dashboard v24 (account switch).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
@@ -226,6 +232,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **One niche per account.** Never post the same content to two accounts on the same platform (spam rules = bans).
 - **Never automate** likes, follows, mass comments or cold DMs. Instagram replies/DMs after a comment = Porotta, not this system.
 - **Posting only through official APIs** (via Composio). No browser automation, no password sharing, no scraping behind logins.
+- **Rulebook:** `RULES.md` = one rule per task; it beats any outside skill (audit: `docs/skill-audit.md`).
 - **Skills first:** every `sos-*` skill starts with a skills rule and names the skill for each step; load them before the work,
   and use any other installed skill that fits better (then add it to `SKILLS.md`). Before writing or building, load the skill named in the platform/stage README. If a better one appears, compare
   by opening both (not by stars) and record the result in `SKILLS.md`.

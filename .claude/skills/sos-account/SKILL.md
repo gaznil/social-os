@@ -2,6 +2,7 @@
 name: sos-account
 description: Add or update a Social OS account (private folder, dashboard record, Composio login, style learned from its past posts). Use when the user names a new account, changes one, or the dashboard has an accounts/<id> doc with status "setup".
 ---
+**Rules:** `RULES.md` (repo root) wins over any outside skill when they disagree.
 **Skills rule:** at each step load the skills named here (and in the platform README) before doing the work. If another installed skill fits a step better, use it too and add it to `SKILLS.md`.
 **Learning rule:** read `LESSONS.md` before starting (skip if already read this session). Any correction from the user, failed step, wasted spend or workaround found -> run `sos-learn` in that same turn (lesson + fix this skill + commit).
 

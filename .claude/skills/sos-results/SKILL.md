@@ -2,6 +2,7 @@
 name: sos-results
 description: Pull the numbers for every active Social OS account (followers, views, per-post results), write the daily `stats` docs that feed the dashboard's Growth section, update best posting times, and add ONE change per account to its lessons. Use on "results", "how are we doing", or in the scheduled results run.
 ---
+**Rules:** `RULES.md` (repo root) wins over any outside skill when they disagree.
 **Skills rule:** at each step load the skills named here (and in the platform README) before doing the work. If another installed skill fits a step better, use it too and add it to `SKILLS.md`.
 **Learning rule:** read `LESSONS.md` before starting (skip if already read this session). Any correction from the user, failed step, wasted spend or workaround found -> run `sos-learn` in that same turn (lesson + fix this skill + commit).
 **Read-only rule:** this skill only reads platform numbers. It never posts, likes, follows or replies.

@@ -2,6 +2,7 @@
 name: sos-learn
 description: Social OS learning loop. Turn every user correction, failed step, wasted spend or found workaround into a lesson, and fix the skill that caused it, so the same mistake never happens twice. Run the moment it happens (same turn), and once at the end of each session.
 ---
+**Rules:** `RULES.md` (repo root) wins over any outside skill when they disagree.
 Method copied from claude-reflect (BayramAnnakov, MIT), claude-reflect-system (haddock-development, MIT) and the
 okteto lessons skill. No install, no review queue: lessons are applied at once and committed, so the user never has to run anything.
 

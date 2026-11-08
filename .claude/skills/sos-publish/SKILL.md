@@ -2,6 +2,7 @@
 name: sos-publish
 description: Post every approved, due Social OS post through Composio and write results back to the dashboard. Use on "publish", in the scheduled publisher run, or when the user approves something for now.
 ---
+**Rules:** `RULES.md` (repo root) wins over any outside skill when they disagree.
 **Learning rule:** read `LESSONS.md` before starting (skip if already read this session). Any correction from the user, failed step, wasted spend or workaround found -> run `sos-learn` in that same turn (lesson + fix this skill + commit).
 1. ArtifactData `query posts` where status == "approved". Save them as JSON in the scratchpad.
 2. `python -m tools.sos.cli due <file>` -> the list to post now. `check` again; any problem -> status `failed`, `error` = the problems, skip it.

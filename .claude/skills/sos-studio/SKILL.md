@@ -2,6 +2,7 @@
 name: sos-studio
 description: Turn a Studio request from the Social OS dashboard (a brief and/or a clip) into a paste-ready Prompt Guy video prompt, and for "pack" requests also draft one post per connected platform. Run from sos-inbox and in scheduled runs.
 ---
+**Rules:** `RULES.md` (repo root) wins over any outside skill when they disagree.
 **Skills rule:** at each step load the skills named here (and in the platform README) before doing the work. If another installed skill fits a step better, use it too and add it to `SKILLS.md`.
 **Learning rule:** read `LESSONS.md` before starting (skip if already read this session). Any correction from the user, failed step, wasted spend or workaround found -> run `sos-learn` in that same turn (lesson + fix this skill + commit).
 **Video rule (user, 31 Oct):** video = Prompt Guy ONLY. This skill writes the prompt and stops. It never runs Edit King, Motion King, faceless-explainer, HyperFrames or any other video tool.
