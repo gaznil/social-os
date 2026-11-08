@@ -1,0 +1,14 @@
+{
+  "name": "social-os",
+  "owner": {
+    "name": "Gaznil"
+  },
+  "plugins": [
+    {
+      "name": "social-os",
+      "source": "./",
+      "description": "Social OS: research, plan, write, make, post (after approval) and measure content for many social accounts. Rulebook = RULES.md; works inside the social-os repo.",
+      "version": "0.1.0"
+    }
+  ]
+}

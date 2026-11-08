@@ -1,0 +1,21 @@
+{
+  "name": "social-os",
+  "version": "0.1.0",
+  "description": "Social OS: research, plan, write, make, post (after approval) and measure content for many social accounts. Rulebook = RULES.md; works inside the social-os repo.",
+  "author": {
+    "name": "Gaznil"
+  },
+  "repository": "https://github.com/gaznil/social-os",
+  "license": "MIT",
+  "skills": [
+    "./.claude/skills/sos-account",
+    "./.claude/skills/sos-create",
+    "./.claude/skills/sos-inbox",
+    "./.claude/skills/sos-learn",
+    "./.claude/skills/sos-publish",
+    "./.claude/skills/sos-research",
+    "./.claude/skills/sos-results",
+    "./.claude/skills/sos-schedules",
+    "./.claude/skills/sos-studio"
+  ]
+}

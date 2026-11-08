@@ -214,6 +214,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   comment-keyword ask IG only (never LinkedIn). **Next = step 1b:** package RULES.md + sos-* as own `social-os` plugin,
   then dashboard v24 (account switch).
 
+- **8 Nov 2026: plan v2 STEP 1b DONE.** Own plugin `social-os` = repo root is plugin + marketplace (`.claude-plugin/`),
+  9 sos-* skills listed in place, `claude plugin validate .` passed, loads all 9 (~750 tokens always-on); 50 tests pass.
+  Not installed (not needed inside the repo). **Next = step 2: dashboard v24** (account switch on top, Options screen,
+  Script screen with EN | ML-EN + Approve script, month calendar with swap, previews; plus Hook Vault etc. from the plan).
+  Two old research ideas (`r1031-tools-sheet`, `r1031-uninstall`) still `new`: left for the v2 options flow, not auto-drafted.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
@@ -233,6 +239,9 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **Never automate** likes, follows, mass comments or cold DMs. Instagram replies/DMs after a comment = Porotta, not this system.
 - **Posting only through official APIs** (via Composio). No browser automation, no password sharing, no scraping behind logins.
 - **Rulebook:** `RULES.md` = one rule per task; it beats any outside skill (audit: `docs/skill-audit.md`).
+- **Own plugin:** `.claude-plugin/plugin.json` lists every `sos-*` skill (no copies; paths into `.claude/skills/`). A new
+  `sos-*` skill must be added there; `tests/test_plugin.py` fails otherwise. Inside this repo the skills load as project
+  skills, so the plugin is NOT installed here (installing = a Claude settings change = needs the user's yes).
 - **Skills first:** every `sos-*` skill starts with a skills rule and names the skill for each step; load them before the work,
   and use any other installed skill that fits better (then add it to `SKILLS.md`). Before writing or building, load the skill named in the platform/stage README. If a better one appears, compare
   by opening both (not by stars) and record the result in `SKILLS.md`.
