@@ -202,6 +202,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   (X free route unverified) using story formats; (4) week + month plan, every slot swappable for the user's own content.
   **Dashboard gets an account switch at the top: pick one account, the whole dashboard works only for it.** Plan v2 written: `docs/plans/2026-11-08-v2-social-partner.md` (waiting for user yes). Also asked: research 4 sources, options->script, EN + Malayalam-English toggle, Codex image_gen + OpenMontage (no Canva), thumbnails, full skill audit + own plugin.
 
+- **8 Nov 2026 HANDOFF: plan v2 APPROVED by the user ("yes, start with audit").** Carousel images = Codex image_gen or
+  real images via OpenMontage; thumbnail = best video frame, else Codex improves that frame, then designed. Dashboard
+  lessons from the user's reference carousel added to the plan (Hook Vault, heaters, competitor tracker, scheduler,
+  month calendar, trending feed). **Next (new chat) = Step 1 skill audit** (read all ~80 skills fully -> `docs/skill-audit.md`
+  -> own `social-os` plugin + RULES.md). Then dashboard v24.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

@@ -28,8 +28,9 @@ Status: WAITING FOR USER YES on this plan. Nothing built yet.
         v                                                                    v
  PRODUCTION                                                       Prompt Guy edit prompt
    reel/short: film it, or Prompt Guy prompt; b-roll list (OpenMontage free sources)
-   carousel: images from Codex image_gen (plain images, no text) -> slides designed in HTML
-   thumbnail: Codex plain image -> designed thumbnail (yt-package + banner-design), never a generated poster
+   carousel: images = Codex image_gen (plain, no text) OR real images via OpenMontage sources/APIs -> slides designed in HTML
+   thumbnail: best real FRAME from the video first; no good frame -> Codex image_gen improves that frame (frame as
+     reference); then designed (yt-package + banner-design). Never a fully generated poster.
    all-platform versions: IG reel+carousel+caption, YT short+title+thumbnail, LinkedIn, X, Threads, FB
         |  USER APPROVES FINAL POSTS (gate 2, one tap each)
         v
@@ -59,3 +60,23 @@ Plan view (door A): week + month calendar; every slot has "Use my own content" (
 ## Not decided / to check before building
 - x-pulse X trends free? (test once). OpenMontage licence AGPL - fine for own use, never copied into the public repo.
 - Codex image_gen uses the user's ChatGPT plan limits (no API key).
+
+## Dashboard lessons from the user's reference carousel (8 Nov, @tenfoldmarc "You need a content dashboard", 9 slides
+saved in `C:\Gaznil\social-os-media\carousel-libraryrom-gaznil	enfoldmarc-content-dashboard\`)
+Add to dashboard v24 (with the account switch):
+1. **Overview** greeting line with counts ("3 reels queued, 2 hooks heating") + 3 stat tiles with sparklines.
+2. **Hook Vault (missing today):** every strong hook from competitors/trends/our winners, turned into a template
+   ("Stop doing [X]. Start doing [Y]."), tagged by type (swap/build/claim/list/contrarian) + how often it hit;
+   searchable; "Use this" drops it into the script step.
+3. **Analytics:** views, saves, follows, profile visits over 7/30/90 days; a "heater" = post that beat the account's
+   30-day median by 2x, top 5 with a one-line "why it popped".
+4. **Competitor tracker:** weekly auto run (top 5 reels per tracked creator, transcribed, hook + on-screen text pulled)
+   with "Save to Hook Vault".
+5. **Scheduler:** one post -> pick platforms -> date/time -> caption auto-made from hook + angle + CTA. (We post via
+   Composio, not Zernio.)
+6. **Content calendar:** month grid, each slot = time + platform + format + hook; click -> side panel with full script
+   and caption; plus our "swap for my own content".
+7. **What's trending:** daily feed from fixed sources (AI company blogs, X lists, GitHub trending, niche RSS), each item
+   auto-tagged Hook / Explainer / Skip; top 5 first; morning digest.
+Design of the carousel itself (cream, terracotta, serif-italic accent word, mono labels, page counter, corner marks,
+"Comment GUIDE" last slide) = a carousel template to copy for our own carousels.
