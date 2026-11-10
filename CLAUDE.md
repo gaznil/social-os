@@ -220,6 +220,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   Script screen with EN | ML-EN + Approve script, month calendar with swap, previews; plus Hook Vault etc. from the plan).
   Two old research ideas (`r1031-tools-sheet`, `r1031-uninstall`) still `new`: left for the v2 options flow, not auto-drafted.
 
+- **10 Nov 2026: plan v2 STEP 2 (dashboard v24) DONE + published.** Account switch in the header (every tab filters to
+  one account; remembered per device), **Plan tab** (doors A week/month, B topic/repo, C -> Studio; Options to Pick/Drop;
+  Scripts with English | Malayalam-English toggle + Approve script / Ask changes), **Hook Vault tab** (search + type chips,
+  "Use this" -> idea), **Calendar = month grid** (tap a slot: Use my own content / New options / Remove) + the 14-day list.
+  New collections `options`, `scripts`, `hooks` in docs/DATA.md; sos-inbox step 1b handles them. Checked in Playwright at
+  390 px with fake data (no errors, no sideways scroll). Not built from the plan's list yet: analytics heaters, competitor
+  tracker auto-run, trending feed (they need step 3 research v2). **Next = step 3: research v2** (4 sources every run).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

@@ -316,12 +316,34 @@ textarea.field-in { min-height: 100px; resize: vertical; }
 .gtiles span { font-size: 13px; color: var(--muted); }
 .gempty { color: var(--muted); margin: 0; }
 @media (max-width: 640px) { .gtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .growth h2 { font-size: 28px; } }
+/* v24 */
+.acct-switch { flex: none; max-width: 190px; border: 0; background: var(--surface-2); color: var(--fg); font: 400 12px var(--font-mono); padding: 6px 10px; border-radius: 99px; box-shadow: inset 0 0 0 1px var(--line); }
+.doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0 0 18px; }
+.door { display: flex; flex-direction: column; gap: 8px; } .door p { margin: 0; }
+.seg { display: inline-flex; background: var(--surface-2); border-radius: 99px; padding: 3px; margin: 8px 0; box-shadow: inset 0 0 0 1px var(--line); }
+.seg button { border: 0; background: none; color: var(--muted); font: 400 12px var(--font-mono); padding: 5px 12px; border-radius: 99px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.answer.script { white-space: pre-wrap; }
+.chips { flex-wrap: wrap; margin: 8px 0 14px; }
+.chip { border: 0; background: var(--surface-2); color: var(--muted); font: 400 12px var(--font-mono); padding: 5px 12px; border-radius: 99px; cursor: pointer; box-shadow: inset 0 0 0 1px var(--line); }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--surface); }
+.card.hook[hidden] { display: none; }
+.month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin: 8px 0 18px; }
+.mhead { font: 400 11px var(--font-mono); color: var(--muted); text-align: center; padding: 4px 0; }
+.mday { min-height: 84px; background: var(--surface); border-radius: 10px; padding: 6px; box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.mday.off { background: none; box-shadow: none; } .mday.today { box-shadow: inset 0 0 0 2px var(--fg); }
+.dn { font: 400 11px var(--font-mono); color: var(--muted); }
+.slot { display: flex; align-items: center; gap: 4px; border: 0; background: var(--surface-2); border-radius: 6px; padding: 3px 5px; font: 400 10px var(--font-mono); color: var(--fg); cursor: pointer; text-align: left; min-width: 0; }
+.slot span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .slot svg { width: 11px; height: 11px; flex: none; }
+.slotpanel { margin: 0 0 18px; }
+@media (max-width: 640px) { .doors { grid-template-columns: 1fr; } .mday { min-height: 56px; padding: 3px; } .slot > span:last-child { display: none; } .slot .plat { font-size: 0; gap: 0; } .acct-switch { max-width: 120px; } }
 </style>
 
 <header>
   <div class="wrap bar">
     <div class="brand"><i></i>Social OS</div>
     <nav id="tabs" role="tablist"></nav>
+    <select class="acct-switch" id="acct-switch" aria-label="Account"></select>
     <div class="mode" id="mode"><button data-mode="live">Live</button><button data-mode="showcase">Showcase</button></div>
   </div>
 </header>
@@ -344,8 +366,13 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [], competitors: [], jobs: [], stats: [] };
-const ui = { growth: "all", loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
+const state = { accounts: [], posts: [], messages: [], ideas: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [] };
+const raw = {};
+// Account switch (v24): every tab shows only the picked account; rows with no accountId belong to all accounts.
+function applyAccount() {
+  for (const [k, v] of Object.entries(raw)) state[k] = k === "accounts" || !ui.acct ? v : v.filter(d => !d.accountId || d.accountId === ui.acct);
+}
+const ui = { acct: "", lang: {}, calPick: null, monthOff: 0, htype: "all", growth: "all", loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
 
 const MODELS = {
   haiku:  { model: "claude-haiku-5-5",  modelTier: "quick",   label: "Haiku 5.5" },
@@ -365,7 +392,7 @@ const BRAND = { instagram: "#e1306c", youtube: "#ff0033", linkedin: "#0a66c2", x
 const logoOf = p => ICONS[p] ? `<span style="color:${BRAND[p] || "currentColor"};display:inline-flex">${svg(p)}</span>` : "";
 const plat = p => `<span class="plat">${logoOf(p)}${PLATFORMS[p] || p}</span>`;
 const MANUAL = { x: "https://x.com/compose/post" };
-const TABS = [["wall", "Control room"], ["approve", "Approve"], ["calendar", "Calendar"], ["accounts", "Accounts"], ["ideas", "Ideas"], ["studio", "Studio"], ["schedules", "Schedules"]];
+const TABS = [["wall", "Control room"], ["plan", "Plan"], ["approve", "Approve"], ["calendar", "Calendar"], ["hooks", "Hook Vault"], ["accounts", "Accounts"], ["ideas", "Ideas"], ["studio", "Studio"], ["schedules", "Schedules"]];
 const TZ = "Asia/Kolkata";
 const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -376,6 +403,7 @@ const store = {
 let tab = store.get("sos.tab3", "wall");
 if (!TABS.some(t => t[0] === tab)) tab = "wall";
 let mode = store.get("sos.mode", "");
+ui.acct = store.get("sos.acct", "");
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -403,12 +431,15 @@ async function connect() {
   db = window.claude ? await claude.use("db") : null;
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  let pending = 8;
-  for (const name of ["accounts", "posts", "messages", "ideas", "schedules", "competitors", "jobs", "stats"]) {
+  const names = ["accounts", "posts", "messages", "ideas", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks"];
+  let pending = names.length;
+  for (const name of names) {
     let first = true;
     db.collection(name).onSnapshot(
       snap => {
-        state[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        raw[name] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (name === "accounts" && ui.acct && !raw.accounts.some(a => a.id === ui.acct)) ui.acct = "";
+        applyAccount();
         if (first) { first = false; if (--pending === 0) { ui.loaded = true; clearTimeout(timer); if (!mode) { mode = state.posts.length ? "live" : "showcase"; lastKey = ""; } } }
         if ((name === "accounts" || name === "competitors") && tab === "accounts") lastKey = "";
         render(true);
@@ -1177,12 +1208,75 @@ function viewSchedules() {
     </section>`;
 }
 
-const VIEWS = { wall: viewWall, approve: viewApprove, calendar: viewCalendar, accounts: viewAccounts, ideas: viewIdeas, studio: viewStudio, schedules: viewSchedules };
+/* ---------- v24: Plan (doors -> options -> script), Hook Vault, month calendar ---------- */
+const SCRIPT_STATE = { draft: "Waiting for your yes", approved: "Approved", changes: "Changes asked" };
+function needAcct() { return ui.acct ? "" : `<div class="banner">Pick one account at the top first. Plan works for one account at a time.</div>`; }
+function viewPlan() {
+  const q = state.posts.filter(p => p.status === "waiting").length, opts = state.options.filter(o => o.status === "new"),
+    scr = state.scripts.filter(s => s.status === "draft");
+  const rq = state.messages.filter(m => m.kind && m.status === "new");
+  return `${needAcct()}<h2>${esc(greeting())}. ${opts.length} option${opts.length === 1 ? "" : "s"} to pick, ${scr.length} script${scr.length === 1 ? "" : "s"} to approve, ${q} post${q === 1 ? "" : "s"} waiting.</h2>
+    <div class="doors">
+      <section class="card door"><b>A · Plan my week</b><p class="muted">Claude researches competitors, X, GitHub and the profiles you like, then brings options.</p>
+        <div class="row"><button class="btn primary" data-door="week">Plan my week</button><button class="btn" data-door="month">Plan my month</button></div></section>
+      <section class="card door"><b>B · One video about…</b><p class="muted">A topic, a tool or a GitHub link. Claude reads it and brings 3 to 5 options.</p>
+        <textarea class="field-in" id="door-topic" placeholder="e.g. github.com/… or Claude Code hooks"></textarea>
+        <div class="row"><button class="btn primary" data-door="topic">Get options</button></div></section>
+      <section class="card door"><b>C · Here is my video</b><p class="muted">Your own clip. Claude writes the edit prompt and every platform version.</p>
+        <div class="row"><button class="btn primary" data-tab="studio">Open Studio</button></div></section>
+    </div>
+    ${rq.length ? `<p class="muted">${rq.length} request${rq.length > 1 ? "s" : ""} waiting for Claude's next chat.</p>` : ""}
+    <h2>Options</h2>
+    ${opts.length ? `<div class="list">${opts.map(o => `<article class="card"><div class="meta"><span>${esc(o.door === "topic" ? "Your topic" : o.door === "video" ? "Your video" : "Plan")}</span>${o.storyFormat ? `<span>${esc(o.storyFormat)}</span>` : ""}${o.format ? `<span>${esc(o.format)}</span>` : ""}</div>
+      <p class="caption"><b>${esc(o.title)}</b></p>${o.why ? `<span class="muted">Why: ${esc(o.why)}</span>` : ""}
+      <div class="row"><button class="btn primary" data-opt="picked" data-id="${esc(o.id)}">Pick this</button><button class="btn" data-opt="dropped" data-id="${esc(o.id)}">Drop</button></div></article>`).join("")}</div>`
+      : `<div class="empty">No options yet. Open a door above; Claude brings options in its next chat.</div>`}
+    <h2>Scripts</h2>
+    ${scr.length ? `<div class="list">${scr.map(s => { const l = ui.lang[s.id] || "en"; return `<article class="card"><div class="meta"><span>${esc(s.title || "Script")}</span>${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${pill("waiting", SCRIPT_STATE[s.status])}</div>
+      <div class="seg" role="group"><button aria-pressed="${l === "en"}" data-lang="en" data-id="${esc(s.id)}">English</button><button aria-pressed="${l === "ml"}" data-lang="ml" data-id="${esc(s.id)}">Malayalam-English</button></div>
+      <div class="answer script">${esc((l === "ml" ? s.mlen : s.en) || "Not written yet.")}</div>
+      <div class="field"><input class="field-in" id="chg-${esc(s.id)}" placeholder="What should change? (only for Ask changes)" maxlength="400"></div>
+      <div class="row"><button class="btn primary" data-scr="approved" data-id="${esc(s.id)}">Approve script</button><button class="btn" data-scr="changes" data-id="${esc(s.id)}">Ask changes</button></div></article>`; }).join("")}</div>`
+      : `<div class="empty">No scripts waiting. Pick an option and Claude writes the script in both languages.</div>`}`;
+}
+const HOOK_TYPES = ["swap", "build", "claim", "list", "contrarian"];
+function viewHooks() {
+  const hooks = [...state.hooks].sort((a, b) => (b.hits || 0) - (a.hits || 0));
+  return `<h2>Hook Vault</h2><p class="muted" style="margin:0 0 10px">Strong hooks from competitors, trends and our winners, turned into templates. "Use this" saves it to Ideas for your next script.</p>
+    <div class="row"><input class="field-in" id="hook-q" placeholder="Search hooks" style="flex:1"></div>
+    <div class="row chips">${["all", ...HOOK_TYPES].map(t => `<button class="chip" aria-pressed="${t === (ui.htype || "all")}" data-htype="${t}">${t}</button>`).join("")}</div>
+    ${hooks.length ? `<div class="list">${hooks.map(h => `<article class="card hook" data-text="${esc((h.template + " " + (h.example || "") + " " + (h.type || "")).toLowerCase())}" data-type="${esc(h.type || "")}">
+      <div class="meta"><span>${esc(h.type || "hook")}</span>${h.hits ? `<span>hit ${esc(h.hits)}x</span>` : ""}${h.source ? `<span>${esc(h.source)}</span>` : ""}</div>
+      <p class="caption"><b>${esc(h.template)}</b></p>${h.example ? `<span class="muted">Example: ${esc(h.example)}</span>` : ""}
+      <div class="row"><button class="btn" data-hook="${esc(h.id)}">Use this</button></div></article>`).join("")}</div>`
+      : `<div class="empty">Empty for now. Claude fills it at the next research run.</div>`}`;
+}
+function viewMonth() {
+  const now = new Date(), y = +new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric" }).format(now), m = +new Intl.DateTimeFormat("en-CA", { timeZone: TZ, month: "numeric" }).format(now) - 1;
+  const first = new Date(Date.UTC(y, m + ui.monthOff, 1)), days = new Date(Date.UTC(y, m + ui.monthOff + 1, 0)).getUTCDate();
+  const lead = (first.getUTCDay() + 6) % 7, today = dayKey(now.toISOString());
+  const by = {}; for (const p of state.posts) if (p.plannedAt && p.status !== "rejected") (by[dayKey(p.plannedAt)] ||= []).push(p);
+  const title = new Intl.DateTimeFormat("en-IN", { month: "long", year: "numeric", timeZone: "UTC" }).format(first);
+  let cells = Array.from({ length: lead }, () => `<div class="mday off"></div>`).join("");
+  for (let d = 1; d <= days; d++) {
+    const k = `${first.getUTCFullYear()}-${String(first.getUTCMonth() + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells += `<div class="mday${k === today ? " today" : ""}"><span class="dn">${d}</span>${(by[k] || []).sort(byTime).map(p => `<button class="slot s-${esc(p.status)}" data-slot="${esc(p.id)}" title="${esc(p.title || p.caption)}">${plat(p.platform)}<span>${esc(fmtHour(p.plannedAt))} ${esc(p.format)}</span></button>`).join("")}</div>`;
+  }
+  const sp = ui.calPick && state.posts.find(p => p.id === ui.calPick);
+  return `<div class="row" style="justify-content:space-between"><h2>${esc(title)}</h2><div class="row"><button class="btn" data-mon="-1" aria-label="Previous month">‹</button><button class="btn" data-mon="0">Today</button><button class="btn" data-mon="1" aria-label="Next month">›</button></div></div>
+    <div class="month">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => `<div class="mhead">${d}</div>`).join("")}${cells}</div>
+    ${sp ? `<section class="card slotpanel">${postMeta(sp)}${sp.title ? `<b>${esc(sp.title)}</b>` : ""}<p class="caption">${esc(sp.caption)}</p>
+      <div class="row"><button class="btn" data-swap="own">Use my own content</button><button class="btn" data-swap="options">New options</button>${canMove(sp.status, "rejected") ? `<button class="btn danger" data-swap="remove">Remove</button>` : ""}<button class="btn" data-swap="close">Close</button></div></section>` : ""}
+    ${viewCalendar()}`;
+}
 
-let lastKey = "";
+const VIEWS = { plan: viewPlan, hooks: viewHooks, wall: viewWall, approve: viewApprove, calendar: viewMonth, accounts: viewAccounts, ideas: viewIdeas, studio: viewStudio, schedules: viewSchedules };
+
+let lastKey = "", prevKey = "";
 function render(dataChanged) {
   const waiting = state.posts.filter(p => p.status === "waiting").length;
   $("#tabs").innerHTML = TABS.map(([k, l]) => `<button role="tab" aria-selected="${k === tab}" data-tab="${k}">${l}${k === "approve" && waiting ? `<span class="n">${waiting}</span>` : ""}</button>`).join("");
+  $("#acct-switch").innerHTML = `<option value="">All accounts</option>` + state.accounts.map(a => `<option value="${esc(a.id)}" ${a.id === ui.acct ? "selected" : ""}>${esc(a.label)} · ${esc(PLATFORMS[a.platform] || a.platform)}</option>`).join("");
   document.querySelectorAll("#mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === (mode || "showcase"))));
   const key = tab + "|" + mode;
   if (key === lastKey && (tab === "wall" || tab === "ideas" || tab === "studio")) {
@@ -1199,7 +1293,11 @@ function render(dataChanged) {
   if (ui.offline) html += `<div class="banner">Open this page signed in to claude.ai to see your data. The control room is showing demo content.</div>`;
   for (const [name, why] of Object.entries(ui.errors)) html += `<div class="banner">Couldn't load ${esc(name)}: ${esc(why)}. Reopen the page to retry.</div>`;
   stopLoops();
+  const keep = key === prevKey ? [...document.querySelectorAll("#view [id]")].filter(e => "value" in e && e.value).map(e => [e.id, e.value]) : [];
+  prevKey = key;
   $("#view").innerHTML = html + VIEWS[tab]();
+  for (const [id, v] of keep) { const el = document.getElementById(id); if (el) el.value = v; }
+  if (tab === "hooks") filterHooks();
   if (tab === "wall") { paintRail(true); startOrb(); requestAnimationFrame(layoutPin); }
 }
 function paintHero() {
@@ -1247,6 +1345,60 @@ document.addEventListener("click", async e => {
     return;
   }
   if (!db && (t.dataset.act || t.dataset.sch || t.id === "idea-save" || t.id === "sch-save" || t.id === "comp-save" || t.dataset.compRemove || t.id === "job-prompt" || t.id === "job-pack")) return showToast("Sign in to claude.ai to save.");
+  if (t.dataset.lang) { ui.lang[t.dataset.id] = t.dataset.lang; lastKey = ""; render(); return; }
+  if (t.dataset.mon) { ui.monthOff = t.dataset.mon === "0" ? 0 : ui.monthOff + +t.dataset.mon; lastKey = ""; render(); return; }
+  if (t.dataset.slot) { ui.calPick = t.dataset.slot; lastKey = ""; render(); return; }
+  if (t.dataset.htype) {
+    document.querySelectorAll("[data-htype]").forEach(b => b.setAttribute("aria-pressed", String(b === t)));
+    ui.htype = t.dataset.htype; filterHooks(); return;
+  }
+  if (!db && (t.dataset.door || t.dataset.opt || t.dataset.scr || t.dataset.hook || (t.dataset.swap && t.dataset.swap !== "close"))) return showToast("Sign in to claude.ai to save.");
+  if (t.dataset.door) {
+    if (!ui.acct) return showToast("Pick one account at the top first.");
+    const topic = t.dataset.door === "topic" ? $("#door-topic").value.trim() : "";
+    if (t.dataset.door === "topic" && !topic) return showToast("Write the topic or paste a link first.");
+    const text = { week: "Plan my week", month: "Plan my month", topic: `One video about: ${topic}` }[t.dataset.door];
+    t.disabled = true;
+    try { await db.collection("messages").add({ from: "user", kind: t.dataset.door, accountId: ui.acct, text, status: "new", reply: null, createdAt: nowIso() });
+      if (t.dataset.door === "topic") $("#door-topic").value = ""; showToast("Saved. Claude brings options in its next chat."); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    t.disabled = false; return;
+  }
+  if (t.dataset.opt) {
+    t.disabled = true;
+    try { await db.doc(`options/${t.dataset.id}`).update({ status: t.dataset.opt, updatedAt: nowIso() }); showToast(t.dataset.opt === "picked" ? "Picked. Claude writes the script next." : "Dropped"); }
+    catch (err) { t.disabled = false; showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.scr) {
+    const note = ($(`#chg-${CSS.escape(t.dataset.id)}`)?.value || "").trim();
+    if (t.dataset.scr === "changes" && !note) return showToast("Write what should change first.");
+    t.disabled = true;
+    const patch = t.dataset.scr === "approved" ? { status: "approved", approvedAt: nowIso(), lang: ui.lang[t.dataset.id] || "en" } : { status: "changes", note };
+    try { await db.doc(`scripts/${t.dataset.id}`).update({ ...patch, updatedAt: nowIso() }); showToast(t.dataset.scr === "approved" ? "Script approved. Claude makes every platform version next." : "Sent. Claude rewrites it."); }
+    catch (err) { t.disabled = false; showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.hook) {
+    const h = state.hooks.find(x => x.id === t.dataset.hook); if (!h) return;
+    try { await saveIdea(`HOOK: ${h.template}${h.example ? ` (example: ${h.example})` : ""}`, ui.acct || h.accountId || ""); showToast("Saved to Ideas. Claude uses it in the next script."); }
+    catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.swap) {
+    const p = state.posts.find(x => x.id === ui.calPick);
+    if (t.dataset.swap === "close" || !p) { ui.calPick = null; lastKey = ""; render(); return; }
+    t.disabled = true;
+    try {
+      if (t.dataset.swap === "remove") await setStatus(p, "rejected");
+      else { await db.collection("messages").add({ from: "user", kind: t.dataset.swap === "own" ? "swap-own" : "swap-options", accountId: p.accountId, postId: p.id,
+          text: t.dataset.swap === "own" ? `Swap the ${fmtTime(p.plannedAt)} slot for my own content` : `New options for the ${fmtTime(p.plannedAt)} slot`, status: "new", reply: null, createdAt: nowIso() });
+        showToast(t.dataset.swap === "own" ? "Saved. Add your clip in Studio; Claude fits it into this slot." : "Saved. Claude brings new options for this slot."); }
+      ui.calPick = null; lastKey = ""; render();
+    } catch (err) { t.disabled = false; showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+
   if (t.id === "job-prompt" || t.id === "job-pack") {
     const accountId = $("#job-acct").value, brief = $("#job-brief").value.trim(), clipUrl = $("#job-clip").value.trim();
     if (!accountId) return showToast("Add an account first (Accounts tab).");
@@ -1295,6 +1447,15 @@ document.addEventListener("click", async e => {
     try { if (await saveIdea($("#idea-text").value, $("#idea-acct").value)) { $("#idea-text").value = ""; showToast("Idea saved"); } else showToast("Write the idea first."); }
     catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
   }
+});
+function filterHooks() {
+  const q = ($("#hook-q")?.value || "").toLowerCase().trim(), ty = ui.htype || "all";
+  document.querySelectorAll(".card.hook").forEach(c => { c.hidden = (q && !c.dataset.text.includes(q)) || (ty !== "all" && c.dataset.type !== ty); });
+}
+document.addEventListener("input", e => { if (e.target.id === "hook-q") filterHooks(); });
+document.addEventListener("change", e => {
+  if (e.target.id !== "acct-switch") return;
+  ui.acct = e.target.value; store.set("sos.acct", ui.acct); ui.calPick = null; applyAccount(); lastKey = ""; render(true);
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") { if (document.querySelector(".menu")) closePick(); else if (voice) voice.close(); else if (sheet) closeSheet(); }
