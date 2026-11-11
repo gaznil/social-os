@@ -26,9 +26,7 @@ description: Turn a Studio request from the Social OS dashboard (a brief and/or 
      hook spoken + on screen by frame 1 inside 3 s, no intro/greeting, a new frame every beat (max 4 s), ends on one ask;
      YouTube long = first 15 s confirms the title, ~150 words/min, `[ON SCREEN: ...]` per beat.
    - On-screen text: max 6 words per card, 1080x1920 safe zone y 230-1440, right 230 px clear, burned-in captions.
-   - Thumbnail/cover: frame 1 is the Instagram cover (no fade from black, hook readable). YouTube thumbnail = the best
-     real frame of the video (else Codex image_gen improves that frame), max 3 words, never the title's words, same
-     promise. Ask Prompt Guy to name the frame time to use and its 3 words.
+   - Thumbnail: Prompt Guy's own thumbnail rule (best real frame, not frame 1; Codex improves it if none is good).
 5. Kind `pack`: ArtifactData `list accounts`, save to the scratchpad, run `python -m tools.sos.cli pack-plan <job.json> <accounts.json>`.
    For each target run `sos-create` (format from the plan, its own rewrite per account, never the same text twice on one
    platform, status `waiting`). Collect the post ids into `postIds`. Empty plan -> `note` "No other active accounts yet."
