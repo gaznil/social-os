@@ -21,12 +21,8 @@ description: Turn a Studio request from the Social OS dashboard (a brief and/or 
    `update` `prompt` = the prompt text (plain, no code fences).
    **Studio ask (hand this to Prompt Guy with the brief; it follows it over its own rules):**
    - Account: which account, on camera or faceless, language (English / Malayalam-English, from the job or `voice.md`).
-   - Script: an approved `scripts` doc for this idea is used word for word, never rewritten. No script -> write one by
-     `RULES.md`: 3 hooks from 3 formulas, top one by `hookscore.py`; ONE story format for the body; reel/Short 15-45 s,
-     hook spoken + on screen by frame 1 inside 3 s, no intro/greeting, a new frame every beat (max 4 s), ends on one ask;
-     YouTube long = first 15 s confirms the title, ~150 words/min, `[ON SCREEN: ...]` per beat.
-   - On-screen text: max 6 words per card, 1080x1920 safe zone y 230-1440, right 230 px clear, burned-in captions.
-   - Thumbnail: Prompt Guy's own thumbnail rule (best real frame, not frame 1; Codex improves it if none is good).
+   - Script + on-screen text + thumbnail: Prompt Guy's own Script and Thumbnail rules; pass the approved `scripts`
+     doc for this idea if there is one.
 5. Kind `pack`: ArtifactData `list accounts`, save to the scratchpad, run `python -m tools.sos.cli pack-plan <job.json> <accounts.json>`.
    For each target run `sos-create` (format from the plan, its own rewrite per account, never the same text twice on one
    platform, status `waiting`). Collect the post ids into `postIds`. Empty plan -> `note` "No other active accounts yet."
