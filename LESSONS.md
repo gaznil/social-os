@@ -3,6 +3,14 @@
 Written by the `sos-learn` skill. Read at every session start (sos-inbox step 0). Newest first. One lesson per entry;
 repeats get `seen xN`, not a new entry. Rules here are already copied into the skill named in "Fixed in".
 
+## 2026-11-12 · HIGH · Paid promo scripts: only true claims, one ask
+- **Mistake:** rewrote a brand's promo reel script and kept "I'm going / follow along" from their draft, then swapped in
+  "you'll see them here first", a new promise the user would not keep. User wasn't attending and posts nothing after.
+- **Rule:** before rewriting a sponsor's script, ask or know the deal: what is posted (reel/story), collab tag or not,
+  is the user attending, any follow-up posts. Cut every personal claim that isn't true (use "if I were there..."),
+  never add promises of future content, ONE ask (the brand's). Keep every fact the brand gave. Caption starts with #ad.
+- **Fixed in:** this lesson (sos-create reads LESSONS at start).
+
 ## 2026-10-31 · HIGH · Build the whole system; the user tests it later
 - **Mistake:** ended a turn pointing the user at approvals instead of building on.
 - **Rule:** the job is to build every planned part now, end to end. The user uses it and says what to improve. Never stop to ask them to test; keep building the next phase. Their own actions (approve, film, add accounts) are theirs, done whenever.
