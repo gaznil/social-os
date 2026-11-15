@@ -3,6 +3,13 @@
 Written by the `sos-learn` skill. Read at every session start (sos-inbox step 0). Newest first. One lesson per entry;
 repeats get `seen xN`, not a new entry. Rules here are already copied into the skill named in "Fixed in".
 
+## 2026-11-15 · MEDIUM · Opinions on hooks/offers need evidence
+- **Mistake:** recommended a hook and a prize split ("2 winners x 3 months") from judgment only; user: "dont just guess".
+- **Rule:** when the user asks "what do you think" about a hook, score every option with `ig-reel/hookscore.py` and show
+  the numbers; for offers/prizes, search for data first and say plainly when none was found. Also check the prize can
+  be delivered (Claude gift subscriptions were unavailable on 15 Nov 2026).
+- **Fixed in:** this lesson (sos-create reads LESSONS at start).
+
 ## 2026-11-12 · HIGH · Paid promo scripts: only true claims, one ask
 - **Mistake:** rewrote a brand's promo reel script and kept "I'm going / follow along" from their draft, then swapped in
   "you'll see them here first", a new promise the user would not keep. User wasn't attending and posts nothing after.
