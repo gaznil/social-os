@@ -1,12 +1,13 @@
 """Command line for skills: `due` and `check` on a JSON list of posts (each with an "id");
 `studio-check <job.json>` and `pack-plan <job.json> <accounts.json>` for video studio jobs;
-`best-times <posts.json>` and `growth <stats.json> --account <id|all> --today YYYY-MM-DD` for results."""
+`best-times <posts.json>` and `growth <stats.json> --account <id|all> --today YYYY-MM-DD` for results;
+`score-radar <items.json>` for Reel Radar priority ranking."""
 import argparse
 import json
 import sys
 from datetime import datetime, timezone
 
-from tools.sos import preflight, queue, results, studio
+from tools.sos import preflight, queue, radar, results, studio
 
 
 def load(path):
@@ -16,7 +17,7 @@ def load(path):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m tools.sos.cli")
-    ap.add_argument("command", choices=["due", "check", "studio-check", "pack-plan", "best-times", "growth"])
+    ap.add_argument("command", choices=["due", "check", "studio-check", "pack-plan", "best-times", "growth", "score-radar"])
     ap.add_argument("file")
     ap.add_argument("accounts", nargs="?", help="pack-plan only: JSON list of accounts")
     ap.add_argument("--now", help="ISO time with offset; default = now")
@@ -30,6 +31,8 @@ def main(argv=None):
         result = results.best_times(posts)
     elif args.command == "growth":
         result = results.growth_tiles(posts, args.account, args.today or datetime.now().date().isoformat())
+    elif args.command == "score-radar":
+        result = radar.rank_inspirations(posts)
     elif args.command == "studio-check":
         result = studio.check_job(posts)
     elif args.command == "pack-plan":

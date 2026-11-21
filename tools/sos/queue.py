@@ -13,8 +13,8 @@ _ALLOWED = {
     "rejected": {"draft"},
 }
 
-# Platforms with no free posting API yet: the user posts these by hand.
-MANUAL_PLATFORMS = frozenset({"x", "threads"})
+# Platforms with no free posting API yet: the user posts these by hand (Threads is automatic via Composio).
+MANUAL_PLATFORMS = frozenset({"x"})
 
 
 def can_move(old, new):

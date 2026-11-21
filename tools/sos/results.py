@@ -36,7 +36,7 @@ def growth_tiles(stats, account_id, today):
     def followers_on(days):
         latest = {}
         for s in rows:
-            if s["date"] <= max(days):
+            if s["date"] <= max(days) and s.get("followers") is not None:
                 latest[s["accountId"]] = s["followers"]
         return sum(latest.values()) if latest else None
 

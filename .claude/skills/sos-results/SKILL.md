@@ -11,8 +11,8 @@ description: Pull the numbers for every active Social OS account (followers, vie
 2. Per account, through its Composio connection (`COMPOSIO_SEARCH_TOOLS` for the read tool of that platform; never guess a tool name):
    - Instagram: account followers + each posted item's insights (views/plays, reach, likes, comments, saves, shares).
    - LinkedIn: follower count and post stats when the API gives them; a member profile often gets none -> `note` it once, don't retry daily.
-   - YouTube / Facebook: channel or page followers + per-video/post views, when connected.
-   - X / Threads: manual accounts, skip (no free API).
+   - YouTube / Facebook / Threads: channel, page or Threads followers + per-video/post views & insights (`THREADS_GET_POST_INSIGHTS` for Threads), when connected.
+   - X: manual account, skip (no free API).
    A read that fails -> keep going with the others; put the reason in the run summary.
 3. For each posted item: ArtifactData `update posts/<id>` `metrics` = `{views, reach, likes, comments, saves, shares, checkedAt}` (missing numbers = null, never 0).
 4. ArtifactData `set stats/<accountId>-<YYYY-MM-DD>` (India date) = `{accountId, date, followers, views, posts}`: views = new views since the last stats doc, posts = items posted that day. One doc per account per day; a second run the same day overwrites it.

@@ -61,7 +61,7 @@ class DuePosts(unittest.TestCase):
 
     def test_manual_platforms_never_due(self):
         posts = [post(id="x1", platform="x"), post(id="t1", platform="threads")]
-        self.assertEqual(queue.due_posts(posts, NOW), [])
+        self.assertEqual([p["id"] for p in queue.due_posts(posts, NOW)], ["t1"])
 
     def test_missing_time_skipped(self):
         self.assertEqual(queue.due_posts([post(plannedAt=None)], NOW), [])

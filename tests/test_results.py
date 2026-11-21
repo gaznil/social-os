@@ -46,3 +46,12 @@ class GrowthTilesTest(unittest.TestCase):
     def test_no_data(self):
         self.assertEqual(growth_tiles([], "ig-a", "2026-10-31"),
                          {"followers": None, "viewsWeek": 0, "postsWeek": 0, "change": None})
+
+    def test_skips_null_followers(self):
+        stats = [
+            {"accountId": "ig-a", "date": "2026-10-30", "followers": 100, "views": 20, "posts": 1},
+            {"accountId": "ig-a", "date": "2026-10-31", "followers": None, "views": 10, "posts": 0},
+        ]
+        t = growth_tiles(stats, "ig-a", "2026-10-31")
+        self.assertEqual(t["followers"], 100)
+        self.assertEqual(t["viewsWeek"], 30)

@@ -1,6 +1,6 @@
 # Social OS v2 - "social partner" (plan, 8 Nov 2026)
 
-Status: WAITING FOR USER YES on this plan. Nothing built yet.
+Status: APPROVED (8 Nov 2026). Steps 1, 1b, 2 (dashboard v24) + v25 Reel Radar & Dashboard Overhaul BUILT. Next: Step 3 (research v2).
 
 ## The flow (one account at a time)
 
