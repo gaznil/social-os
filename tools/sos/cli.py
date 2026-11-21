@@ -1,7 +1,7 @@
 """Command line for skills: `due` and `check` on a JSON list of posts (each with an "id");
 `studio-check <job.json>` and `pack-plan <job.json> <accounts.json>` for video studio jobs;
-`best-times <posts.json>` and `growth <stats.json> --account <id|all> --today YYYY-MM-DD` for results;
-`score-radar <items.json>` for Reel Radar priority ranking."""
+`best-times <posts.json>`, `heaters <posts.json> [--today YYYY-MM-DD]`, and `growth <stats.json> --account <id|all> --today YYYY-MM-DD` for results;
+`score-radar <items.json> [--now ISO]` for Reel Radar priority ranking."""
 import argparse
 import json
 import sys
@@ -17,22 +17,24 @@ def load(path):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m tools.sos.cli")
-    ap.add_argument("command", choices=["due", "check", "studio-check", "pack-plan", "best-times", "growth", "score-radar"])
+    ap.add_argument("command", choices=["due", "check", "studio-check", "pack-plan", "best-times", "heaters", "growth", "score-radar"])
     ap.add_argument("file")
     ap.add_argument("accounts", nargs="?", help="pack-plan only: JSON list of accounts")
     ap.add_argument("--now", help="ISO time with offset; default = now")
     ap.add_argument("--account", default="all", help="growth only: account id or all")
-    ap.add_argument("--today", help="growth only: YYYY-MM-DD; default = today")
+    ap.add_argument("--today", help="growth/heaters: YYYY-MM-DD; default = today")
     args = ap.parse_args(argv)
 
     posts = load(args.file)
 
     if args.command == "best-times":
         result = results.best_times(posts)
+    elif args.command == "heaters":
+        result = results.find_heaters(posts, today=args.today)
     elif args.command == "growth":
         result = results.growth_tiles(posts, args.account, args.today or datetime.now().date().isoformat())
     elif args.command == "score-radar":
-        result = radar.rank_inspirations(posts)
+        result = radar.rank_inspirations(posts, now=args.now)
     elif args.command == "studio-check":
         result = studio.check_job(posts)
     elif args.command == "pack-plan":

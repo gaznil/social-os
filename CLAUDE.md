@@ -227,6 +227,25 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   New collections `options`, `scripts`, `hooks` in docs/DATA.md; sos-inbox step 1b handles them. Checked in Playwright at
   390 px with fake data (no errors, no sideways scroll). Not built from the plan's list yet: analytics heaters, competitor
   tracker auto-run, trending feed (they need step 3 research v2). **Next = step 3: research v2** (4 sources every run).
+- **21 Nov 2026: Social OS v25 + v26 (Quiet Studio OS, Reel Radar, Daily Auto-Run, Self-Learning & Shelf-Life Expiry) DONE.**
+  1. **Engine & CLI (`tools/sos/`):** Fixed `MANUAL_PLATFORMS = {"x"}` (Threads is automatic via Composio), 1-7 story frames in
+     `preflight.py` and `platforms/instagram/PUBLISH.md`, null-follower guard + `find_heaters` (`heaters` CLI: 2x+ median outliers
+     and 90-day evergreen recycling) in `results.py`, and built `tools/sos/radar.py` (`score-radar` CLI: exact tracking-param
+     cleaner, IG `/p/`+`/reel/`+`/reels/` deduplication, First-Mover bonus/penalty, Relatability score, and `update`/`trend`/`evergreen`
+     Shelf-Life expiry engine where live trends outrank evergreen P1s and expired items sink to `tier: "expired"`).
+  2. **Skills (`sos-radar`, `sos-research`, `sos-learn`, `sos-inbox`, `sos-results`, `sos-publish`):** Added `sos-radar` to
+     `.claude-plugin/plugin.json` (10 skills total); upgraded `sos-research` to the 6-source Daily Auto-Run (GitHub trending/releases,
+     Reddit/HN/YouTube, Web/AI news, Reel Radar, Competitors, Heaters); upgraded `sos-learn` + `sos-inbox` to extract structured
+     voice/edit/hook rules from video transcripts (`deepdive.py`), caption inline edits (`editedFrom`), script notes (`note`),
+     draft feedback (`feedbackNote`), and heaters into `learnings/{id}` and `accounts/{id}.voiceProfile`.
+  3. **Dashboard v26 (`dashboard/index.html`):** Rebuilt into the **Quiet Studio OS** (6 tabs: `Home`, `Plan`, `Approve`,
+     `Calendar`, `Studio`, `Accounts`) with multilingual Apple-style Welcome screen + Iris reveal, 3D Liquid-Glass Pearl Sphere
+     orbit stage, removed dead v24 horizontal-scroll code and hidden `#threads` loop, added Shelf-Life & First-Mover badges
+     everywhere (`Update · Nh left`, `Trend · Nd left`, `Evergreen`, `Expired · avoid` with **Remake as evergreen**), One-Glance
+     Home (**Film Today** card with 1-tap Teleprompter, Expiring-Today warning banner, Daily Auto-Run strip, Heaters & Learnings),
+     **What Claude learned** card in `Accounts` (with **Remove** button on every rule), **"Script top 3"** in Radar, **"Approve all clean"**
+     + expired-post warning in Approve, and upgraded Teleprompter (active reading line, dimmed `[ON SCREEN]` cues, tap-to-pause,
+     `localStorage` speed/font persistence).
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).

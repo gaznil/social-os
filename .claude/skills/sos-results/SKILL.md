@@ -1,6 +1,6 @@
 ---
 name: sos-results
-description: Pull the numbers for every active Social OS account (followers, views, per-post results), write the daily `stats` docs that feed the dashboard's Growth section, update best posting times, and add ONE change per account to its lessons. Use on "results", "how are we doing", or in the scheduled results run.
+description: Pull the numbers for every active Social OS account (followers, views, per-post results), write the daily `stats` docs that feed the dashboard's Growth section, detect 2x+ heaters and 90-day evergreen recycling candidates, update best posting times, and record learnings in `learnings`. Use on "results", "how are we doing", or in the scheduled results run.
 ---
 **Rules:** `RULES.md` (repo root) wins over any outside skill when they disagree.
 **Skills rule:** at each step load the skills named here (and in the platform README) before doing the work. If another installed skill fits a step better, use it too and add it to `SKILLS.md`.
@@ -16,8 +16,10 @@ description: Pull the numbers for every active Social OS account (followers, vie
    A read that fails -> keep going with the others; put the reason in the run summary.
 3. For each posted item: ArtifactData `update posts/<id>` `metrics` = `{views, reach, likes, comments, saves, shares, checkedAt}` (missing numbers = null, never 0).
 4. ArtifactData `set stats/<accountId>-<YYYY-MM-DD>` (India date) = `{accountId, date, followers, views, posts}`: views = new views since the last stats doc, posts = items posted that day. One doc per account per day; a second run the same day overwrites it.
-5. Save posts + stats to the scratchpad as JSON. `python -m tools.sos.cli best-times <posts.json>` -> per account top hours, or null (under 6 measured posts: keep the default windows). Not null -> `update accounts/<id>` `bestTimes` = that list; sos-create plans new slots into those hours.
-6. Weekly (Mondays, or when asked): per account, compare this week's best and worst post (load `dataviz` only if a chart helps you see it). Write ONE change to try next week at the top of `private/accounts/<id>/lessons.md` (dated, one line, with the two posts' numbers as the reason). Never more than one change per week per account.
+5. Save posts + stats to the scratchpad as JSON:
+   - `python -m tools.sos.cli best-times <posts.json>` -> per account top hours, or null (under 6 measured posts: keep the default windows). Not null -> `update accounts/<id>` `bestTimes` = that list; sos-create plans new slots into those hours.
+   - `python -m tools.sos.cli heaters <posts.json>` -> posts beating `>= 2x` median views + `evergreenRecycle: true` for 90d+ evergreen winners. Add a `learnings` doc for new heaters (what hook/format won) and queue an `options` doc for any 90d+ evergreen winner ready to remake with a fresh hook.
+6. Weekly (Mondays, or when asked): per account, compare this week's best and worst post (load `dataviz` only if a chart helps you see it). Write ONE change to try next week at the top of `private/accounts/<id>/lessons.md` and into `learnings` (dated, one line, with the two posts' numbers as the reason). Never more than one change per week per account.
 7. Monthly (first run of the month): load `llm-council` and ask it to check the month's numbers + the four weekly changes; save its verdict under `private/accounts/<id>/reviews/YYYY-MM.md` and carry its one top fix into lessons.md.
 8. Trending audio (Instagram reels): suggest up to 3 in the run summary as names only. The user adds audio in the app; never attach it by API.
-9. ArtifactData `set runs/results-<YYYYMMDD-HHMM>` with kind `analytics` and a one-sentence summary ("2 accounts measured; IG followers +31 this week; best hour 19:00"). Commit + push `private/`.
+9. ArtifactData `set runs/results-<YYYYMMDD-HHMM>` with kind `analytics` and a one-sentence summary ("2 accounts measured; IG followers +31 this week; 1 heater 3.4x; best hour 19:00"). Commit + push `private/`.

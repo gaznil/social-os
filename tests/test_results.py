@@ -1,10 +1,17 @@
 import unittest
 
-from tools.sos.results import best_times, growth_tiles
+from tools.sos.results import best_times, find_heaters, growth_tiles
 
 
-def post(acc, at, views, status="posted"):
-    return {"accountId": acc, "status": status, "postedAt": at, "metrics": {"views": views}}
+def post(acc, at, views, status="posted", pid=None, shelf="evergreen"):
+    return {
+        "id": pid or at,
+        "accountId": acc,
+        "status": status,
+        "postedAt": at,
+        "shelfLife": shelf,
+        "metrics": {"views": views},
+    }
 
 
 class BestTimesTest(unittest.TestCase):
@@ -55,3 +62,18 @@ class GrowthTilesTest(unittest.TestCase):
         t = growth_tiles(stats, "ig-a", "2026-10-31")
         self.assertEqual(t["followers"], 100)
         self.assertEqual(t["viewsWeek"], 30)
+
+
+class HeatersTest(unittest.TestCase):
+    def test_finds_2x_outliers_and_flags_90d_evergreen_recycle(self):
+        posts = [
+            post("ig-a", "2026-07-01T13:30:00Z", 4200, pid="old-winner", shelf="evergreen"),
+            post("ig-a", "2026-11-10T13:30:00Z", 1000, pid="p2"),
+            post("ig-a", "2026-11-12T13:30:00Z", 900, pid="p3"),
+            post("ig-a", "2026-11-15T13:30:00Z", 1100, pid="p4"),
+            post("ig-a", "2026-11-18T13:30:00Z", 2500, pid="recent-heater", shelf="trend"),
+        ]
+        got = find_heaters(posts, today="2026-11-21")
+        self.assertEqual([h["id"] for h in got], ["old-winner", "recent-heater"])
+        self.assertTrue(got[0]["evergreenRecycle"])
+        self.assertFalse(got[1]["evergreenRecycle"])

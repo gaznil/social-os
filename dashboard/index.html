@@ -7,7 +7,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@1,6..72,300;1,6..72,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@1,6..72,300;1,6..72,400&family=Noto+Sans+Malayalam:wght@400;500&display=swap">
 <style>
 /* ElevenLabs App x BlueYard studio architecture: expandable/closable 236px #FAFAFA sidebar + full-width workspace canvas */
 :root {
@@ -38,7 +38,6 @@
 html, body { margin: 0; padding: 0; overflow-x: clip; }
 html { scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--fg); font: var(--t-body); caret-color: var(--ink); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-#threads { display: none; }
 ::selection { background: var(--ink); color: #fff; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -116,7 +115,8 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .qchip { border: 0; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-2); color: var(--muted); font: 500 12.5px var(--font-body); height: 32px; padding: 0 12px; border-radius: 99px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: color 75ms var(--ease), background 75ms var(--ease); }
 .qchip:hover { color: var(--ink); background: var(--surface-2); }
 
-.orb-stage { position: relative; min-height: 290px; border-radius: 18px; background: radial-gradient(75% 75% at 50% 45%, #ffffff 0%, #f4f5f9 65%, #eceef5 100%); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; display: grid; }
+.orb-stage { position: relative; min-height: 300px; border-radius: 18px; background: radial-gradient(70% 70% at 50% 42%, #ffffff 0%, #f5f6f9 68%, #eceef3 100%); box-shadow: inset 0 0 0 1px var(--line); overflow: hidden; display: grid; }
+.orb-stage::after { content: ""; position: absolute; left: 50%; bottom: 26px; width: 140px; height: 22px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(ellipse, rgba(15,15,16,.11) 0%, transparent 72%); pointer-events: none; z-index: 0; }
 .orb-stage .orb { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .orb-stage .orb canvas { width: 100%; height: 100%; display: block; }
 .orb-meta-top, .orb-meta-bot { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; pointer-events: none; }
@@ -496,11 +496,111 @@ nav button { min-height: 36px; }
 .drawer-body { overflow-y: auto; padding: 20px; display: grid; gap: 14px; align-content: start; }
 .drawer-foot { padding: 14px 20px; border-top: 1px solid var(--line); background: var(--surface); display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 @keyframes slideIn { from { transform: translateX(36px); opacity: .6; } }
+/* Apple-grade Multilingual Welcome Screen + Luminous Prism Lens Transition */
+.intro { position: fixed; inset: 0; z-index: 120; background: radial-gradient(90% 80% at 50% 45%, #ffffff 0%, #f8f7fc 65%, #f3f5fa 100%); display: grid; grid-template-rows: auto 1fr auto; place-items: center; padding: 28px 24px 36px; overflow: hidden; transition: opacity 920ms cubic-bezier(.16, 1, .3, 1), transform 980ms cubic-bezier(.16, 1, .3, 1), filter 920ms cubic-bezier(.16, 1, .3, 1); will-change: transform, opacity, filter; }
+.intro[hidden] { display: none; }
+.intro-aura { position: absolute; width: min(820px, 98vw); height: min(820px, 98vw); border-radius: 50%; pointer-events: none; filter: blur(64px); opacity: .78;
+  background: radial-gradient(circle at 28% 36%, rgba(255, 184, 152, .68) 0%, transparent 52%), radial-gradient(circle at 72% 38%, rgba(182, 166, 255, .66) 0%, transparent 52%), radial-gradient(circle at 50% 74%, rgba(142, 228, 206, .62) 0%, transparent 55%);
+  animation: auraFloat 12s ease-in-out infinite alternate; }
+@keyframes auraFloat { 0% { transform: translate(-24px, -12px) scale(.95) rotate(0deg); } 100% { transform: translate(24px, 16px) scale(1.08) rotate(18deg); } }
+.intro-rings { position: absolute; left: 50%; top: 50%; width: min(560px, 88vw); height: min(560px, 88vw); transform: translate(-50%, -50%); pointer-events: none; z-index: 1; }
+.intro-rings::before, .intro-rings::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(15, 15, 16, .055); animation: orbitSpin 36s linear infinite; }
+.intro-rings::after { inset: 14%; border-color: rgba(99, 91, 255, .09); animation-duration: 24s; animation-direction: reverse; }
+@keyframes orbitSpin { to { transform: rotate(360deg); } }
+.intro-top { position: relative; z-index: 2; display: flex; align-items: center; gap: 9px; font: 500 13.5px var(--font-display); color: var(--muted); letter-spacing: -.01em; }
+.intro-top i { width: 16px; height: 16px; border-radius: 50%; background: conic-gradient(from 200deg, #ffb59a, #c8b8ff, #9fe3d0, #ffb59a); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7); }
+.intro-mid { position: relative; z-index: 2; display: grid; justify-items: center; gap: 10px; text-align: center; transition: transform 880ms cubic-bezier(.16, 1, .3, 1), filter 840ms cubic-bezier(.16, 1, .3, 1), opacity 720ms cubic-bezier(.16, 1, .3, 1); }
+.hello-stage { position: relative; height: clamp(66px, 11vw, 108px); width: min(92vw, 780px); display: grid; place-items: center; }
+.hello-word { position: absolute; margin: 0; font: 400 clamp(3rem, 7.6vw, 5.8rem)/1.02 var(--font-display); letter-spacing: -.03em; color: var(--ink); opacity: 0; transform: translateY(16px) scale(.975); filter: blur(8px);
+  transition: transform 950ms cubic-bezier(.16, 1, .3, 1), opacity 860ms cubic-bezier(.16, 1, .3, 1), filter 900ms cubic-bezier(.16, 1, .3, 1); white-space: nowrap; will-change: transform, opacity, filter; }
+.hello-word.latin { font: 300 italic clamp(3.4rem, 8.4vw, 6.4rem)/1 var(--font-serif); letter-spacing: -.02em; }
+.hello-word.ml { font-family: "Noto Sans Malayalam", var(--font-body); font-size: clamp(2.3rem, 5.8vw, 4.4rem); font-weight: 500; letter-spacing: -.01em; }
+.hello-word.in { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+.hello-word.out { opacity: 0; transform: translateY(-14px) scale(1.015); filter: blur(6px); }
+.intro-sub { margin: 0; font: 400 15px/1.5 var(--font-body); color: var(--muted); max-width: 42ch; }
+.intro-sub b { color: var(--ink); font-weight: 500; }
+.enter-btn { margin-top: 14px; display: inline-flex; align-items: center; gap: 14px; border: 0; cursor: pointer; background: var(--ink); color: var(--ink-fg); font: 500 15px var(--font-body); height: 50px; padding: 0 7px 0 24px; border-radius: 99px; box-shadow: var(--lift);
+  transition: background 180ms var(--ease), transform 260ms cubic-bezier(.22, 1, .36, 1); }
+.enter-btn:hover { background: #232328; transform: translateY(-1px); }
+.enter-btn:active { transform: scale(.975); }
+.enter-btn .e-ring { width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.15); display: grid; place-items: center; transition: transform 360ms cubic-bezier(.22, 1, .36, 1), background 180ms var(--ease); }
+.enter-btn:hover .e-ring { transform: translateX(3px) scale(1.06); background: rgba(255,255,255,.24); }
+.enter-btn svg { width: 17px; height: 17px; }
+.intro-foot { position: relative; z-index: 2; font: 400 12px var(--font-mono); color: var(--dim); display: flex; align-items: center; gap: 10px; }
+
+/* Luminous Prism Shockwave + Iris Aperture Reveal */
+.iris-ring { position: fixed; left: 50%; top: 52%; width: 360px; height: 360px; margin: -180px 0 0 -180px; border-radius: 50%; pointer-events: none; z-index: 125; opacity: 0; transform: scale(.08);
+  border: 2px solid rgba(124, 108, 255, .42);
+  background: conic-gradient(from 0deg, rgba(255,168,136,.32), rgba(168,142,255,.38), rgba(112,218,196,.34), rgba(255,168,136,.32));
+  box-shadow: 0 0 60px 16px rgba(154, 134, 255, .28), inset 0 0 40px rgba(255, 255, 255, .75);
+  will-change: transform, opacity; }
+.iris-ring.go { animation: irisPulse 1150ms cubic-bezier(.16, 1, .3, 1) forwards; }
+@keyframes irisPulse {
+  0% { opacity: 0; transform: scale(.08) rotate(0deg); }
+  16% { opacity: 1; }
+  65% { opacity: .75; }
+  100% { opacity: 0; transform: scale(4.8) rotate(65deg); }
+}
+
+.intro.leaving { transform: scale(1.06); filter: blur(16px); opacity: 0; pointer-events: none; }
+.intro.leaving .intro-mid { transform: scale(1.05) translateY(-10px); filter: blur(10px); opacity: 0; }
+body.intro-wait .app { clip-path: circle(0% at 50% 52%); transform: scale(.94); filter: blur(10px); opacity: 0; }
+body.intro-open .app { animation: irisUnveil 1100ms cubic-bezier(.16, 1, .3, 1) forwards; will-change: clip-path, transform, filter, opacity; }
+@keyframes irisUnveil {
+  0% { clip-path: circle(0% at 50% 52%); transform: scale(.94); filter: blur(10px); opacity: .15; }
+  35% { opacity: 1; filter: blur(3px); }
+  100% { clip-path: circle(150% at 50% 52%); transform: scale(1); filter: blur(0); opacity: 1; }
+}
+body.intro-open .cockpit-top { animation: stgRise 860ms 220ms cubic-bezier(.16, 1, .3, 1) both; }
+body.intro-open .kpi-row { animation: stgRise 860ms 320ms cubic-bezier(.16, 1, .3, 1) both; }
+body.intro-open .home-grid { animation: stgRise 860ms 420ms cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes stgRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.replay-btn { border: 0; background: none; color: var(--dim); font: 400 11.5px var(--font-mono); cursor: pointer; padding: 2px 6px; border-radius: 6px; transition: color 75ms var(--ease), background 75ms var(--ease); }
+.replay-btn:hover { color: var(--ink); background: var(--surface-2); }
+/* v26: Shelf-Life Expiry, First-Mover, Film Today, Daily Auto-Run, What Claude Learned, Teleprompter v26 */
+.shelf, .fm-badge { display: inline-flex; align-items: center; gap: 5px; font: 500 11px var(--font-mono); border-radius: 7px; padding: 2px 8px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.sh-evergreen { background: color-mix(in srgb, var(--ok) 11%, transparent); color: var(--ok); }
+.sh-trend { background: color-mix(in srgb, var(--warn) 13%, transparent); color: var(--warn); }
+.sh-update { background: color-mix(in srgb, #ea580c 14%, transparent); color: #c2410c; }
+.sh-expired { background: color-mix(in srgb, var(--bad) 12%, transparent); color: var(--bad); }
+.fm-untapped { background: color-mix(in srgb, var(--accent) 11%, transparent); color: var(--accent); }
+.fm-early { background: var(--surface-2); color: var(--fg); }
+.fm-saturated { background: color-mix(in srgb, var(--bad) 9%, transparent); color: var(--bad); }
+.exp-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 16px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 9%, var(--surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 32%, transparent); font-size: 13.5px; color: var(--ink); }
+.exp-banner b { color: var(--warn); font-weight: 600; }
+.autorun-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); font-size: 13px; }
+.autorun-left { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
+.film-card { background: linear-gradient(180deg, rgba(21,128,61,.04), rgba(255,255,255,0)), var(--surface); box-shadow: 0 0 0 1px color-mix(in srgb, var(--ok) 25%, var(--line)); }
+.voice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--surface-2); font-size: 13px; }
+.voice-grid div { display: grid; gap: 3px; align-content: start; }
+.voice-grid small { font: 500 11px var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.voice-grid b { font-weight: 500; color: var(--ink); }
+.learn-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); }
+.learn-main { display: grid; gap: 4px; min-width: 0; }
+.learn-main b { font: 500 14px/1.4 var(--font-body); color: var(--ink); }
+.learn-main span { font: 400 12px var(--font-mono); color: var(--muted); }
+.tele-body { scroll-behavior: auto; cursor: pointer; }
+.tele-line { padding: 10px 14px; border-radius: 12px; color: rgba(246,247,251,.42); transition: color 140ms var(--ease), background 140ms var(--ease), transform 140ms var(--ease); margin-bottom: 8px; }
+.tele-line.active { color: #ffffff; background: rgba(255,255,255,.08); box-shadow: inset 3px 0 0 var(--claude); }
+.tele-cue { display: inline-block; font: 500 .58em/1.3 var(--font-mono); color: #ffb59a; background: rgba(217,119,87,.18); border: 1px solid rgba(217,119,87,.35); padding: 2px 8px; border-radius: 6px; margin-bottom: 4px; vertical-align: middle; }
+.heater-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 11px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); font-size: 13px; }
 @media (max-width: 960px) { .split { grid-template-columns: 1fr; } .split > .sticky-col { position: static; } }
 @media (max-width: 640px) { .doors { grid-template-columns: 1fr; } .mday { min-height: 64px; padding: 4px; } .slot { min-height: 24px; padding: 3px 4px; } .slot > span:last-child { font-size: 9px; } .slot .plat { font-size: 0; gap: 0; } .acct-switch { max-width: 118px; } .two { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
+<section class="intro" id="intro" aria-label="Welcome to Social OS">
+  <div class="intro-aura" aria-hidden="true"></div>
+  <div class="intro-rings" aria-hidden="true"></div>
+  <div class="intro-top"><i></i>Social OS</div>
+  <div class="intro-mid">
+    <div class="hello-stage" id="hello-stage" aria-live="polite"></div>
+    <p class="intro-sub"><b>Your quiet content studio.</b> Viral radar, scripts, approvals, and multi-channel publishing in one place.</p>
+    <button class="enter-btn" id="enter-studio">Enter Studio<span class="e-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></button>
+  </div>
+  <div class="intro-foot"><span id="hello-lang">English</span><span>·</span><span>Press Enter</span></div>
+</section>
+<div class="iris-ring" id="iris-ring" aria-hidden="true"></div>
 <div class="app">
   <aside class="side" id="side">
     <div class="side-top">
@@ -510,14 +610,14 @@ nav button { min-height: 36px; }
       </div>
     </div>
     <nav id="tabs" role="tablist"></nav>
-    <div class="side-foot"><span>Social OS v25</span><span>IST</span></div>
+    <div class="side-foot"><span>Social OS v26</span><button class="replay-btn" id="replay-intro" title="Replay welcome screen">Welcome ↺</button></div>
   </aside>
   <div class="stage">
     <header class="topbar">
       <div class="top-left">
         <button class="side-btn" data-side-toggle aria-label="Toggle sidebar" title="Toggle sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
         <button class="back-home" id="back-home" data-tab="wall" hidden>← Home</button>
-        <div class="crumb"><button class="crumb-home" data-tab="wall">Social OS</button><span>/</span><b id="crumb-title">Control room</b></div>
+        <div class="crumb"><button class="crumb-home" data-tab="wall">Social OS</button><span>/</span><b id="crumb-title">Home</b></div>
       </div>
       <div class="top-right">
         <span class="pill" id="offline-pill" hidden title="Open signed in to claude.ai for live data">Demo</span>
@@ -529,7 +629,6 @@ nav button { min-height: 36px; }
     <div class="wrap"><main id="view"></main></div>
   </div>
 </div>
-<canvas id="threads" aria-hidden="true"></canvas>
 <div class="toast" id="toast" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -547,41 +646,54 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], runs: [] };
+const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], learnings: [], runs: [] };
 const raw = {};
 // Rich read-only Showcase dataset so every tab can be previewed cleanly without touching Live DB
 function showcaseSeed() {
   const day = n => new Date(Date.now() + n * 864e5).toISOString();
+  const hr = n => new Date(Date.now() + n * 36e5).toISOString();
   return {
     accounts: [
-      { id: "demo-ig", platform: "instagram", label: "AI Tools Lab", niche: "Practical AI workflows & Claude Code tips", language: "Malayalam-English", postsPerWeek: 4, composioAccountId: "ig_demo", bestTimes: ["19:00", "13:00", "09:00"], status: "active" },
-      { id: "demo-yt", platform: "youtube", label: "AI Tools Shorts", niche: "60s AI tool breakdowns & demos", language: "English", postsPerWeek: 3, composioAccountId: "yt_demo", bestTimes: ["18:30", "12:00"], status: "active" },
+      { id: "demo-ig", platform: "instagram", label: "AI Tools Lab", niche: "Practical AI workflows & Claude Code tips", language: "Malayalam-English", postsPerWeek: 4, composioAccountId: "ig_demo", bestTimes: ["19:00", "13:00", "09:00"], status: "active",
+        voiceProfile: { tone: "Direct builder · zero hype · shows terminal proof first", manglishMix: "65% Malayalam / 35% English tech terms", commonPhrases: ["Ithu nokku", "Nirthu", "Exact checklist"], bannedWords: ["Game-changer", "Revolutionary", "Delve", "Unleash"], winningFormats: ["Problem -> Fix -> Proof (30s Reel)", "5-Slide Before/After Carousel"] } },
+      { id: "demo-yt", platform: "youtube", label: "AI Tools Shorts", niche: "60s AI tool breakdowns & demos", language: "English", postsPerWeek: 3, composioAccountId: "yt_demo", bestTimes: ["18:30", "12:00"], status: "active",
+        voiceProfile: { tone: "Fast 60s demo · hook in 1.5s · no intro fluff", manglishMix: "100% English (simple Indian English cadence)", commonPhrases: ["Watch this", "Here is the exact command"], bannedWords: ["Hey guys welcome back", "Smash subscribe"], winningFormats: ["Live Screen Demo Short"] } },
       { id: "demo-x", platform: "x", label: "Founder Notes", niche: "Building Social OS in public", language: "English", postsPerWeek: 5, composioAccountId: null, bestTimes: ["08:30", "13:00"], status: "active" },
     ],
     inspirations: [
-      { id: "rad-1", accountId: "demo-ig", url: "https://www.instagram.com/reel/C9xDemoHot01", platform: "instagram", userNote: "Show this with Claude Code hooks", title: "3 terminal hooks that catch bugs before you push", hook: "Stop reviewing your own PRs for silly mistakes.", hookScore: 91, outlierMultiple: 14.2, storyFormat: "Problem -> Fix -> Proof", whyPopped: "Opens with a concrete mistake every dev hits in the first 1.5s, then shows a real 10-second terminal demo.", ourTwist: "Demo our actual Social OS preflight hook catching a broken IG story live on screen in Malayalam-English.", audioNote: "Original Audio · Lo-fi Clicks", score: 94, tier: "P1", status: "scripted", scriptId: "scr-1", createdAt: day(-1) },
-      { id: "rad-2", accountId: "demo-ig", url: "https://www.instagram.com/reel/C9xDemoQueue2", platform: "instagram", userNote: "Good carousel or reel breakdown", title: "Why 90% of AI prompts fail on the second run", hook: "Your prompt worked once because you got lucky.", hookScore: 78, outlierMultiple: 6.4, storyFormat: "Contrarian Myth-Bust", whyPopped: "Sharp contrarian first line + side-by-side before/after output keeps watch time above 85%.", ourTwist: "Show our Prompt Guy score log (0/100 vs 92/100) so every claim has real evidence.", audioNote: null, score: 71, tier: "P2", status: "scored", createdAt: day(-1) },
-      { id: "rad-3", accountId: "demo-yt", url: "https://youtu.be/demoEvergreen3", platform: "youtube", userNote: null, title: "How I organize 50 Claude skills into one plugin", hook: "I deleted 40 skills and my output got 2x better.", hookScore: 72, outlierMultiple: 3.8, storyFormat: "Build in Public", whyPopped: "Clean folder walkthrough with zero fluff; high save rate for builders.", ourTwist: "Walk through our social-os plugin.json + RULES.md single-rulebook architecture.", audioNote: null, score: 54, tier: "P2", status: "scored", createdAt: day(-2) },
-      { id: "rad-4", accountId: "demo-ig", url: "https://www.instagram.com/reel/C9xDemoNew04", platform: "instagram", userNote: "Check if worth filming this weekend", title: null, status: "new", createdAt: day(0) },
+      { id: "rad-1", accountId: "demo-ig", url: "https://instagram.com/reel/C9xDemoHot01", platform: "instagram", userNote: "Show this with Claude Code hooks", title: "3 terminal hooks that catch bugs before you push", hook: "Stop reviewing your own PRs for silly mistakes.", hookScore: 91, outlierMultiple: 14.2, relatabilityScore: 94, firstMover: "untapped", shelfLife: "trend", expiresAt: hr(18), storyFormat: "Problem -> Fix -> Proof", whyPopped: "Opens with a concrete mistake every dev hits in the first 1.5s, then shows a real 10-second terminal demo.", ourTwist: "Demo our actual Social OS preflight hook catching a broken IG story live on screen in Malayalam-English.", audioNote: "Original Audio · Lo-fi Clicks", score: 96, tier: "P1", status: "scripted", scriptId: "scr-1", createdAt: day(-1) },
+      { id: "rad-2", accountId: "demo-ig", url: "https://github.com/anthropics/claude-code", platform: "github", userNote: "New GitHub release · nobody covered in Malayalam yet", title: "Claude Code sub-agent hooks just dropped (4.2K stars this week)", hook: "One config file replaced my entire review checklist.", hookScore: 86, outlierMultiple: 8.5, relatabilityScore: 90, firstMover: "untapped", shelfLife: "update", expiresAt: hr(14), storyFormat: "New Release Breakdown", whyPopped: "Fast star velocity on GitHub + zero Malayalam reels covering the new hook syntax.", ourTwist: "Show a 25-second live Malayalam-English screen test before anyone else in the niche posts it.", audioNote: null, score: 92, tier: "P1", status: "scored", createdAt: day(0) },
+      { id: "rad-3", accountId: "demo-ig", url: "https://instagram.com/reel/C9xDemoQueue2", platform: "instagram", userNote: "Good carousel or reel breakdown", title: "Why 90% of AI prompts fail on the second run", hook: "Your prompt worked once because you got lucky.", hookScore: 78, outlierMultiple: 6.4, relatabilityScore: 84, firstMover: "early", shelfLife: "evergreen", expiresAt: null, storyFormat: "Contrarian Myth-Bust", whyPopped: "Sharp contrarian first line + side-by-side before/after output keeps watch time above 85%.", ourTwist: "Show our Prompt Guy score log (0/100 vs 92/100) so every claim has real evidence.", audioNote: null, score: 74, tier: "P2", status: "scored", createdAt: day(-1) },
+      { id: "rad-4", accountId: "demo-yt", url: "https://youtu.be/demoEvergreen3", platform: "youtube", userNote: null, title: "How I organize 50 Claude skills into one plugin", hook: "I deleted 40 skills and my output got 2x better.", hookScore: 72, outlierMultiple: 3.8, relatabilityScore: 80, firstMover: "early", shelfLife: "evergreen", expiresAt: null, storyFormat: "Build in Public", whyPopped: "Clean folder walkthrough with zero fluff; high save rate for builders.", ourTwist: "Walk through our social-os plugin.json + RULES.md single-rulebook architecture.", audioNote: null, score: 62, tier: "P2", status: "scored", createdAt: day(-2) },
+      { id: "rad-5", accountId: "demo-ig", url: "https://x.com/demo/status/101", platform: "x", userNote: "Last week's model launch", title: "OpenAI Tuesday minor voice patch announcement", hook: "OpenAI just changed voice mode again.", hookScore: 68, outlierMultiple: 4.1, relatabilityScore: 60, firstMover: "saturated", shelfLife: "update", expiresAt: day(-2), storyFormat: "News Update", whyPopped: "Day-1 announcement spike, now over.", ourTwist: "Expired news window: skip or remake as an evergreen voice comparison.", audioNote: null, score: 61, tier: "expired", status: "scored", createdAt: day(-5) },
     ],
     options: [
-      { id: "opt-1", accountId: "demo-ig", door: "week", title: "1 Claude command that audits your whole dashboard in 60 seconds", storyFormat: "Problem -> Fix -> Proof", format: "reel", why: "Matches 14.2x outlier structure + we have the real screen recording ready.", status: "new", createdAt: day(0) },
-      { id: "opt-2", accountId: "demo-ig", door: "week", title: "5 carousel layout rules that doubled our saves", storyFormat: "List with Proof", format: "carousel", why: "Carousel-first competitors average 4.1x saves on concrete before/after slides.", status: "new", createdAt: day(0) },
+      { id: "opt-1", accountId: "demo-ig", door: "auto", title: "Claude Code GitHub release: 1 hook that blocks broken deploys", storyFormat: "Problem -> Fix -> Proof", format: "reel", shelfLife: "update", expiresAt: hr(14), firstMover: "untapped", why: "Daily Auto-Run: 4.2K GitHub stars + 0 Malayalam creators covered it yet. Film today.", status: "new", createdAt: day(0) },
+      { id: "opt-2", accountId: "demo-ig", door: "week", title: "5 carousel layout rules that doubled our saves", storyFormat: "List with Proof", format: "carousel", shelfLife: "evergreen", expiresAt: null, firstMover: "early", why: "Carousel-first competitors average 4.1x saves on concrete before/after slides.", status: "new", createdAt: day(0) },
     ],
     scripts: [
-      { id: "scr-1", accountId: "demo-ig", inspirationId: "rad-1", title: "3 terminal hooks that catch bugs before you push", storyFormat: "Problem -> Fix -> Proof", hookScore: 91, status: "draft",
+      { id: "scr-1", accountId: "demo-ig", inspirationId: "rad-1", title: "3 terminal hooks that catch bugs before you push", storyFormat: "Problem -> Fix -> Proof", hookScore: 91, shelfLife: "trend", expiresAt: hr(18), firstMover: "untapped", status: "draft",
         en: "[0-2s ON SCREEN: Stop shipping broken posts]\nStop reviewing every post by hand. One 20-line hook caught 3 bugs before my code even left my laptop.\n\n[3-12s ON SCREEN: Live terminal check]\nWatch this. I try to approve an 8-frame Instagram story. Preflight blocks it instantly and tells me why.\n\n[13-25s ON SCREEN: 3 rules]\nRule 1: check limits before publishing. Rule 2: block empty captions. Rule 3: never guess a hook score.\n\n[26-30s CTA]\nComment HOOK and I'll send you the exact checklist.",
         mlen: "[0-2s ON SCREEN: Stop shipping broken posts]\nElla post-um manually check cheyyunnathu nirthu. Oru cheriya 20-line hook ente 3 bugs live aakunathinu munne pidichu.\n\n[3-12s ON SCREEN: Live terminal check]\nIthu nokku. Njan 8-frame Instagram story approve cheyyan nokkumbol preflight appol thanne block cheyyum.\n\n[13-25s ON SCREEN: 3 rules]\nRule 1: publish cheyyunnathinu munne limits check cheyya. Rule 2: empty caption block cheyya. Rule 3: hook score guess cheyyaruthu.\n\n[26-30s CTA]\nHOOK ennu comment cheyyu, ee exact checklist njan ayachu tharam." },
-      { id: "scr-2", accountId: "demo-ig", title: "My 1-screen AI content engine (full walkthrough)", storyFormat: "Build in Public", hookScore: 86, status: "done", lang: "ml", postIds: ["demo-p1"],
-        en: "[0-3s] I replaced 6 social media apps with one private dashboard.\n\n[4-18s] Viral URLs drop into Reel Radar, get scored 0 to 100, and turn into English and Malayalam-English scripts automatically.\n\n[19-28s] Nothing posts without my tap in Approve.\n\n[29-32s] Comment OS if you want the architecture breakdown.",
-        mlen: "[0-3s] Njan 6 social media apps maatti oru private dashboard aakki.\n\n[4-18s] Viral reels URLs Reel Radar-il ittal 0 to 100 score cheythu, English & Malayalam-English script ready aakum.\n\n[19-28s] Ente approval illathe oru post-um live aakilla.\n\n[29-32s] Architecture breakdown venamenkil OS ennu comment cheyyu." },
+      { id: "scr-2", accountId: "demo-ig", title: "My 1-screen AI content engine (full walkthrough)", storyFormat: "Build in Public", hookScore: 88, shelfLife: "evergreen", expiresAt: null, firstMover: "untapped", status: "done", lang: "ml", postIds: ["demo-p1"],
+        en: "[0-3s ON SCREEN: 6 apps -> 1 studio]\nI replaced 6 social media apps with one private dashboard.\n\n[4-18s ON SCREEN: Live Reel Radar]\nViral URLs drop into Reel Radar, get scored 0 to 100, and turn into English and Malayalam-English scripts automatically.\n\n[19-28s ON SCREEN: Gate 2 Approve]\nNothing posts without my tap in Approve.\n\n[29-32s CTA]\nComment OS if you want the architecture breakdown.",
+        mlen: "[0-3s ON SCREEN: 6 apps -> 1 studio]\nNjan 6 social media apps maatti oru private dashboard aakki.\n\n[4-18s ON SCREEN: Live Reel Radar]\nViral reels URLs Reel Radar-il ittal 0 to 100 score cheythu, English & Malayalam-English script ready aakum.\n\n[19-28s ON SCREEN: Gate 2 Approve]\nEnte approval illathe oru post-um live aakilla.\n\n[29-32s CTA]\nArchitecture breakdown venamenkil OS ennu comment cheyyu." },
     ],
     posts: [
-      { id: "demo-p1", accountId: "demo-ig", platform: "instagram", format: "carousel", title: "", caption: "Stop guessing which reel will pop.\n\nScore every viral link on 4 real signals before you film:\n1. Outlier multiple (views / creator median)\n2. First-2s hook score\n3. Real proof check\n4. Shoot effort\n\nSave this for your next content batch.\n#aitools #contentcreator #claudecode", mediaUrls: [], audioNote: null, plannedAt: day(1), status: "waiting", problems: [], updatedAt: day(0) },
-      { id: "demo-p2", accountId: "demo-x", platform: "x", format: "thread", title: "", caption: "1/ I audited my entire AI content dashboard today and found 14 real bugs.\n\n2/ The worst one: Threads posts were marked manual in Python but automatic in the UI — so they sat in limbo forever.\n\n3/ Fixed the contract, added a 0-100 viral URL scorer, and cut 9 tabs down to 6.", mediaUrls: [], plannedAt: day(2), status: "waiting", problems: [], updatedAt: day(0) },
-      { id: "demo-p3", accountId: "demo-ig", platform: "instagram", format: "reel", title: "", caption: "One 20-line preflight script saved me from posting a broken carousel. Comment HOOK for the checklist. #claudecode #aitools #reels", mediaUrls: [], audioNote: "Original Audio · Lo-fi Clicks", plannedAt: day(-1), status: "failed", error: "Instagram media upload timed out (code 408). Tap Retry to re-queue.", problems: [], updatedAt: day(0) },
-      { id: "demo-p4", accountId: "demo-ig", platform: "instagram", format: "reel", title: "", caption: "How I turned 12 competitor reels into 1 week of scripts in 10 minutes.", mediaUrls: [], plannedAt: day(-3), status: "posted", postedAt: day(-3), permalink: "https://instagram.com", metrics: { views: 24800, reach: 19400, likes: 1620, comments: 94, saves: 612, shares: 285 }, updatedAt: day(-2) },
-      { id: "demo-p5", accountId: "demo-yt", platform: "youtube", format: "short", title: "This 1 Claude hook catches bugs before you push", caption: "Full breakdown of our preflight hook for Social OS.", mediaUrls: [], plannedAt: day(3), status: "approved", approvedAt: day(0), updatedAt: day(0) },
+      { id: "demo-p1", accountId: "demo-ig", platform: "instagram", format: "carousel", title: "", caption: "Stop guessing which reel will pop.\n\nScore every viral link on 5 real signals before you film:\n1. Outlier multiple (views / creator median)\n2. First-2s hook score\n3. First-mover chance in our niche\n4. Shelf-life window (Update vs Trend vs Evergreen)\n5. Shoot effort\n\nSave this for your next content batch.\n#aitools #contentcreator #claudecode", mediaUrls: [], audioNote: null, shelfLife: "evergreen", expiresAt: null, viewerScore: 91, plannedAt: day(1), status: "waiting", problems: [], updatedAt: day(0) },
+      { id: "demo-p2", accountId: "demo-x", platform: "x", format: "thread", title: "", caption: "1/ I audited my entire AI content dashboard today and found 14 real bugs.\n\n2/ The worst one: Threads posts were marked manual in Python but automatic in the UI: so they sat in limbo forever.\n\n3/ Fixed the contract, added a 0-100 viral URL scorer with shelf-life expiry, and cut 9 tabs down to 6.", mediaUrls: [], shelfLife: "trend", expiresAt: hr(20), viewerScore: 87, plannedAt: day(1), status: "waiting", problems: [], updatedAt: day(0) },
+      { id: "demo-p3", accountId: "demo-ig", platform: "instagram", format: "reel", title: "", caption: "One 20-line preflight script saved me from posting a broken carousel. Comment HOOK for the checklist. #claudecode #aitools #reels", mediaUrls: [], audioNote: "Original Audio · Lo-fi Clicks", shelfLife: "trend", expiresAt: hr(18), isTrialReel: true, viewerScore: 89, plannedAt: day(-1), status: "failed", error: "Instagram media upload timed out (code 408). Tap Retry to re-queue.", problems: [], updatedAt: day(0) },
+      { id: "demo-p4", accountId: "demo-ig", platform: "instagram", format: "reel", title: "", caption: "How I turned 12 competitor reels into 1 week of scripts in 10 minutes.", mediaUrls: [], shelfLife: "evergreen", plannedAt: day(-3), status: "posted", postedAt: day(-3), permalink: "https://instagram.com", metrics: { views: 24800, reach: 19400, likes: 1620, comments: 94, saves: 612, shares: 285 }, updatedAt: day(-2) },
+      { id: "demo-p6", accountId: "demo-ig", platform: "instagram", format: "carousel", title: "", caption: "3 free terminal tools I use every morning before opening VS Code.", mediaUrls: [], shelfLife: "evergreen", plannedAt: day(-95), status: "posted", postedAt: day(-95), permalink: "https://instagram.com", metrics: { views: 31200, reach: 24100, likes: 2140, comments: 118, saves: 940, shares: 410 }, updatedAt: day(-94) },
+      { id: "demo-p7", accountId: "demo-ig", platform: "instagram", format: "reel", title: "", caption: "Quick setup tour of my desk.", mediaUrls: [], shelfLife: "evergreen", plannedAt: day(-10), status: "posted", postedAt: day(-10), permalink: "https://instagram.com", metrics: { views: 8200, reach: 6900, likes: 410, comments: 19, saves: 88, shares: 32 }, updatedAt: day(-9) },
+      { id: "demo-p8", accountId: "demo-ig", platform: "instagram", format: "reel", title: "", caption: "Why I switched from 40 plugins to 1 rulebook.", mediaUrls: [], shelfLife: "evergreen", plannedAt: day(-18), status: "posted", postedAt: day(-18), permalink: "https://instagram.com", metrics: { views: 9400, reach: 7800, likes: 520, comments: 28, saves: 140, shares: 45 }, updatedAt: day(-17) },
+      { id: "demo-p5", accountId: "demo-yt", platform: "youtube", format: "short", title: "This 1 Claude hook catches bugs before you push", caption: "Full breakdown of our preflight hook for Social OS.", mediaUrls: [], shelfLife: "trend", expiresAt: day(4), plannedAt: day(2), status: "approved", approvedAt: day(0), updatedAt: day(0) },
+    ],
+    learnings: [
+      { id: "lrn-1", accountId: "demo-ig", category: "voice", text: "Open Malayalam-English reels with a direct imperative ('Nirthu' / 'Ithu nokku') in the first 1.8 seconds; skip greetings.", source: "Deep-dive transcript · Top 14.2x Reel", createdAt: day(-2) },
+      { id: "lrn-2", accountId: "demo-ig", category: "edits", text: "Cut buzzwords ('game-changer', 'revolutionary') and keep sentences under 14 words in captions.", source: "Inline caption edit in Approve", createdAt: day(-1) },
+      { id: "lrn-3", accountId: "demo-ig", category: "hooks", text: "'Problem -> Fix -> Proof' with a live terminal demo gets 2.9x higher saves than talking-head lists.", source: "Analytics Heater · 24.8K views (2.8x median)", createdAt: day(-1) },
+      { id: "lrn-4", accountId: "demo-ig", category: "timing", text: "19:00 IST and 13:00 IST outperform morning slots by +38% first-hour reach.", source: "sos-results · 12 measured posts", createdAt: day(-3) },
     ],
     hooks: [
       { id: "hk-1", template: "Stop doing [X]. One [small tool] caught [N] mistakes before I even pushed.", example: "Stop reviewing every post by hand. One 20-line hook caught 3 bugs.", type: "swap", hits: 4, source: "Reel Radar · 14.2x" },
@@ -589,24 +701,24 @@ function showcaseSeed() {
       { id: "hk-3", template: "Your [prompt/workflow] worked once because you got lucky.", example: "Your prompt worked once because you got lucky.", type: "claim", hits: 2, source: "Reel Radar · 6.4x" },
     ],
     jobs: [
-      { id: "job-1", accountId: "demo-ig", kind: "pack", brief: "30s talking-head reel showing Reel Radar ranking 4 viral IG URLs and opening the Teleprompter.", clipUrl: "radar-demo-clip.mp4", model: "sonnet", effort: "medium", status: "done", prompt: "SHOT 1 (0.0-2.5s): Tight chest-up frame, crisp 5600K key light, punch-in 106% on 'Stop guessing'. Burned-in caption white bold centered y=1200.\nSHOT 2 (2.5-12s): Screen-capture zoom on Reel Radar P1 94 badge with subtle 150ms spring ease-out...", postIds: ["demo-p1", "demo-p2"], note: "Prompt ready + 2 pack drafts waiting in Approve.", createdAt: day(-1) },
+      { id: "job-1", accountId: "demo-ig", kind: "pack", brief: "30s talking-head reel showing Reel Radar ranking 4 viral IG URLs and opening the Teleprompter.", clipUrl: "radar-demo-clip.mp4", model: "sonnet", effort: "medium", status: "done", prompt: "SHOT 1 (0.0-2.5s): Tight chest-up frame, crisp 5600K key light, punch-in 106% on 'Stop guessing'. Burned-in caption white bold centered y=1200.\nSHOT 2 (2.5-12s): Screen-capture zoom on Reel Radar P1 96 badge with subtle 150ms spring ease-out...", postIds: ["demo-p1", "demo-p2"], note: "Prompt ready + 2 pack drafts waiting in Approve.", createdAt: day(-1) },
     ],
     competitors: [
       { id: "cmp-1", link: "instagram.com/tenfoldmarc", platform: "instagram", accountId: "demo-ig", note: "Clean editorial carousel rhythm & strong hooks", status: "tracked" },
     ],
     schedules: [
-      { id: "sch-1", accountId: "demo-ig", kind: "research", every: "daily", time: "08:00", status: "active", note: "Cloud task active" },
+      { id: "sch-1", accountId: "demo-ig", kind: "research", every: "daily", time: "07:30", status: "active", note: "Daily 6-source Auto-Run (GitHub + Reddit/HN/YT + Web + Radar + Competitors)" },
       { id: "sch-2", accountId: null, kind: "publish", every: "daily", time: "19:00", status: "active", note: "Posts approved items at 7 PM IST" },
     ],
     runs: [
-      { id: "run-1", kind: "research", summary: "Reel Radar scored 3 URLs: 1 P1 Film Now (94), 2 P2 Queue; 1 script written.", finishedAt: day(0) },
-      { id: "run-2", kind: "analytics", summary: "AI Tools Lab: 24.8K views (+31% vs 30d median), best hour 19:00 IST.", finishedAt: day(-1) },
+      { id: "run-1", kind: "research", summary: "Daily Auto-Run: found 6 topics (2 GitHub releases, 2 reels, 2 trends); 2 scripts ready in your voice.", finishedAt: day(0) },
+      { id: "run-2", kind: "analytics", summary: "AI Tools Lab: 24.8K views (2.8x heater), 1 evergreen 90d+ winner ready to remake, best hour 19:00 IST.", finishedAt: day(-1) },
     ],
     messages: [], ideas: [], stats: [],
   };
 }
 const SHOWCASE_DATA = showcaseSeed();
-// Account switch (v24/v25): every tab shows only the picked account; global rows (no accountId) still apply.
+// Account switch (v24-v26): every tab shows only the picked account; global rows (no accountId) still apply.
 function applyAccount() {
   const src = mode === "showcase" ? SHOWCASE_DATA : raw;
   for (const k of Object.keys(state)) {
@@ -614,7 +726,7 @@ function applyAccount() {
     state[k] = (k === "accounts" || k === "runs" || !ui.acct) ? v : v.filter(d => !d.accountId || d.accountId === ui.acct);
   }
 }
-const ui = { acct: "", lang: {}, calPick: null, monthOff: 0, htype: "all", growth: "all", homeMode: "ask", planTab: "work", calTab: "month", radarFilter: "all", editingPost: null, confirmNow: null, showApprovedScripts: false, loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
+const ui = { acct: "", lang: {}, calPick: null, monthOff: 0, htype: "all", growth: "all", homeMode: "ask", planTab: "work", calTab: "month", radarFilter: "all", editingPost: null, confirmNow: null, confirmExpired: null, showApprovedScripts: false, loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
 
 const MODELS = {
   haiku:  { model: "claude-haiku-5-5",  modelTier: "quick",   label: "Haiku 5.5" },
@@ -629,8 +741,8 @@ const PICKS = {
 const CHEV = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`;
 const CHECK = `<svg class="chk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"/></svg>`;
 const XICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
-const PLATFORMS = { instagram: "Instagram", youtube: "YouTube", linkedin: "LinkedIn", x: "X", facebook: "Facebook", threads: "Threads" };
-const BRAND = { instagram: "#e1306c", youtube: "#ff0033", linkedin: "#0a66c2", x: "currentColor", facebook: "#0866ff", threads: "currentColor" };
+const PLATFORMS = { instagram: "Instagram", youtube: "YouTube", linkedin: "LinkedIn", x: "X", facebook: "Facebook", threads: "Threads", github: "GitHub", reddit: "Reddit", hackernews: "Hacker News", web: "Web" };
+const BRAND = { instagram: "#e1306c", youtube: "#ff0033", linkedin: "#0a66c2", x: "currentColor", facebook: "#0866ff", threads: "currentColor", github: "#24292f", reddit: "#ff4500", hackernews: "#ff6600" };
 const logoOf = p => ICONS[p] ? `<span style="color:${BRAND[p] || "currentColor"};display:inline-flex">${svg(p)}</span>` : "";
 const plat = p => `<span class="plat">${logoOf(p)}${PLATFORMS[p] || p}</span>`;
 const MANUAL = { x: "https://x.com/compose/post" };
@@ -680,7 +792,7 @@ async function connect() {
   catch (err) { db = null; showError("database", err); return showOffline(); }
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "runs"];
+  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "learnings", "runs"];
   let pending = names.length;
   for (const name of names) {
     let first = true;
@@ -690,7 +802,7 @@ async function connect() {
         if (name === "accounts" && ui.acct && !raw.accounts.some(a => a.id === ui.acct)) ui.acct = "";
         applyAccount();
         if (first) { first = false; if (--pending === 0) { ui.loaded = true; clearTimeout(timer); if (!mode) { mode = (state.posts.length || state.accounts.length) ? "live" : "showcase"; lastKey = ""; } } }
-        if ((name === "accounts" || name === "competitors" || name === "schedules" || name === "runs") && tab === "accounts") lastKey = "";
+        if ((name === "accounts" || name === "competitors" || name === "schedules" || name === "runs" || name === "learnings") && tab === "accounts") lastKey = "";
         render(true);
       },
       err => { clearTimeout(timer); showError(name, err); });
@@ -724,26 +836,39 @@ async function saveIdea(text, accountId) {
   return true;
 }
 
-/* ---------- Reel Radar URL helpers ---------- */
+/* ---------- Reel Radar URL, Shelf-Life Expiry & First-Mover helpers (matches tools/sos/radar.py) ---------- */
+const TRACKING_EXACT = new Set(["fbclid", "gclid", "igsh", "igshid", "si", "s", "t", "ref", "ref_src", "ref_url", "feature", "pp", "rcm", "trk"]);
 function detectPlatform(url) {
   try {
-    const h = new URL(url).hostname.toLowerCase();
+    const h = new URL(url).hostname.toLowerCase().replace(/^www\./, "");
     if (h.includes("instagram.com") || h.includes("instagr.am")) return "instagram";
     if (h.includes("youtube.com") || h.includes("youtu.be")) return "youtube";
-    if (h.includes("x.com") || h.includes("twitter.com")) return "x";
+    if (h === "x.com" || h === "twitter.com" || h === "mobile.twitter.com") return "x";
     if (h.includes("linkedin.com")) return "linkedin";
     if (h.includes("threads.net") || h.includes("threads.com")) return "threads";
     if (h.includes("facebook.com") || h.includes("fb.watch")) return "facebook";
+    if (h.includes("github.com")) return "github";
+    if (h.includes("reddit.com") || h.includes("redd.it")) return "reddit";
+    if (h.includes("news.ycombinator.com")) return "hackernews";
   } catch {}
   return "web";
 }
 function normalizeUrl(rawUrl) {
   try {
     const u = new URL(rawUrl.trim().replace(/[.,;:!?)]+$/, ""));
-    const drop = ["utm_", "igsh", "si", "fbclid", "gclid", "ref", "feature", "t", "s"];
-    for (const k of [...u.searchParams.keys()]) if (drop.some(p => k.toLowerCase().startsWith(p))) u.searchParams.delete(k);
+    u.hostname = u.hostname.toLowerCase().replace(/^www\./, "");
+    if (u.hostname === "twitter.com" || u.hostname === "mobile.twitter.com") u.hostname = "x.com";
+    else if (u.hostname === "instagr.am") u.hostname = "instagram.com";
+    for (const k of [...u.searchParams.keys()]) {
+      const low = k.toLowerCase();
+      if (TRACKING_EXACT.has(low) || low.startsWith("utm_")) u.searchParams.delete(k);
+    }
     u.hash = "";
-    u.pathname = u.pathname.replace(/\/+$/, "") || "/";
+    u.pathname = u.pathname.replace(/\/+/g, "/").replace(/\/+$/, "") || "/";
+    if (u.hostname === "instagram.com") {
+      const m = u.pathname.match(/^\/(?:p|reel|reels|tv)\/([A-Za-z0-9_-]+)/i);
+      if (m) u.pathname = `/reel/${m[1]}`;
+    }
     return u.toString();
   } catch { return rawUrl.trim(); }
 }
@@ -755,6 +880,63 @@ function extractUrls(text) {
     if (url && !seen.has(url)) { seen.add(url); out.push({ url, platform: detectPlatform(url) }); }
   }
   return out;
+}
+function expiryInfo(item) {
+  if (!item) return { shelf: "evergreen", state: "evergreen", hoursLeft: null, daysLeft: null, label: "Evergreen", cls: "sh-evergreen" };
+  const shelf = String(item.shelfLife || "evergreen").toLowerCase();
+  const defHours = shelf === "update" ? 48 : shelf === "trend" ? 168 : null;
+  let expMs = item.expiresAt ? Date.parse(item.expiresAt) : NaN;
+  if (isNaN(expMs) && defHours != null && item.createdAt) {
+    const cMs = Date.parse(item.createdAt);
+    if (!isNaN(cMs)) expMs = cMs + defHours * 36e5;
+  }
+  if (shelf === "evergreen" && isNaN(expMs)) {
+    return { shelf: "evergreen", state: "evergreen", hoursLeft: null, daysLeft: null, label: "Evergreen", cls: "sh-evergreen" };
+  }
+  if (isNaN(expMs)) {
+    const lbl = shelf === "update" ? "Update · 48h window" : "Trend · 7d window";
+    return { shelf, state: "active", hoursLeft: defHours || 168, daysLeft: Math.round((defHours || 168) / 24), label: lbl, cls: shelf === "update" ? "sh-update" : "sh-trend" };
+  }
+  const deltaH = (expMs - Date.now()) / 36e5;
+  const hoursLeft = Math.round(deltaH);
+  const daysLeft = Math.round(deltaH / 24);
+  if (deltaH <= 0) {
+    const agoD = Math.max(1, Math.round(Math.abs(deltaH) / 24));
+    return { shelf, state: "expired", hoursLeft, daysLeft, agoDays: agoD, label: "Expired · avoid", cls: "sh-expired" };
+  }
+  const kindLbl = shelf === "update" ? "Update" : "Trend";
+  if (deltaH <= 24) {
+    return { shelf, state: "expiring_today", hoursLeft: Math.max(1, hoursLeft), daysLeft: 1, label: `${kindLbl} · ${Math.max(1, hoursLeft)}h left`, cls: "sh-update" };
+  }
+  return { shelf, state: "active", hoursLeft, daysLeft: Math.max(1, daysLeft), label: `${kindLbl} · ${Math.max(1, daysLeft)}d left`, cls: shelf === "update" ? "sh-update" : "sh-trend" };
+}
+const shelfBadge = item => { const e = expiryInfo(item); return `<span class="shelf ${e.cls}">${esc(e.label)}</span>`; };
+const FM_LABEL = { untapped: "First mover · 0 in niche", early: "Early wave · 1-2 creators", saturated: "Saturated · everywhere" };
+const firstMoverBadge = fm => fm && FM_LABEL[fm] ? `<span class="fm-badge fm-${esc(fm)}">${esc(FM_LABEL[fm])}</span>` : "";
+
+function findHeaters(posts) {
+  const byAcc = {};
+  for (const p of posts || []) {
+    const v = p.metrics?.views;
+    if (p.status !== "posted" || v == null || v <= 0) continue;
+    (byAcc[p.accountId || "all"] ||= []).push(p);
+  }
+  const out = [];
+  for (const [acc, list] of Object.entries(byAcc)) {
+    if (list.length < 3) continue;
+    const sorted = list.map(x => x.metrics.views).sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    const med = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+    if (med <= 0) continue;
+    for (const p of list) {
+      const mult = +(p.metrics.views / med).toFixed(1);
+      if (mult < 2.0) continue;
+      const ageDays = p.postedAt ? Math.max(0, Math.round((Date.now() - Date.parse(p.postedAt)) / 864e5)) : 0;
+      const evergreenRecycle = ageDays >= 90 && (p.shelfLife || "evergreen") === "evergreen";
+      out.push({ post: p, accountId: acc, views: p.metrics.views, median: Math.round(med), mult, ageDays, evergreenRecycle });
+    }
+  }
+  return out.sort((a, b) => b.mult - a.mult || b.views - a.views);
 }
 
 // The page records the request; Claude's next run does the setup (private folder, voice file, Composio connection)
@@ -801,251 +983,159 @@ function agentTools(did) {
   ];
 }
 
-/* ---------- lanes ---------- */
-const LANES = [
-  { id: "carousel", platform: "instagram", fmt: ["carousel"], kind: "Carousel", color: "#e1306c", size: "big" },
-  { id: "reel", platform: "instagram", fmt: ["reel"], kind: "Reel", color: "#f56040" },
-  { id: "linkedin", platform: "linkedin", fmt: null, kind: "Post", color: "#0a66c2" },
-  { id: "x", platform: "x", fmt: null, kind: "Thread", color: "var(--fg)" },
-  { id: "story", platform: "instagram", fmt: ["story"], kind: "Story", color: "#c13584" },
-  { id: "youtube", platform: "youtube", fmt: null, kind: "Short", color: "#ff0033" },
-  { id: "facebook", platform: "facebook", fmt: null, kind: "Post", color: "#0866ff" },
-  { id: "threads", platform: "threads", fmt: null, kind: "Post", color: "var(--fg)" },
-  { id: "log", platform: null, fmt: null, kind: "Engine log", color: "#d97757" },
-];
-const DEMO = {
-  carousel: [["#ffe0d2", "5 coffee mistakes", "01 / 05"], ["#e3ddff", "Old beans", "02 / 05"], ["#d4f1e8", "Wrong grind", "03 / 05"], ["#fff0c2", "Boiling water", "04 / 05"], ["#ffd9e6", "Save this", "05 / 05"]],
-  reel: ["Stop", "scrolling.", "This", "changes", "how", "you", "train."],
-  x: "I posted every day for 90 days.\n\nHere's what actually moved the numbers.\n\n1/ Consistency beat quality for the first 30 days. After that, it flipped.",
-  linkedin: "Most teams don't have a content problem.\n\nThey have a decision problem. Three questions fixed ours.",
-  facebook: "New weekend menu is live. Which one are you trying first?",
-  youtube: ["I tried 5 morning routines", "The only routine that stuck"],
-  threads: "Unpopular opinion: your first 10 posts are practice. Ship them anyway.",
-  story: [["#ffe39a", "Tea or coffee?"], ["#e3ddff", "Behind the scenes"], ["#d4f1e8", "Link in bio"]],
-};
-const LOG_LINES = [
-  ["Research", "12 trending reels pulled"], ["Strategy", "Tuesday 7 PM picked for the carousel"], ["Create", "carousel slide 3 laid out"],
-  ["Create", "LinkedIn draft in the account's voice"], ["Create", "X thread fits 280 characters"], ["Create", "reel captions synced to the beat"],
-  ["Approve", "2 drafts waiting for you"], ["Publish", "Facebook post queued for 7 PM"], ["Analyse", "best post this week: the carousel"],
-  ["Create", "YouTube title pair written"], ["Strategy", "next week has 9 slots"],
-];
-const STAGES = ["Research", "Strategy", "Create", "Approve", "Publish", "Analyse"];
-
-function laneShell(l) {
-  return `<article class="mon ${l.size || ""}" data-lane="${l.id}" style="--c:${l.color}">
-    <div class="mon-top">${svg(l.platform || "claude")}<b>${l.platform ? PLATFORMS[l.platform] : "Claude"}</b><span>${l.kind}</span><span class="state" data-st>…</span></div>
-    <div class="mon-body" data-body></div>
-    <div class="mon-foot"><div class="prog"><i data-prog></i></div><div class="cap" data-cap></div></div>
-  </article>`;
-}
-const parts = el => ({ body: el.querySelector("[data-body]"), st: el.querySelector("[data-st]"), prog: el.querySelector("[data-prog]"), cap: el.querySelector("[data-cap]") });
-
-function realPostFor(l) {
-  const order = { posting: 0, approved: 1, waiting: 2, draft: 3, failed: 4 };
-  return state.posts.filter(p => p.platform === l.platform && (!l.fmt || l.fmt.includes(p.format)) && p.status in order)
-    .sort((a, b) => order[a.status] - order[b.status] || byTime(a, b))[0] || null;
-}
-const LIVE_STATE = { posting: ["Posting", 90], approved: ["Scheduled", 75], waiting: ["Needs you", 55], draft: ["Drafting", 30], failed: ["Failed", 100] };
-
-function paintLive(el, l) {
-  const { body, st, prog, cap } = parts(el);
-  if (l.id === "log") {
-    const runLines = state.runs.slice().sort((a, b) => String(b.finishedAt || b.startedAt || "").localeCompare(String(a.finishedAt || a.startedAt || ""))).slice(0, 8).reverse()
-      .map(r => `<div><span class="p">${esc(r.kind || "run")}</span> <em>${esc((r.summary || "").slice(0, 62))}</em></div>`);
-    const postLines = runLines.length ? [] : state.posts.slice().sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt))).slice(0, 8).reverse()
-      .map(p => `<div><span class="p">${esc(PLATFORMS[p.platform] || p.platform)}</span> <em>${esc(p.status)}</em> · ${esc((p.title || p.caption || "").slice(0, 50))}</div>`);
-    const lines = runLines.length ? runLines : postLines;
-    body.innerHTML = `<div class="log">${lines.join("") || `<div>No activity yet.</div>`}</div>`;
-    st.textContent = lines.length ? "Live" : "Idle"; prog.style.width = lines.length ? "100%" : "0";
-    cap.textContent = runLines.length ? `${state.runs.length} engine runs logged` : `${state.posts.length} posts in the system`; el.classList.toggle("idle", !lines.length); return;
-  }
-  const p = realPostFor(l);
-  el.classList.toggle("idle", !p);
-  if (!p) {
-    st.textContent = "Idle"; prog.style.width = "0";
-    body.innerHTML = `<div class="idle-note">${svg(l.platform)}Nothing in this lane yet</div>`;
-    cap.textContent = state.accounts.length ? "Claude adds work here" : "Add an account to start"; return;
-  }
-  const [label, pct] = LIVE_STATE[p.status];
-  cap.textContent = `${accountLabel(p.accountId)} · ${fmtTime(p.plannedAt)}`;
-  // same moving previews as the showcase, fed by the real post; rebuilt only when the post itself changes
-  const key = p.id + "|" + p.updatedAt + "|" + p.status;
-  if (el.dataset.key === key) return;
-  el.dataset.key = key; clearInterval(el._t);
-  st.textContent = label; prog.style.width = pct + "%";
-  const loop = (ms, fn) => { fn(); if (!REDUCED) el._t = setInterval(() => { if (!el.isConnected) return clearInterval(el._t); if (!document.hidden) fn(); }, ms); };
-  const media = p.mediaUrls || [], isVid = u => /\.(mp4|mov|webm)(\?|$)/i.test(u);
-  const text = p.title || p.caption || "";
-  if (p.status === "draft") {
-    // Claude is still making it: the format's own shape, blurred, with light sweeping across
-    const n = Math.max(3, media.length || 5);
-    body.innerHTML = ["carousel", "story"].includes(p.format)
-      ? `<div class="slides building">${Array.from({ length: n }, (_, k) => `<div class="slide" style="background:${["#ffe0d2", "#e3ddff", "#d4f1e8", "#fff0c2", "#ffd9e6"][k % 5]}${p.format === "story" ? ";aspect-ratio:9/16" : ""}"><small>${String(k + 1).padStart(2, "0")} / ${String(n).padStart(2, "0")}</small><b>${k ? "" : esc(text.split("\n")[0].slice(0, 40))}</b></div>`).join("")}</div>`
-      : ["reel", "video", "short"].includes(p.format) ? `<div class="reel-frame building"></div>`
-      : `<div class="post building">${who(accountLabel(p.accountId))}<div class="skel"></div><div class="skel"></div><div class="skel" style="width:60%"></div></div>`;
-    if (["carousel", "story"].includes(p.format)) { const strip = body.querySelector(".slides"); let i = 0;
-      loop(1600, () => { const w = strip.firstElementChild.getBoundingClientRect().width + 10; strip.style.transform = `translateX(${-i * w}px)`; st.textContent = `Building ${i + 1}/${n}`; i = (i + 1) % n; }); }
-    return;
-  }
-  if (["carousel", "story"].includes(p.format) && media.length && !isVid(media[0])) {
-    body.innerHTML = `<div class="slides">${media.map(u => `<img class="slide" style="padding:0;object-fit:cover;background:var(--surface-2)${p.format === "story" ? ";aspect-ratio:9/16" : ""}" src="${esc(u)}" alt="">`).join("")}</div>`;
-    const strip = body.querySelector(".slides"); let i = 0;
-    loop(2200, () => { const w = strip.firstElementChild.getBoundingClientRect().width + 10; strip.style.transform = `translateX(${-i * w}px)`;
-      st.textContent = `${label} · ${i + 1}/${media.length}`; i = (i + 1) % media.length; });
-  } else if (["reel", "video", "short"].includes(p.format)) {
-    if (media[0]) { body.innerHTML = `<div class="reel-frame" style="background:#000"><video src="${esc(media[0])}" muted autoplay loop playsinline style="width:100%;height:100%;object-fit:cover"></video></div>`; return; }
-    // not filmed yet: play the script (or caption) as burned-in captions
-    const script = (p.problems || []).find(x => /script/i.test(x));
-    const words = (script ? script.split("\n").slice(1).join(" ") : text).split(/\s+/).filter(Boolean).slice(0, 80);
-    body.innerHTML = `<div class="reel-frame"><div class="word"></div><div class="tl"><i></i></div></div>`;
-    const word = body.querySelector(".word"), tl = body.querySelector(".tl i"); let t = 0;
-    loop(450, () => { const k = t % words.length; word.innerHTML = (k ? esc(words[k - 1]) + " " : "") + `<mark>${esc(words[k])}</mark>`;
-      tl.style.width = (k / words.length * 100) + "%"; t++; });
-  } else {
-    body.innerHTML = `<div class="post">${who(accountLabel(p.accountId))}${media[0] && !isVid(media[0]) ? `<img src="${esc(media[0])}" alt="" style="width:100%;height:120px;object-fit:cover;border-radius:12px">` : ""}<div class="typed" data-t></div></div>`;
-    const node = body.querySelector("[data-t]"); let i = 0;
-    if (REDUCED) node.textContent = text;
-    else el._t = setInterval(() => { if (!el.isConnected) return clearInterval(el._t); if (document.hidden) return; i += 2; node.textContent = text.slice(0, i); if (i >= text.length) clearInterval(el._t); }, 35);
-  }
-}
-
+/* ---------- timer cleanup ---------- */
 const timers = [];
-function every(ms, fn) { fn(); if (!REDUCED) timers.push(setInterval(() => { if (!document.hidden) fn(); }, ms)); }
-function later(ms, fn) { timers.push(setTimeout(fn, ms)); }
 function stopLoops() { while (timers.length) { const t = timers.pop(); clearInterval(t); clearTimeout(t); } }
-function typer(node, text, speed, done) {
-  let i = 0; node.textContent = "";
-  if (REDUCED) { node.textContent = text; done && done(); return; }
-  const t = setInterval(() => { if (document.hidden) return; i += 1 + (Math.random() < .3 ? 1 : 0); node.textContent = text.slice(0, i); if (i >= text.length) { clearInterval(t); done && done(); } }, speed);
-  timers.push(t);
-}
-let logK = 0;
-function pushLog() {
-  const box = document.querySelector('[data-lane="log"] .log'); if (!box) return;
-  const [stage, what] = LOG_LINES[logK++ % LOG_LINES.length];
-  box.insertAdjacentHTML("beforeend", `<div>${clock()} <span class="p">${stage}</span> <em>${what}</em></div>`);
-  while (box.children.length > 9) box.firstElementChild.remove();
-  document.querySelectorAll(".st").forEach((s, i) => s.classList.toggle("on", STAGES[i] === stage));
-}
-const who = handle => `<div class="who"><span class="ava"></span><div><b>Your brand</b><span>${handle}</span></div></div>`;
 
-function playShowcase(el, l) {
-  const { body, st, prog, cap } = parts(el);
-  el.classList.remove("idle");
-  switch (l.id) {
-    case "carousel": {
-      body.innerHTML = `<div class="slides">${DEMO.carousel.map(([bg, h, s]) => `<div class="slide" style="background:${bg}"><small>${s}</small><b>${h}</b></div>`).join("")}</div>`;
-      let i = 0; const strip = body.querySelector(".slides");
-      every(2200, () => { const w = strip.firstElementChild.getBoundingClientRect().width + 10; strip.style.transform = `translateX(${-i * w}px)`;
-        st.textContent = `Slide ${i + 1}/5`; prog.style.width = ((i + 1) * 20) + "%"; cap.textContent = "Laying out in brand colours"; i = (i + 1) % 5; });
-      break;
-    }
-    case "reel": {
-      body.innerHTML = `<div class="reel-frame"><div class="word"></div><div class="tl"><i></i></div></div>`;
-      let t = 0; const word = body.querySelector(".word"), tl = body.querySelector(".tl i");
-      every(900, () => { const w = DEMO.reel, k = t % w.length; word.innerHTML = (k ? w[k - 1] + " " : "") + `<mark>${w[k]}</mark>`;
-        const pct = (t % 28) / 28 * 100; tl.style.width = pct + "%";
-        st.textContent = `Editing 0:${String(t % 28).padStart(2, "0")}`; prog.style.width = pct + "%"; cap.textContent = "Captions synced to the beat"; t++; });
-      break;
-    }
-    case "story": {
-      body.innerHTML = `<div class="reel-frame story"><div class="segs">${DEMO.story.map(() => "<i><b></b></i>").join("")}</div><strong></strong></div>`;
-      let i = 0; const fr = body.querySelector(".reel-frame"), segs = body.querySelectorAll(".segs b");
-      every(1800, () => { const k = i % 3; if (k === 0) segs.forEach(s => s.style.width = "0");
-        segs[k].style.width = "100%"; fr.style.background = DEMO.story[k][0]; fr.querySelector("strong").textContent = DEMO.story[k][1];
-        st.textContent = `Frame ${k + 1}/3`; prog.style.width = ((k + 1) / 3 * 100) + "%"; cap.textContent = "One image per frame · checked"; i++; });
-      break;
-    }
-    case "x": case "linkedin": case "threads": case "facebook": {
-      const names = { x: "@yourbrand · 1/4", linkedin: "Founder · 2nd", threads: "@yourbrand", facebook: "Page · Public" };
-      body.innerHTML = `<div class="post">${who(names[l.id])}${l.id === "facebook" ? `<div class="fb-img"></div>` : ""}<div class="typed" data-t></div></div>`;
-      const node = body.querySelector("[data-t]");
-      const steps = { x: ["Writing", "Checking 280", "Ready"], linkedin: ["Writing", "Humanizing", "Needs you"], threads: ["Writing", "Tone check", "Ready"], facebook: ["Writing", "Image set", "7:00 PM"] }[l.id];
-      const run = () => { st.textContent = steps[0]; prog.style.width = "20%"; cap.textContent = "In the account's own voice";
-        typer(node, DEMO[l.id], l.id === "x" ? 30 : 42, () => { st.textContent = steps[1]; prog.style.width = "70%";
-          later(1400, () => { st.textContent = steps[2]; prog.style.width = "100%"; later(2600, run); }); }); };
-      run();
-      break;
-    }
-    case "youtube": {
-      body.innerHTML = `<div class="thumb"></div><div class="ab">${DEMO.youtube.map((t, i) => `<div class="ab-row"><div>${"AB"[i]} · ${t}<span data-v="${i}">0%</span></div><div class="prog"><i data-ab="${i}" style="background:${i ? "var(--accent)" : "#ff0033"}"></i></div></div>`).join("")}</div>`;
-      every(1500, () => { const a = 40 + Math.round(Math.random() * 25), v = [a, 100 - a];
-        v.forEach((x, i) => { body.querySelector(`[data-ab="${i}"]`).style.width = x + "%"; body.querySelector(`[data-v="${i}"]`).textContent = x + "%"; });
-        st.textContent = "Testing titles"; prog.style.width = "60%"; cap.textContent = "Predicted click share"; });
-      break;
-    }
-    case "log": {
-      body.innerHTML = `<div class="log"></div>`;
-      st.textContent = "Running"; prog.style.width = "100%"; cap.textContent = "Every step, as it happens";
-      for (let n = 0; n < 6; n++) pushLog();
-      every(1700, pushLog);
-      break;
-    }
-  }
-}
-
-function paintRail(fresh) {
-  const rail = $("#rail"); if (!rail) return;
-  if (fresh) rail.innerHTML = LANES.map(laneShell).join("");
-  rail.querySelectorAll(".mon").forEach(el => {
-    const l = LANES.find(x => x.id === el.dataset.lane);
-    if (mode === "showcase") { if (fresh) playShowcase(el, l); } else paintLive(el, l);
-  });
-}
-
-/* ---------- 3D orb ---------- */
+/* ---------- 3D Studio Liquid-Glass Pearl Sphere + Dual Gyroscopic Orbits ---------- */
 let orb3d = null;
 function startOrb() {
   const host = document.querySelector(".orb"); if (!host || !window.THREE) return;
   if (orb3d) { host.append(orb3d.canvas); orb3d.resize(); if (!orb3d.running) orb3d.go(); return; }
   const THREE = window.THREE;
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(36, 1, .1, 100); cam.position.set(0, 0, 8);
-  const isDark = () => false;
-  const uni = { t: { value: 0 }, dark: { value: isDark() ? 1 : 0 } };
-  const mat = new THREE.ShaderMaterial({ uniforms: uni, transparent: true,
-    vertexShader: `uniform float t; varying vec3 vN; varying vec3 vP;
-      void main(){ vec3 p = position; float d = sin(p.x*2.2+t*.9)*sin(p.y*2.6+t*1.1)*sin(p.z*2.0+t*.7);
-        p += normal * d * .09; vN = normalize(normalMatrix * normal); vec4 mv = modelViewMatrix * vec4(p,1.); vP = -mv.xyz; gl_Position = projectionMatrix * mv; }`,
-    fragmentShader: `uniform float t; uniform float dark; varying vec3 vN; varying vec3 vP;
-      void main(){ vec3 n = normalize(vN); vec3 v = normalize(vP); float f = pow(1. - max(dot(n,v),0.), 2.2);
-        vec3 peach = vec3(1.,.72,.6), lilac = vec3(.76,.7,1.), mint = vec3(.62,.9,.82), deep = vec3(.36,.3,.96);
-        float a = .5 + .5*sin(n.y*2.4 + t*.5), b = .5 + .5*sin(n.x*2.0 - t*.4);
-        vec3 c = mix(mix(peach, lilac, a), mix(mint, deep, .35), b*.55);
-        vec3 L = normalize(vec3(-.55, .7, .6)); float diff = max(dot(n, L), 0.);
-        float spec = pow(max(dot(reflect(-L, n), v), 0.), 28.);
-        c *= .72 + .38 * diff; c += spec * .55; c = mix(c, vec3(1.), f * .7); c *= mix(1., .85, dark);
-        gl_FragColor = vec4(c, .96); }` });
-  const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(1.7, 40), mat);
-  const group = new THREE.Group(); group.add(ball); scene.add(group);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.45, .004, 6, 200), new THREE.MeshBasicMaterial({ color: 0x8a80ff, transparent: true, opacity: .35 }));
-  ring.rotation.x = 1.18; ring.rotation.y = -0.22; group.add(ring);
-  // the real platform logos orbit the orb
-  const sprites = ["instagram", "linkedin", "x", "youtube", "facebook", "threads"].map((name, i) => {
-    const c = document.createElement("canvas"); c.width = c.height = 128; const g = c.getContext("2d");
-    g.fillStyle = "#ffffff"; g.beginPath(); g.arc(64, 64, 60, 0, Math.PI * 2); g.fill();
-    g.translate(34, 34); g.scale(2.5, 2.5); g.fillStyle = { instagram: "#e1306c", linkedin: "#0a66c2", youtube: "#ff0033", facebook: "#0866ff" }[name] || "#111222";
-    g.fill(new Path2D(ICONS[name]));
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true }));
-    s.scale.setScalar(.38); s.position.set(Math.cos(i / 6 * Math.PI * 2) * 2.45, Math.sin(i / 6 * Math.PI * 2) * 2.45, 0); ring.add(s); return s;
+  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(34, 1, .1, 100); cam.position.set(0, 0, 8.2);
+  const uni = { t: { value: 0 }, mouse: { value: new THREE.Vector2(0, 0) } };
+  const mat = new THREE.ShaderMaterial({
+    uniforms: uni, transparent: true,
+    vertexShader: `uniform float t; uniform vec2 mouse; varying vec3 vN; varying vec3 vP; varying vec3 vObj;
+      void main(){
+        vec3 p = position;
+        float w1 = sin(p.x * 1.65 + t * .55) * cos(p.y * 1.55 - t * .42) * sin(p.z * 1.45 + t * .38);
+        float w2 = sin((p.x + p.y) * 2.4 - t * .7) * .35;
+        p += normal * (w1 + w2) * .026;
+        vObj = normalize(p);
+        vN = normalize(normalMatrix * normal);
+        vec4 mv = modelViewMatrix * vec4(p, 1.);
+        vP = -mv.xyz;
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `uniform float t; uniform vec2 mouse; varying vec3 vN; varying vec3 vP; varying vec3 vObj;
+      vec3 irid(float x){
+        // Delicate Apple-pearl / optical thin-film spectrum (silver-lilac, cool sky, warm Claude terracotta)
+        vec3 a = vec3(.86, .87, .91);
+        vec3 b = vec3(.14, .11, .14);
+        vec3 c = vec3(1., 1., 1.);
+        vec3 d = vec3(.06, .18, .36);
+        return a + b * cos(6.28318 * (c * x + d));
+      }
+      void main(){
+        vec3 n = normalize(vN);
+        vec3 v = normalize(vP);
+        float ndv = max(dot(n, v), 0.);
+        float fres = pow(1. - ndv, 2.6);
+        float rim = pow(1. - ndv, 4.5);
+
+        // Studio environment reflection (overhead softbox + horizon graphite band + alabaster floor bounce)
+        vec3 R = reflect(-v, n);
+        float horizon = smoothstep(-.18, .28, R.y);
+        vec3 studioLow = vec3(.14, .15, .18);     // architectural graphite reflection
+        vec3 studioMid = vec3(.82, .83, .87);     // brushed platinum silver
+        vec3 studioTop = vec3(.98, .985, 1.0);    // bright studio softbox sky
+        vec3 env = mix(studioLow, studioMid, smoothstep(-.55, .05, R.y));
+        env = mix(env, studioTop, smoothstep(.08, .65, R.y));
+
+        // Flowing internal silk light-ribbon (BlueYard glass inspiration)
+        float ribbon = smoothstep(.62, .98, sin(vObj.y * 3.8 + vObj.x * 2.2 + t * .65 + mouse.x * 1.4) * .5 + .5);
+        vec3 pearl = irid(fres * 1.35 + vObj.y * .28 + t * .06);
+        vec3 claudeWarm = vec3(.93, .58, .44);    // subtle warm terracotta refraction kiss
+
+        // Crisp 3-point studio speculars (softbox key + cool rim)
+        vec3 L1 = normalize(vec3(-.55, .78, .65));
+        vec3 L2 = normalize(vec3(.75, -.25, .45));
+        vec3 H1 = normalize(L1 + v);
+        vec3 H2 = normalize(L2 + v);
+        float specKey = pow(max(dot(n, H1), 0.), 90.) * .95;
+        float specSoft = pow(max(dot(n, H1), 0.), 16.) * .26;
+        float specWarm = pow(max(dot(n, H2), 0.), 26.) * .28;
+
+        // Compose ceramic-glass body: deep sculpted core -> platinum mid -> iridescent optical rim
+        vec3 col = mix(env * .92, pearl, .28 + fres * .58);
+        col = mix(col, vec3(.99, .99, 1.0), ribbon * .22);
+        col += claudeWarm * specWarm * (.45 + fres);
+        col += vec3(1.) * (specSoft + specKey);
+        col = mix(col, vec3(1.), rim * .72);
+
+        gl_FragColor = vec4(col, .97);
+      }`
   });
-  let mx = 0, my = 0;
+
+  const group = new THREE.Group(); scene.add(group);
+  const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(1.48, 56), mat);
+  group.add(ball);
+
+  // Outer precision graphite orbital ring (carries the 6 machined platform medallions)
+  const R_OUT = 2.32;
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(R_OUT, .0055, 8, 220),
+    new THREE.MeshBasicMaterial({ color: 0x0f0f10, transparent: true, opacity: .14 })
+  );
+  ring.rotation.x = 1.18; ring.rotation.y = -.24; group.add(ring);
+
+  // Inner counter-rotating platinum gyroscopic ring + 2 micro telemetry nodes
+  const ring2 = new THREE.Mesh(
+    new THREE.TorusGeometry(1.88, .004, 8, 180),
+    new THREE.MeshBasicMaterial({ color: 0x0f0f10, transparent: true, opacity: .075 })
+  );
+  ring2.rotation.x = 1.42; ring2.rotation.y = .48; group.add(ring2);
+  const dotMat1 = new THREE.MeshBasicMaterial({ color: 0x0f0f10, transparent: true, opacity: .55 });
+  const dotMat2 = new THREE.MeshBasicMaterial({ color: 0xd97757, transparent: true, opacity: .85 });
+  const d1 = new THREE.Mesh(new THREE.SphereGeometry(.038, 16, 16), dotMat1); d1.position.set(1.88, 0, 0); ring2.add(d1);
+  const d2 = new THREE.Mesh(new THREE.SphereGeometry(.044, 16, 16), dotMat2); d2.position.set(-1.88, 0, 0); ring2.add(d2);
+
+  // Machined glass-rimmed studio medallions (256px crisp retina canvas)
+  const sprites = ["instagram", "linkedin", "x", "youtube", "facebook", "threads"].map((name, i) => {
+    const c = document.createElement("canvas"); c.width = c.height = 256; const g = c.getContext("2d");
+    // Soft ambient shadow + pure white ceramic disk + 1px hairline silver rim
+    g.shadowColor = "rgba(15,15,16,0.14)"; g.shadowBlur = 18; g.shadowOffsetY = 6;
+    g.fillStyle = "#ffffff"; g.beginPath(); g.arc(128, 124, 96, 0, Math.PI * 2); g.fill();
+    g.shadowColor = "transparent";
+    g.strokeStyle = "rgba(15,15,16,0.11)"; g.lineWidth = 3; g.stroke();
+    g.save();
+    g.translate(76, 72); g.scale(4.35, 4.35);
+    g.fillStyle = { instagram: "#e1306c", linkedin: "#0a66c2", youtube: "#ff0033", facebook: "#0866ff" }[name] || "#0f0f10";
+    g.fill(new Path2D(ICONS[name]));
+    g.restore();
+    const tex = new THREE.CanvasTexture(c); tex.minFilter = THREE.LinearFilter;
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: true }));
+    s.scale.setScalar(.42);
+    s.position.set(Math.cos(i / 6 * Math.PI * 2) * R_OUT, Math.sin(i / 6 * Math.PI * 2) * R_OUT, 0);
+    ring.add(s); return s;
+  });
+
+  let mx = 0, my = 0, sx = 0, sy = 0;
   addEventListener("pointermove", e => { mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5; });
   const canvas = renderer.domElement;
-  function resize() { const h = canvas.parentElement; if (!h) return; const w = h.clientWidth, ht = h.clientHeight; if (!w || !ht) return; renderer.setSize(w, ht, false); cam.aspect = w / ht;
-    cam.updateProjectionMatrix();
-    const sc = Math.min(0.86, Math.max(0.58, Math.min(w, ht) / 340));
-    group.position.set(0, 0, 0);
-    group.scale.setScalar(sc); }
+  const worldPos = new THREE.Vector3();
+  function resize() {
+    const h = canvas.parentElement; if (!h) return;
+    const w = h.clientWidth, ht = h.clientHeight; if (!w || !ht) return;
+    renderer.setSize(w, ht, false); cam.aspect = w / ht; cam.updateProjectionMatrix();
+    const sc = Math.min(.88, Math.max(.62, Math.min(w, ht) / 335));
+    group.position.set(0, .04, 0);
+    group.scale.setScalar(sc);
+  }
   addEventListener("resize", resize);
   const t0 = performance.now();
   function frame(now) {
     if (!canvas.isConnected) { orb3d.running = false; return; }
-    const t = (now - t0) / 1000; uni.t.value = t; uni.dark.value = isDark() ? 1 : 0;
-    ball.rotation.y = t * .1 + mx * .5; ball.rotation.x = my * .3;
-    ring.rotation.z = t * .15;
-    group.rotation.y = mx * .25; group.rotation.x = my * .15;
+    const t = (now - t0) / 1000;
+    sx += (mx - sx) * .055; sy += (my - sy) * .055; // silky spring-damped inertia
+    uni.t.value = t; uni.mouse.value.set(sx, sy);
+    ball.rotation.y = t * .14 + sx * .55;
+    ball.rotation.x = sy * .32;
+    ring.rotation.z = t * .16;
+    ring2.rotation.z = -t * .24;
+    group.rotation.y = sx * .28;
+    group.rotation.x = sy * .18;
+    // Depth-of-field parallax on orbiting medallions (front = crisp & larger, back = softer & smaller)
+    for (const s of sprites) {
+      s.getWorldPosition(worldPos);
+      const depth = Math.max(0, Math.min(1, (worldPos.z + 2.3) / 4.6));
+      s.scale.setScalar(.30 + depth * .15);
+      s.material.opacity = .42 + depth * .58;
+    }
     renderer.render(scene, cam);
     if (!REDUCED) requestAnimationFrame(frame); else orb3d.running = false;
   }
@@ -1185,27 +1275,13 @@ function openPick(btn) {
 }
 function closePick() { document.querySelectorAll(".menu").forEach(m => m.remove()); document.querySelectorAll(".pick").forEach(b => b.setAttribute("aria-expanded", "false")); }
 
-/* ---------- pinned horizontal section ---------- */
-function layoutPin() {
-  const hdr = document.querySelector("header")?.offsetHeight || 60;
+/* ---------- header height sync ---------- */
+function syncHeader() {
+  const hdr = document.querySelector("header")?.offsetHeight || 52;
   document.documentElement.style.setProperty("--hdr", hdr + "px");
-  const sec = $("#hscroll"), track = $("#track"); if (!sec || !track) return;
-  const pin = track.parentElement; pin.style.setProperty("--pw", pin.clientWidth + "px");
-  const dist = Math.max(0, track.scrollWidth - pin.clientWidth);
-  sec.style.height = `calc(100vh - ${hdr}px + ${dist}px)`; sec.dataset.dist = dist;
-  onPinScroll();
   orb3d?.resize();
 }
-function onPinScroll() {
-  const sec = $("#hscroll"), rail = $("#track"); if (!sec || !rail) return;
-  const hdr = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hdr")) || 60, dist = +sec.dataset.dist || 0;
-  const p = dist ? Math.min(1, Math.max(0, (hdr - sec.getBoundingClientRect().top) / dist)) : 0;
-  rail.style.transform = `translate3d(${-p * dist}px,0,0)`;
-  const bar = $("#hbar"); if (bar) bar.style.width = (p * 100) + "%";
-  const c = $("#hcount"); if (c) c.textContent = `${String(Math.min(LANES.length, 1 + Math.round(p * (LANES.length - 1)))).padStart(2, "0")} / ${String(LANES.length).padStart(2, "0")}`;
-}
-addEventListener("scroll", onPinScroll, { passive: true });
-addEventListener("resize", layoutPin);
+addEventListener("resize", syncHeader);
 
 /* ---------- add account sheet ---------- */
 let sheet = null;
@@ -1256,18 +1332,6 @@ function openAddAccount() {
 function closeSheet() { sheet?.remove(); sheet = null; }
 
 /* ---------- views ---------- */
-function figures() {
-  if (mode === "showcase") return [["Waiting for you", 3, "warn"], ["Scheduled", 9, ""], ["Posted this week", 21, ""], ["Channels", 8, ""]];
-  const weekAgo = Date.now() - 7 * 864e5, c = s => state.posts.filter(p => p.status === s).length;
-  return [["Waiting for you", c("waiting"), c("waiting") ? "warn" : ""], ["Scheduled", c("approved"), ""],
-    ["Posted this week", state.posts.filter(p => p.status === "posted" && p.postedAt && Date.parse(p.postedAt) >= weekAgo).length, ""], ["Failed", c("failed"), c("failed") ? "bad" : ""]];
-}
-const figuresHtml = () => figures().map(([l, v, c]) => `<div class="${c}"><b>${v}</b>${l}</div>`).join("");
-function pipeCounts() {
-  if (mode === "showcase") return ["14 sources", "9 slots", "6 drafts", "3 waiting", "9 queued", "21 posts"];
-  const c = (...s) => state.posts.filter(p => s.includes(p.status)).length;
-  return ["feeds", `${state.accounts.length} accounts`, `${c("draft")} drafts`, `${c("waiting")} waiting`, `${c("approved", "posting")} queued`, `${c("posted")} posted`];
-}
 
 function heroInner() {
   const mk = store.get("sos.model", "sonnet"), ef = store.get("sos.effort", "medium");
@@ -1304,19 +1368,39 @@ function viewWall() {
   const failed = state.posts.filter(p => p.status === "failed");
   const waiting = state.posts.filter(p => p.status === "waiting").sort(byTime);
   const draftScr = state.scripts.filter(s => s.status === "draft");
-  const p1Radar = state.inspirations.filter(i => i.tier === "P1" && i.status !== "skipped");
+  const filmScr = state.scripts.filter(s => s.status === "approved" || s.status === "done");
+  const p1Radar = state.inspirations.filter(i => i.tier === "P1" && i.status !== "skipped" && expiryInfo(i).state !== "expired");
   const sched = state.posts.filter(p => p.status === "approved").sort(byTime);
   const upcoming = state.posts.filter(p => p.plannedAt && ["approved", "waiting", "posting"].includes(p.status)).sort(byTime).slice(0, 4);
   const runs = [...state.runs].sort((a, b) => String(b.finishedAt || b.startedAt || "").localeCompare(String(a.finishedAt || a.startedAt || ""))).slice(0, 5);
-  const topRadar = state.inspirations.filter(i => i.status !== "skipped" && i.score != null).sort((a, b) => (b.score || 0) - (a.score || 0))[0];
+  const learnings = [...state.learnings].sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || ""))).slice(0, 3);
+  const dailyAuto = state.schedules.find(s => s.kind === "research" && s.every === "daily" && s.status !== "remove");
+
+  const expiringToday = [
+    ...state.inspirations.filter(i => i.status !== "skipped" && expiryInfo(i).state === "expiring_today").map(i => ({ kind: "Radar", title: i.title || i.url, exp: expiryInfo(i), tab: "plan", ptab: "radar" })),
+    ...state.options.filter(o => o.status === "new" && expiryInfo(o).state === "expiring_today").map(o => ({ kind: "Option", title: o.title, exp: expiryInfo(o), tab: "plan", ptab: "work" })),
+    ...state.scripts.filter(s => s.status !== "done" && expiryInfo(s).state === "expiring_today").map(s => ({ kind: "Script", title: s.title, exp: expiryInfo(s), tab: "plan", ptab: "work" })),
+    ...waiting.filter(p => expiryInfo(p).state === "expiring_today").map(p => ({ kind: "Post", title: p.title || p.caption, exp: expiryInfo(p), tab: "approve" })),
+  ];
 
   const needItems = [
     ...failed.slice(0, 2).map(p => `<div class="mini-row failed-box"><div class="mini-main"><div class="meta">${plat(p.platform)}${pill("failed", "Failed")}</div><b>${esc(p.title || p.caption)}</b><span>${esc((p.error || "Publish failed").slice(0, 70))}</span></div><button class="btn" data-tab="approve">Fix</button></div>`),
-    ...draftScr.slice(0, 2).map(s => `<div class="mini-row"><div class="mini-main"><div class="meta">${pill("waiting", "Gate 1 · Script")}${s.hookScore != null ? `<span>hook ${esc(s.hookScore)}/100</span>` : ""}</div><b>${esc(s.title || "Draft script")}</b><span>EN + Malayalam-English ready</span></div><div class="row"><button class="btn" data-tele="${esc(s.id)}">Teleprompter</button><button class="btn primary" data-tab="plan" data-ptab="work">Review</button></div></div>`),
-    ...waiting.slice(0, 2).map(p => `<div class="mini-row"><div class="mini-main"><div class="meta">${plat(p.platform)}<span>${esc(p.format)}</span>${pill("waiting", "Gate 2 · Post")}</div><b>${esc(p.title || p.caption)}</b><span>${esc(fmtTime(p.plannedAt))}</span></div><button class="btn" data-tab="approve">Approve</button></div>`),
+    ...draftScr.slice(0, 2).map(s => `<div class="mini-row"><div class="mini-main"><div class="meta">${pill("waiting", "Gate 1 · Script")}${shelfBadge(s)}${firstMoverBadge(s.firstMover)}</div><b>${esc(s.title || "Draft script")}</b><span>EN + Malayalam-English ready</span></div><div class="row"><button class="btn" data-tele="${esc(s.id)}">Teleprompter</button><button class="btn primary" data-tab="plan" data-ptab="work">Review</button></div></div>`),
+    ...waiting.slice(0, 2).map(p => `<div class="mini-row"><div class="mini-main"><div class="meta">${plat(p.platform)}<span>${esc(p.format)}</span>${pill("waiting", "Gate 2 · Post")}${shelfBadge(p)}</div><b>${esc(p.title || p.caption)}</b><span>${esc(fmtTime(p.plannedAt))}</span></div><button class="btn" data-tab="approve">Approve</button></div>`),
   ];
 
-  return `<section class="cockpit-top">
+  return `${expiringToday.length ? `<div class="exp-banner"><div class="row"><b>Expiring today (${expiringToday.length}):</b><span>${esc(expiringToday.slice(0, 2).map(x => `${x.kind}: ${(x.title || "").slice(0, 46)} (${x.exp.hoursLeft}h left)`).join(" · "))}</span></div><button class="btn" style="min-height:30px;padding:0 11px;font-size:12.5px" data-tab="${esc(expiringToday[0].tab)}" ${expiringToday[0].ptab ? `data-ptab="${esc(expiringToday[0].ptab)}"` : ""}>Act now →</button></div>` : ""}
+    <div class="autorun-strip">
+      <div class="autorun-left">
+        <span class="pulse"></span>
+        <b>Daily Auto-Run:</b>
+        ${dailyAuto ? `<span>Active · every day at ${esc(dailyAuto.time || "07:30")} IST (GitHub + Reddit/HN/YT + Web + Radar + Competitors)</span>` : `<span>Off · turn on 1 daily sweep so topics & scripts are ready every morning</span>`}
+        ${runs[0] ? `<span class="muted">· Last: ${esc((runs[0].summary || "").slice(0, 72))}</span>` : ""}
+      </div>
+      ${dailyAuto ? `<button class="btn ghost" style="min-height:30px;padding:0 10px;font-size:12.5px" data-tab="accounts">Schedules</button>` : `<button class="btn primary" style="min-height:30px;padding:0 12px;font-size:12.5px" id="enable-autorun">Enable Daily 07:30 IST Auto-Run</button>`}
+    </div>
+
+    <section class="cockpit-top">
       <div class="cockpit-left">
         <h1 class="cockpit-hi">${esc(greeting())}. <span>What are we making today?</span></h1>
         <div id="hero">${heroInner()}</div>
@@ -1324,7 +1408,7 @@ function viewWall() {
           <button class="qchip" data-tab="plan" data-ptab="radar">Open Reel Radar</button>
           <button class="qchip" data-tab="plan" data-ptab="work">Plan my week</button>
           <button class="qchip" data-tab="studio">New Prompt Guy brief</button>
-          <button class="qchip" data-tab="calendar" data-ctab="grid">Preview IG Grid 3:4</button>
+          <button class="qchip" data-tab="accounts">What Claude learned (${state.learnings.length})</button>
         </div>
       </div>
       <div class="orb-stage">
@@ -1342,20 +1426,23 @@ function viewWall() {
     <section class="kpi-row">
       <button class="kpi ${failed.length ? "bad" : waiting.length ? "warn" : ""}" data-tab="approve"><span>Needs approval</span><b>${waiting.length + failed.length}</b></button>
       <button class="kpi ${draftScr.length ? "warn" : ""}" data-tab="plan" data-ptab="work"><span>Scripts to review</span><b>${draftScr.length}</b></button>
-      <button class="kpi ${p1Radar.length ? "ok" : ""}" data-tab="plan" data-ptab="radar"><span>Radar P1 ready</span><b>${p1Radar.length}</b></button>
-      <button class="kpi" data-tab="calendar"><span>Scheduled</span><b>${sched.length}</b></button>
+      <button class="kpi ${filmScr.length ? "ok" : ""}" data-tab="plan" data-ptab="work"><span>Film today</span><b>${filmScr.length}</b></button>
+      <button class="kpi ${p1Radar.length ? "ok" : ""}" data-tab="plan" data-ptab="radar"><span>Radar P1 live</span><b>${p1Radar.length}</b></button>
     </section>
 
     <section class="home-grid">
       <div class="list">
         ${band("Needs your yes", needItems.length, failed.length ? "var(--bad)" : "var(--warn)")}
         ${needItems.length ? needItems.join("") : emptyBox("All caught up", "No failed posts, draft scripts, or waiting posts right now.", `<button class="btn primary" data-tab="plan" data-ptab="radar">Drop viral URLs</button>`)}
+        ${filmScr.length ? `${band("Film today", filmScr.length, "var(--ok)")}${filmScr.slice(0, 2).map(s => `<div class="mini-row film-card"><div class="mini-main"><div class="meta">${pill("done", "Approved script")}${shelfBadge(s)}${firstMoverBadge(s.firstMover)}</div><b>${esc(s.title || "Ready to film")}</b><span>${esc(s.storyFormat || "Reel")} · EN & Malayalam-English ready</span></div><button class="btn primary" data-tele="${esc(s.id)}">Open Teleprompter</button></div>`).join("")}` : ""}
       </div>
       <div class="list">
         ${band("Up next on calendar", upcoming.length, "var(--accent)")}
-        ${upcoming.length ? upcoming.map(p => `<div class="mini-row"><div class="mini-main"><div class="meta">${plat(p.platform)}<span>${esc(p.format)}</span>${pill(p.status)}</div><b>${esc(p.title || p.caption)}</b><span>${esc(fmtTime(p.plannedAt))}</span></div><button class="btn ghost" data-tab="calendar" data-slot="${esc(p.id)}">Open</button></div>`).join("")
+        ${upcoming.length ? upcoming.map(p => `<div class="mini-row"><div class="mini-main"><div class="meta">${plat(p.platform)}<span>${esc(p.format)}</span>${pill(p.status)}${shelfBadge(p)}</div><b>${esc(p.title || p.caption)}</b><span>${esc(fmtTime(p.plannedAt))}</span></div><button class="btn ghost" data-tab="calendar" data-slot="${esc(p.id)}">Open</button></div>`).join("")
           : emptyBox("Calendar is open", "Approve a script or plan your week to fill upcoming slots.")}
-        ${topRadar ? `<div class="card" style="margin-top:6px"><div class="radar-head"><div class="score-box t-${esc(topRadar.tier || "P1")}">${esc(topRadar.score)}</div><div class="mini-main" style="flex:1"><div class="meta"><span class="tier t-${esc(topRadar.tier || "P1")}">${esc(TIER_LABEL[topRadar.tier] || "Top Radar")}</span>${topRadar.outlierMultiple ? `<span><b>${esc(topRadar.outlierMultiple)}x</b> median</span>` : ""}</div><b>${esc(topRadar.title || topRadar.url)}</b></div><button class="btn" data-tab="plan" data-ptab="radar">Radar</button></div></div>` : ""}
+        ${band("What Claude learned", state.learnings.length, "var(--claude)")}
+        ${learnings.length ? learnings.map(l => `<div class="learn-row"><div class="learn-main"><div class="meta">${pill("active", l.category || "voice")}<span>Learned from: ${esc(l.source || "your content")}</span></div><b>${esc(l.text)}</b></div><button class="btn ghost" data-tab="accounts" title="Manage learnings">Manage</button></div>`).join("")
+          : emptyBox("Learning your style", "Every video transcript, inline caption edit, and 2x+ heater teaches Claude your voice.")}
       </div>
     </section>
 
@@ -1417,10 +1504,12 @@ function growthHtml() {
   const lines = shown.map(a => { const r = pts.filter(p => p.accountId === a.id).sort((p, q) => p.date < q.date ? -1 : 1); if (!r.length) return "";
     return `<path d="${r.map((p, i) => (i ? "L" : "M") + x(p.date).toFixed(1) + " " + y(p.followers).toFixed(1)).join("")}" fill="none" stroke="${color(a.id)}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>`; }).join("");
   const legend = shown.length > 1 ? `<div class="glegend">${shown.map(a => `<span><i style="background:${color(a.id)}"></i>${esc(a.label)}</span>`).join("")}</div>` : "";
+  const heaters = findHeaters(state.posts).slice(0, 3);
+  const heatersHtml = heaters.length ? `<div class="list" style="margin-top:4px">${band("Heaters (>= 2x median views)", heaters.length, "var(--ok)")}${heaters.map(h => `<div class="heater-row"><div class="mini-main"><div class="meta">${plat(h.post.platform)}<span class="tier t-P1">${esc(h.mult)}x median</span><span>${num(h.views)} views</span>${h.evergreenRecycle ? `<span class="shelf sh-evergreen">90d+ Evergreen · Remake ready</span>` : ""}</div><b>${esc((h.post.title || h.post.caption || "").slice(0, 76))}</b></div>${h.evergreenRecycle ? `<button class="btn" style="min-height:30px;padding:0 10px;font-size:12px" data-recycle="${esc(h.post.id)}">Remake with fresh hook</button>` : ""}</div>`).join("")}</div>` : "";
   ui.gview = { days, x, y, W, shown: shown.map(a => ({ id: a.id, label: a.label, c: color(a.id) })), pts };
   return `<h2>Growth</h2>${btns}
     <div class="gchart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Followers over time">${grid}${xl}${lines}<g id="gcross"></g><rect id="ghit" x="${L}" y="0" width="${W - L}" height="${H - B}" fill="transparent"/></svg>
-      <div class="gtip" id="gtip"></div>${legend}</div>${tiles}`;
+      <div class="gtip" id="gtip"></div>${legend}</div>${tiles}${heatersHtml}`;
 }
 function onGrowthMove(e) {
   const v = ui.gview, svgEl = $("#growth svg"); if (!v || !svgEl) return;
@@ -1471,7 +1560,7 @@ function metricsBar(m) {
 
 function postMeta(p) {
   return `<div class="meta">${plat(p.platform)}<span>${esc(accountLabel(p.accountId))}</span><span>${esc(p.format)}</span>
-    <span>${esc(fmtTime(p.plannedAt))}</span>${pill(p.status)}${p.audioNote ? `<span class="audio-tag">♪ ${esc(p.audioNote)}</span>` : ""}</div>`;
+    <span>${esc(fmtTime(p.plannedAt))}</span>${pill(p.status)}${shelfBadge(p)}${p.viewerScore != null ? `<span class="tier ${p.viewerScore >= 80 ? "t-P1" : "t-P2"}">Viewer panel ${esc(p.viewerScore)}/100</span>` : ""}${p.isTrialReel ? `<span class="fm-badge fm-untapped">Trial Reel</span>` : ""}${p.collabHandle ? `<span class="fm-badge fm-early">Collab ${esc(p.collabHandle)}</span>` : ""}${p.audioNote ? `<span class="audio-tag">♪ ${esc(p.audioNote)}</span>` : ""}</div>`;
 }
 
 function renderPostBody(p) {
@@ -1497,7 +1586,8 @@ function band(title, count, colorVar = "var(--ink)") {
 function viewApprove() {
   const failed = state.posts.filter(p => p.status === "failed").sort(byTime);
   const w = state.posts.filter(p => p.status === "waiting").sort(byTime);
-  const head = `<div class="page-head"><div><h2>Approve</h2><p>Gate 2: nothing publishes until you approve the exact post. Edit inline to teach Claude your voice.</p></div></div>`;
+  const cleanWaiting = w.filter(p => !(p.problems || []).length && expiryInfo(p).state !== "expired");
+  const head = `<div class="page-head"><div><h2>Approve</h2><p>Gate 2: nothing publishes until you approve the exact post. Edit inline to teach Claude your voice.</p></div>${cleanWaiting.length > 1 ? `<button class="btn primary" id="approve-all-clean">Approve all clean (${cleanWaiting.length})</button>` : ""}</div>`;
   const failHtml = failed.length ? `<section class="list">${band("Failed (needs attention)", failed.length, "var(--bad)")}${failed.map(p => `<article class="card failed-box">
     ${postMeta(p)}<p class="caption">${esc(p.title || p.caption)}</p>
     <div class="problems" style="padding:10px 14px">${esc(p.error || "Publish failed (no error message recorded).")}</div>
@@ -1510,7 +1600,11 @@ function viewApprove() {
     const probs = p.problems || [];
     const editing = ui.editingPost === p.id;
     const confirmingNow = ui.confirmNow === p.id;
+    const exp = expiryInfo(p);
+    const isExpired = exp.state === "expired";
+    const confirmingExp = ui.confirmExpired === p.id;
     return `<article class="card">${postMeta(p)}
+      ${isExpired ? `<div class="problems" style="padding:10px 14px">This ${esc(exp.shelf)} expired ${esc(exp.agoDays || 1)} day${(exp.agoDays || 1) === 1 ? "" : "s"} ago. Consider sending back to draft to remake as evergreen, or tap Approve twice to post anyway.</div>` : ""}
       ${editing ? `<div class="field">${p.platform === "youtube" ? `<label class="label">Title</label><input class="field-in" id="ed-title-${esc(p.id)}" value="${esc(p.title || "")}">` : ""}
         <label class="label">Caption (your edits teach Claude's voice)</label>
         <textarea class="field-in" id="ed-cap-${esc(p.id)}">${esc(p.caption || "")}</textarea>
@@ -1518,9 +1612,9 @@ function viewApprove() {
         : renderPostBody(p)}
       ${probs.length ? `<ul class="problems">${probs.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
       ${p.audioNote ? `<span class="muted">Manual audio handoff: post from Instagram app with sound "${esc(p.audioNote)}".</span>` : ""}
-      <div class="field"><input class="field-in" id="fb-${esc(p.id)}" placeholder="Optional note if sending back to draft (what to fix)" maxlength="300"></div>
+      <div class="field"><input class="field-in" id="fb-${esc(p.id)}" placeholder="Optional note if sending back to draft (teaches Claude what to fix)" maxlength="300"></div>
       <div class="row">
-        <button class="btn primary" data-act="approved" data-id="${esc(p.id)}" ${probs.length ? "disabled title=\"Fix the problems first\"" : ""}>Approve</button>
+        <button class="btn primary" data-act="approved" data-id="${esc(p.id)}" ${probs.length ? "disabled title=\"Fix the problems first\"" : ""}>${isExpired && !confirmingExp ? `Expired · Approve anyway?` : confirmingExp ? `Tap again to post expired item` : `Approve`}</button>
         ${p.platform !== "x" ? `<button class="btn" data-act="now" data-id="${esc(p.id)}" ${probs.length ? "disabled" : ""}>${confirmingNow ? "Tap again to post now" : "Approve + post now"}</button>` : ""}
         ${!editing ? `<button class="btn ghost" data-edit-open="${esc(p.id)}">Edit</button>` : ""}
         <button class="btn ghost" data-act="draft" data-id="${esc(p.id)}">Back to draft</button>
@@ -1578,6 +1672,9 @@ const SCHED_STATE = { requested: "Waiting for Claude", active: "Active", paused:
 function viewAccounts() {
   const rows = [...state.schedules].sort((a, b) => String(a.time).localeCompare(String(b.time)));
   const runs = [...state.runs].sort((a, b) => String(b.finishedAt || b.startedAt || "").localeCompare(String(a.finishedAt || a.startedAt || ""))).slice(0, 10);
+  const learnings = [...state.learnings].sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
+  const profAcc = (ui.acct && state.accounts.find(a => a.id === ui.acct)) || state.accounts.find(a => a.voiceProfile) || state.accounts[0];
+  const vp = profAcc?.voiceProfile;
   return `<h2>Accounts</h2><div class="acc-grid">
     ${state.accounts.map(a => `<article class="acc">
       <div class="acc-top"><span class="mark" style="color:${BRAND[a.platform] || "currentColor"}">${ICONS[a.platform] ? svg(a.platform) : ""}</span><div><b>${esc(a.label)}</b><span>${esc(PLATFORMS[a.platform] || a.platform)}</span></div></div>
@@ -1587,6 +1684,32 @@ function viewAccounts() {
       <div>${pill(a.status, ACC_STATE[a.status] || a.status)}</div></article>`).join("")}
     <button class="acc add" data-add-account><span class="plus">+</span>Add account<small>Pick a platform and a topic. Claude does the rest.</small></button>
   </div>
+  <section class="card" id="learned-section">
+    <div class="row" style="justify-content:space-between">
+      <div><h2>What Claude learned</h2><p class="muted" style="margin:4px 0 0">Learned automatically from your video transcripts, inline caption edits, script change requests, rejections, and 2x+ heaters. Remove any rule you disagree with.</p></div>
+      <span class="pill s-active">${learnings.length} rules active</span>
+    </div>
+    ${vp ? `<div class="voice-grid">
+      <div><small>Voice & tone (${esc(profAcc.label)})</small><b>${esc(vp.tone || "Direct & practical")}</b></div>
+      <div><small>Malayalam-English mix</small><b>${esc(vp.manglishMix || profAcc.language || "Malayalam-English")}</b></div>
+      ${vp.commonPhrases?.length ? `<div><small>Signature phrases</small><b>${esc(vp.commonPhrases.join(" · "))}</b></div>` : ""}
+      ${vp.bannedWords?.length ? `<div><small>Never uses</small><b>${esc(vp.bannedWords.join(", "))}</b></div>` : ""}
+      ${vp.winningFormats?.length ? `<div><small>Winning formats</small><b>${esc(vp.winningFormats.join(" · "))}</b></div>` : ""}
+    </div>` : ""}
+    <div class="two">
+      <div class="field"><label class="label" for="lrn-cat">Category</label><select class="field-in" id="lrn-cat"><option value="voice">Voice & Manglish mix</option><option value="edits">Caption & wording rule</option><option value="hooks">Hook preference</option><option value="topics">Topic filter</option><option value="timing">Posting time</option></select></div>
+      <div class="field"><label class="label" for="lrn-text">Teach Claude a rule manually</label><div class="row"><input class="field-in" style="flex:1" id="lrn-text" placeholder="e.g. Never start a Malayalam script with 'Hello friends'" maxlength="220"><button class="btn primary" id="lrn-save">Save rule</button></div></div>
+    </div>
+    <div class="list">
+      ${learnings.length ? learnings.map(l => `<div class="learn-row">
+        <div class="learn-main">
+          <div class="meta">${pill("active", l.category || "voice")}${l.accountId ? `<span>${esc(accountLabel(l.accountId))}</span>` : ""}<span>Learned from: ${esc(l.source || "your feedback")}</span>${l.createdAt ? `<span>${esc(fmtTime(l.createdAt))}</span>` : ""}</div>
+          <b>${esc(l.text)}</b>
+        </div>
+        <button class="btn ghost danger" data-learn-del="${esc(l.id)}" title="Forget this learning">Remove</button>
+      </div>`).join("") : `<span class="muted">No learnings recorded yet. Edit a caption in Approve, ask changes on a script, or run sos-results to populate this list.</span>`}
+    </div>
+  </section>
   <section class="card"><h2>Competitors & profiles I like</h2>
     <p class="muted" style="margin:0 0 10px">Paste any competitor or profile you like. Claude studies all of it in the next research run: reels, carousels, hooks, captions, what gets views.</p>
     <div class="field"><label class="label" for="comp-link">Profile link or @handle</label><input class="field-in" id="comp-link" placeholder="instagram.com/… or @name" maxlength="200"></div>
@@ -1653,9 +1776,9 @@ function viewStudio() {
     </div>`;
 }
 
-/* ---------- v25: Plan (Workspace | Reel Radar | Hook Vault), Teleprompter, Calendar (Month | 14-day | Grid) ---------- */
+/* ---------- v26: Plan (Workspace | Reel Radar | Hook Vault), Shelf-Life Expiry, First-Mover, Teleprompter v26 ---------- */
 const SCRIPT_STATE = { draft: "Waiting for your yes", approved: "Approved · making posts", changes: "Changes asked", done: "Ready to film" };
-const TIER_LABEL = { P1: "P1 · Film Now", P2: "P2 · Queue", P3: "P3 · Save", skip: "Skip" };
+const TIER_LABEL = { P1: "P1 · Film Now", P2: "P2 · Queue", P3: "P3 · Save", skip: "Skip", expired: "Expired · Avoid" };
 function needAcct() {
   if (ui.acct) return "";
   const picks = state.accounts.map(a => `<button class="btn" style="min-height:30px;padding:4px 11px;font-size:12.5px" data-pick-acct="${esc(a.id)}">${logoOf(a.platform)}${esc(a.label)}</button>`).join("");
@@ -1663,7 +1786,7 @@ function needAcct() {
 }
 
 function planSubnav() {
-  const radarNew = state.inspirations.filter(i => i.status === "new" || i.tier === "P1").length;
+  const radarNew = state.inspirations.filter(i => (i.status === "new" || i.tier === "P1") && expiryInfo(i).state !== "expired").length;
   const workN = state.options.filter(o => o.status === "new").length + state.scripts.filter(s => s.status === "draft").length;
   return `<div class="row" style="justify-content:space-between"><div class="subnav" role="tablist">
     <button role="tab" aria-selected="${ui.planTab === "work"}" data-ptab="work">Workspace${workN ? `<span class="n">${workN}</span>` : ""}</button>
@@ -1673,36 +1796,58 @@ function planSubnav() {
 }
 
 function viewRadar() {
-  const rankOrd = { P1: 0, P2: 1, P3: 2, new: 3, skip: 4 };
+  const rankOrd = { P1: 0, P2: 1, P3: 2, new: 3, skip: 4, expired: 5 };
   const all = state.inspirations.filter(i => i.status !== "skipped").sort((a, b) => {
+    const ea = expiryInfo(a), eb = expiryInfo(b);
+    const expA = ea.state === "expired" ? 1 : 0, expB = eb.state === "expired" ? 1 : 0;
+    if (expA !== expB) return expA - expB;
+    const liveA = (ea.state === "active" || ea.state === "expiring_today") && (ea.shelf === "update" || ea.shelf === "trend") ? 0 : 1;
+    const liveB = (eb.state === "active" || eb.state === "expiring_today") && (eb.shelf === "update" || eb.shelf === "trend") ? 0 : 1;
     const ta = rankOrd[a.tier || (a.status === "new" ? "new" : "P3")] ?? 3;
     const tb = rankOrd[b.tier || (b.status === "new" ? "new" : "P3")] ?? 3;
-    return ta - tb || (b.score || 0) - (a.score || 0) || String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
+    return ta - tb || liveA - liveB || (b.score || 0) - (a.score || 0) || String(b.createdAt || "").localeCompare(String(a.createdAt || ""));
   });
-  const shown = all.filter(i => ui.radarFilter === "all" || (ui.radarFilter === "new" ? i.status === "new" : ui.radarFilter === "scripted" ? i.status === "scripted" : i.tier === ui.radarFilter));
+  const topUnscripted = all.filter(i => expiryInfo(i).state !== "expired" && i.status !== "scripted" && i.status !== "script" && i.tier !== "skip").slice(0, 3);
+  const shown = all.filter(i => {
+    const isExp = expiryInfo(i).state === "expired" || i.tier === "expired";
+    if (ui.radarFilter === "expired") return isExp;
+    if (ui.radarFilter === "all") return true;
+    if (isExp) return false;
+    return ui.radarFilter === "new" ? i.status === "new" : ui.radarFilter === "scripted" ? i.status === "scripted" : i.tier === ui.radarFilter;
+  });
   return `<div class="split">
     <section class="card sticky-col"><b>Drop viral URLs</b>
-      <p class="muted" style="margin:0">Paste 1 or many Instagram Reels, YouTube Shorts, or X links (here or in VS Code chat). Claude scores each 0–100 with <code>ig-viral</code> + <code>hookscore.py</code> and scripts the winners.</p>
+      <p class="muted" style="margin:0">Paste 1 or many Instagram Reels, YouTube Shorts, GitHub repos, or X links. Claude scores virality, relatability, first-mover chance, and shelf-life expiry (Update / Trend / Evergreen).</p>
       <div class="field"><label class="label" for="radar-urls">URLs (one per line)</label>
-        <textarea class="field-in" id="radar-urls" placeholder="https://www.instagram.com/reel/...&#10;https://www.instagram.com/reel/..."></textarea></div>
+        <textarea class="field-in" id="radar-urls" placeholder="https://www.instagram.com/reel/...&#10;https://github.com/..."></textarea></div>
       <div class="field"><label class="label" for="radar-acct">Account</label><select class="field-in" id="radar-acct">${accountOptions(ui.acct)}</select></div>
       <div class="field"><label class="label" for="radar-note">Your angle (optional)</label><input class="field-in" id="radar-note" placeholder="e.g. demo this with Claude Code hooks" maxlength="160"></div>
       <div class="row" style="justify-content:flex-end"><button class="btn primary" id="radar-save">Add to Radar</button></div>
     </section>
     <div class="list">
-      <div class="row chips" style="margin:0">${[["all", "All"], ["P1", "P1 · Film Now"], ["P2", "P2 · Queue"], ["new", "Waiting score"], ["scripted", "Scripted"]].map(([k, l]) =>
-        `<button class="chip" aria-pressed="${ui.radarFilter === k}" data-rfilter="${k}">${l}</button>`).join("")}</div>
-      ${band("Priority queue", shown.length, "var(--ok)")}
-      ${shown.length ? shown.map(i => `<article class="card">
+      <div class="row" style="justify-content:space-between">
+        <div class="row chips" style="margin:0">${[["all", "All"], ["P1", "P1 · Film Now"], ["P2", "P2 · Queue"], ["new", "Waiting score"], ["scripted", "Scripted"], ["expired", "Expired"]].map(([k, l]) =>
+          `<button class="chip" aria-pressed="${ui.radarFilter === k}" data-rfilter="${k}">${l}</button>`).join("")}</div>
+        ${topUnscripted.length ? `<button class="btn primary" id="radar-script-top3">Script top ${topUnscripted.length}</button>` : ""}
+      </div>
+      ${band("Priority queue (live trends & updates outrank evergreen)", shown.length, "var(--ok)")}
+      ${shown.length ? shown.map(i => {
+        const exp = expiryInfo(i);
+        const isExp = exp.state === "expired" || i.tier === "expired";
+        const dispTier = isExp ? "expired" : (i.tier || "new");
+        return `<article class="card">
         <div class="radar-head">
-          <div class="score-box ${i.tier ? `t-${esc(i.tier)}` : "t-new"}">${i.score != null ? esc(i.score) : "—"}</div>
+          <div class="score-box t-${esc(dispTier === "expired" ? "skip" : dispTier)}">${i.score != null ? esc(i.score) : "—"}</div>
           <div style="min-width:0;display:grid;gap:4px;flex:1">
             <div class="meta">
-              ${i.tier ? `<span class="tier t-${esc(i.tier)}">${esc(TIER_LABEL[i.tier] || i.tier)}</span>` : `<span class="tier t-new">Waiting for sos-radar</span>`}
+              ${i.tier || isExp ? `<span class="tier t-${esc(dispTier === "expired" ? "skip" : dispTier)}">${esc(TIER_LABEL[dispTier] || dispTier)}</span>` : `<span class="tier t-new">Waiting for sos-radar</span>`}
+              ${shelfBadge(i)}
+              ${firstMoverBadge(i.firstMover)}
               ${plat(i.platform || "instagram")}
               ${i.accountId ? `<span>${esc(accountLabel(i.accountId))}</span>` : ""}
               ${i.outlierMultiple ? `<span><b>${esc(i.outlierMultiple)}x</b> median</span>` : ""}
               ${i.hookScore != null ? `<span>hook ${esc(i.hookScore)}/100</span>` : ""}
+              ${i.relatabilityScore != null ? `<span>relatable ${esc(i.relatabilityScore)}/100</span>` : ""}
               ${i.audioNote ? `<span class="audio-tag">♪ ${esc(i.audioNote)}</span>` : ""}
             </div>
             <p class="caption" style="font:var(--t-sec);color:var(--ink)">${esc(i.title || i.url)}</p>
@@ -1716,16 +1861,19 @@ function viewRadar() {
           ${i.ourTwist ? `<div><b>Our twist</b><span>${esc(i.ourTwist)}</span></div>` : ""}
         </div>` : ""}
         <div class="row">
-          ${i.status === "scripted" ? `<button class="btn primary" data-ptab="work">Open script in Workspace</button>` : `<button class="btn primary" data-radar="script" data-id="${esc(i.id)}" ${i.status === "script" ? "disabled" : ""}>${i.status === "script" ? "Queued for script…" : "Write improved script"}</button>`}
+          ${isExp ? `<button class="btn primary" data-remake-ev="${esc(i.id)}">Remake as evergreen</button>`
+            : i.status === "scripted" ? `<button class="btn primary" data-ptab="work">Open script in Workspace</button>`
+            : `<button class="btn primary" data-radar="script" data-id="${esc(i.id)}" ${i.status === "script" ? "disabled" : ""}>${i.status === "script" ? "Queued for script…" : "Write improved script"}</button>`}
           <button class="btn ghost" data-radar="skipped" data-id="${esc(i.id)}">Skip</button>
         </div>
-      </article>`).join("") : emptyBox("Reel Radar is clear", "Paste one or many viral Instagram/YouTube URLs on the left (or share them in VS Code chat) to score and script them.")}
+      </article>`;
+      }).join("") : emptyBox("Reel Radar is clear", "Paste one or many viral Instagram/YouTube/GitHub URLs on the left (or share them in VS Code chat) to score and script them.")}
     </div>
   </div>`;
 }
 
 function viewPlan() {
-  const head = `<div class="page-head"><div><h2>Plan</h2><p>Go from viral URLs or raw ideas to approved EN / Malayalam-English scripts (Gate 1).</p></div></div>`;
+  const head = `<div class="page-head"><div><h2>Plan</h2><p>Go from daily auto-run topics or viral URLs to approved EN / Malayalam-English scripts (Gate 1).</p></div></div>`;
   if (ui.planTab === "radar") return head + planSubnav() + viewRadar();
   if (ui.planTab === "hooks") return head + planSubnav() + viewHooks();
   const q = state.posts.filter(p => p.status === "waiting").length, opts = state.options.filter(o => o.status === "new"),
@@ -1734,15 +1882,15 @@ function viewPlan() {
   const rq = state.messages.filter(m => m.kind && m.status === "new");
   const slotLabel = o => {
     if (o.door === "slot" && o.postId) { const sp = state.posts.find(p => p.id === o.postId); return sp ? `Swap ${fmtTime(sp.plannedAt)}` : "Slot swap"; }
-    return o.door === "topic" ? "Your topic" : o.door === "video" ? "Your video" : "Plan";
+    return o.door === "auto" ? "Daily Auto-Run" : o.door === "topic" ? "Your topic" : o.door === "video" ? "Your video" : "Plan";
   };
   return `${head}${planSubnav()}${needAcct()}<p class="muted" style="margin:0">${esc(greeting())}. <b>${opts.length}</b> option${opts.length === 1 ? "" : "s"} to pick, <b>${scr.length}</b> script${scr.length === 1 ? "" : "s"} to approve, <b>${q}</b> post${q === 1 ? "" : "s"} waiting.</p>
     <div class="doors">
-      <section class="card door hero-door"><div><b>Start from a topic, raw idea, or GitHub repo</b><p class="muted" style="margin-top:6px">Claude researches it across 4 sources and brings 3 to 5 ranked concepts plus English and Malayalam-English scripts.</p>
+      <section class="card door hero-door"><div><b>Start from a topic, raw idea, or GitHub repo</b><p class="muted" style="margin-top:6px">Claude researches it across 6 sources, checks first-mover chance and shelf life, and brings ranked options + EN & Malayalam-English scripts.</p>
         <textarea class="field-in" style="margin-top:10px;min-height:72px" id="door-topic" placeholder="e.g. github.com/… or 3 Claude Code hooks that saved me hours"></textarea></div>
         <div class="row"><button class="btn primary" data-door="topic">Get options</button></div></section>
       <div class="doors-side">
-        <section class="card door"><div><b>Plan my week or month</b><p class="muted" style="margin-top:4px">Pulls competitors, trends, and profiles you like into calendar options.</p></div>
+        <section class="card door"><div><b>Plan my week or month</b><p class="muted" style="margin-top:4px">Pulls GitHub trending, Reddit/HN/YouTube, competitors, and profiles you like into calendar options.</p></div>
           <div class="row"><button class="btn" data-door="week">Plan my week</button><button class="btn" data-door="month">Plan my month</button></div></section>
         <section class="card door"><div><b>Have viral links or raw footage?</b><p class="muted" style="margin-top:4px">Score Instagram/YouTube URLs in Reel Radar or get a Prompt Guy brief in Studio.</p></div>
           <div class="row"><button class="btn" data-ptab="radar">Open Reel Radar</button><button class="btn ghost" data-tab="studio">Open Studio</button></div></section>
@@ -1750,19 +1898,19 @@ function viewPlan() {
     </div>
     ${rq.length ? `<p class="muted">${rq.length} request${rq.length > 1 ? "s" : ""} waiting for Claude's next chat.</p>` : ""}
     <section class="list">${band("Options to pick", opts.length, "var(--accent)")}
-    ${opts.length ? opts.map(o => `<article class="card"><div class="meta"><span>${esc(slotLabel(o))}</span>${o.storyFormat ? `<span>${esc(o.storyFormat)}</span>` : ""}${o.format ? `<span>${esc(o.format)}</span>` : ""}</div>
+    ${opts.length ? opts.map(o => `<article class="card"><div class="meta"><span>${esc(slotLabel(o))}</span>${shelfBadge(o)}${firstMoverBadge(o.firstMover)}${o.storyFormat ? `<span>${esc(o.storyFormat)}</span>` : ""}${o.format ? `<span>${esc(o.format)}</span>` : ""}</div>
       <p class="caption"><b>${esc(o.title)}</b></p>${o.why ? `<span class="muted">Why: ${esc(o.why)}</span>` : ""}
       <div class="row"><button class="btn primary" data-opt="picked" data-id="${esc(o.id)}">Pick this</button><button class="btn" data-opt="dropped" data-id="${esc(o.id)}">Drop</button></div></article>`).join("")
       : emptyBox("No options waiting", "Open Door A or B above, or drop viral URLs in Reel Radar to generate ranked concepts.")}</section>
     <section class="list">${band("Scripts (Gate 1 approval)", scr.length, "var(--warn)")}
-    ${scr.length ? scr.map(s => { const l = ui.lang[s.id] || "en"; return `<article class="card"><div class="meta"><span>${esc(s.title || "Script")}</span>${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${s.hookScore != null ? `<span>hook ${esc(s.hookScore)}/100</span>` : ""}${pill("waiting", SCRIPT_STATE[s.status] || s.status)}</div>
+    ${scr.length ? scr.map(s => { const l = ui.lang[s.id] || "en"; return `<article class="card"><div class="meta"><span>${esc(s.title || "Script")}</span>${shelfBadge(s)}${firstMoverBadge(s.firstMover)}${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${s.hookScore != null ? `<span>hook ${esc(s.hookScore)}/100</span>` : ""}${pill("waiting", SCRIPT_STATE[s.status] || s.status)}</div>
       <div class="seg" role="group"><button aria-pressed="${l === "en"}" data-lang="en" data-id="${esc(s.id)}">English</button><button aria-pressed="${l === "ml"}" data-lang="ml" data-id="${esc(s.id)}">Malayalam-English</button></div>
       <div class="answer script">${esc((l === "ml" ? s.mlen : s.en) || "Not written yet.")}</div>
-      <div class="field"><input class="field-in" id="chg-${esc(s.id)}" placeholder="What should change? (only for Ask changes)" maxlength="400"></div>
+      <div class="field"><input class="field-in" id="chg-${esc(s.id)}" placeholder="What should change? (also teaches Claude your voice)" maxlength="400"></div>
       <div class="row"><button class="btn primary" data-scr="approved" data-id="${esc(s.id)}">Approve script</button><button class="btn" data-scr="changes" data-id="${esc(s.id)}">Ask changes</button><button class="btn" data-tele="${esc(s.id)}">Teleprompter</button></div></article>`; }).join("")
       : emptyBox("No draft scripts waiting", "Pick an option above or click 'Write improved script' on a Reel Radar card.")}</section>
     ${readyScr.length ? `<section class="list"><div class="band"><span class="b-left"><span class="b-dot" style="color:var(--ok)"></span>Approved & ready to film</span><div class="row"><span class="b-cnt">${readyScr.length}</span><button class="btn" style="min-height:30px;padding:4px 10px" id="toggle-approved-scr">${ui.showApprovedScripts ? "Hide" : "Show"}</button></div></div>
-      ${ui.showApprovedScripts ? readyScr.map(s => { const l = ui.lang[s.id] || s.lang || "en"; return `<article class="card"><div class="meta"><span>${esc(s.title || "Script")}</span>${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${pill(s.status === "done" ? "done" : "approved", SCRIPT_STATE[s.status] || s.status)}</div>
+      ${ui.showApprovedScripts ? readyScr.map(s => { const l = ui.lang[s.id] || s.lang || "en"; return `<article class="card"><div class="meta"><span>${esc(s.title || "Script")}</span>${shelfBadge(s)}${firstMoverBadge(s.firstMover)}${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${pill(s.status === "done" ? "done" : "approved", SCRIPT_STATE[s.status] || s.status)}</div>
         <div class="seg" role="group"><button aria-pressed="${l === "en"}" data-lang="en" data-id="${esc(s.id)}">English</button><button aria-pressed="${l === "ml"}" data-lang="ml" data-id="${esc(s.id)}">Malayalam-English</button></div>
         <div class="answer script">${esc((l === "ml" ? s.mlen : s.en) || "")}</div>
         <div class="row"><button class="btn primary" data-tele="${esc(s.id)}">Open Teleprompter</button>${s.postIds?.length ? `<button class="btn" data-tab="approve">${s.postIds.length} posts in Approve</button>` : ""}</div></article>`; }).join("") : ""}</section>` : ""}`;
@@ -1781,24 +1929,35 @@ function viewHooks() {
       : `<div class="empty">Empty for now. Claude fills it during research and Reel Radar runs.</div>`}`;
 }
 
-/* ---------- Fullscreen Teleprompter ---------- */
+/* ---------- Fullscreen Teleprompter v26 (active line highlight, dimmed cues, tap-to-pause, saved speed/size) ---------- */
 let tele = null;
+function formatTeleHtml(rawText) {
+  const blocks = String(rawText || "Not written yet.").split(/\n+/).map(s => s.trim()).filter(Boolean);
+  return blocks.map((line, idx) => {
+    const withCues = esc(line).replace(/\[([^\]]+)\]/g, (_, c) => `<span class="tele-cue">${c}</span>`);
+    return `<div class="tele-line${idx === 0 ? " active" : ""}" data-tline="${idx}">${withCues}</div>`;
+  }).join("");
+}
 function openTeleprompter(s) {
   if (!s) return;
-  let lang = ui.lang[s.id] || s.lang || "en", playing = false, speed = 28, size = 32, raf = 0, lastT = 0;
+  let lang = ui.lang[s.id] || s.lang || "en", playing = false,
+      speed = +store.get("sos.tele.speed", "28") || 28,
+      size = +store.get("sos.tele.size", "32") || 32,
+      raf = 0, lastT = 0;
   const el = document.createElement("div"); el.className = "tele";
+  el.style.setProperty("--tsize", size + "px");
   el.innerHTML = `<div class="tele-top">
-      <div><b>${esc(s.title || "Teleprompter")}</b>${s.storyFormat ? ` · <span class="muted">${esc(s.storyFormat)}</span>` : ""}</div>
+      <div><b>${esc(s.title || "Teleprompter")}</b>${s.storyFormat ? ` · <span class="muted">${esc(s.storyFormat)}</span>` : ""} · <span class="muted">Tap script to pause/resume</span></div>
       <div class="row">
         <button class="btn" data-tact="lang">${lang === "ml" ? "ML-EN" : "English"}</button>
         <button class="btn" data-tact="mirror">Mirror</button>
         <button class="btn" data-tact="close">✕ Close</button>
       </div>
     </div>
-    <div class="tele-body" id="tele-body">${esc((lang === "ml" ? s.mlen : s.en) || "")}</div>
+    <div class="tele-body" id="tele-body" title="Tap anywhere on script to pause or resume">${formatTeleHtml(lang === "ml" ? s.mlen : s.en)}</div>
     <div class="tele-bot">
       <div class="row">
-        <button class="btn primary" data-tact="play">Play scroll</button>
+        <button class="btn primary" id="tele-play-btn" data-tact="play">Play scroll</button>
         <button class="btn" data-tact="reset">Top</button>
       </div>
       <div class="row">
@@ -1807,24 +1966,42 @@ function openTeleprompter(s) {
       </div>
     </div>`;
   document.body.append(el); document.documentElement.classList.add("locked");
-  const body = el.querySelector("#tele-body");
+  const body = el.querySelector("#tele-body"), playBtn = el.querySelector("#tele-play-btn");
+  const updateActiveLine = () => {
+    const lines = body.querySelectorAll(".tele-line"); if (!lines.length) return;
+    const rect = body.getBoundingClientRect(), targetY = rect.top + rect.height * 0.34;
+    let best = lines[0], bestDist = 1e9;
+    lines.forEach(node => {
+      const r = node.getBoundingClientRect(), mid = (r.top + r.bottom) / 2, d = Math.abs(mid - targetY);
+      if (d < bestDist) { bestDist = d; best = node; }
+    });
+    lines.forEach(node => node.classList.toggle("active", node === best));
+  };
+  body.addEventListener("scroll", updateActiveLine, { passive: true });
   const step = now => {
     if (!playing || !el.isConnected) return;
-    if (lastT) body.scrollTop += (now - lastT) / 1000 * speed;
+    if (lastT) { body.scrollTop += (now - lastT) / 1000 * speed; updateActiveLine(); }
     lastT = now; raf = requestAnimationFrame(step);
   };
+  const togglePlay = () => {
+    playing = !playing;
+    if (playBtn) playBtn.textContent = playing ? "Pause" : "Play scroll";
+    lastT = 0;
+    if (playing) raf = requestAnimationFrame(step); else cancelAnimationFrame(raf);
+  };
+  body.addEventListener("click", togglePlay);
   el.addEventListener("input", e => {
-    if (e.target.id === "tele-spd") speed = +e.target.value;
-    if (e.target.id === "tele-sz") { size = +e.target.value; el.style.setProperty("--tsize", size + "px"); }
+    if (e.target.id === "tele-spd") { speed = +e.target.value; store.set("sos.tele.speed", String(speed)); }
+    if (e.target.id === "tele-sz") { size = +e.target.value; el.style.setProperty("--tsize", size + "px"); store.set("sos.tele.size", String(size)); }
   });
   el.addEventListener("click", e => {
     const b = e.target.closest("[data-tact]"); if (!b) return;
     const a = b.dataset.tact;
     if (a === "close") closeTele();
     else if (a === "mirror") el.classList.toggle("mirror");
-    else if (a === "reset") body.scrollTop = 0;
-    else if (a === "lang") { lang = lang === "ml" ? "en" : "ml"; b.textContent = lang === "ml" ? "ML-EN" : "English"; body.textContent = (lang === "ml" ? s.mlen : s.en) || "Not written yet."; }
-    else if (a === "play") { playing = !playing; b.textContent = playing ? "Pause" : "Play scroll"; lastT = 0; if (playing) raf = requestAnimationFrame(step); else cancelAnimationFrame(raf); }
+    else if (a === "reset") { body.scrollTop = 0; updateActiveLine(); }
+    else if (a === "lang") { lang = lang === "ml" ? "en" : "ml"; b.textContent = lang === "ml" ? "ML-EN" : "English"; body.innerHTML = formatTeleHtml(lang === "ml" ? s.mlen : s.en); body.scrollTop = 0; }
+    else if (a === "play") togglePlay();
   });
   tele = { close: closeTele };
   function closeTele() { playing = false; cancelAnimationFrame(raf); el.remove(); tele = null; document.documentElement.classList.remove("locked"); }
@@ -1883,11 +2060,11 @@ if (store.get("sos.side", "open") === "closed") document.body.classList.add("sid
 function toggleSide() {
   const closed = document.body.classList.toggle("side-closed");
   store.set("sos.side", closed ? "closed" : "open");
-  setTimeout(() => { layoutPin(); orb3d?.resize(); }, 240);
+  setTimeout(() => { syncHeader(); orb3d?.resize(); }, 240);
 }
 function render(dataChanged) {
   document.body.dataset.tab = tab;
-  const ct = $("#crumb-title"); if (ct) ct.textContent = (TABS.find(t => t[0] === tab)?.[1] || "Control room") + (tab === "plan" && ui.planTab === "radar" ? " · Reel Radar" : tab === "plan" && ui.planTab === "hooks" ? " · Hook Vault" : "");
+  const ct = $("#crumb-title"); if (ct) ct.textContent = (TABS.find(t => t[0] === tab)?.[1] || "Home") + (tab === "plan" && ui.planTab === "radar" ? " · Reel Radar" : tab === "plan" && ui.planTab === "hooks" ? " · Hook Vault" : "");
   const bh = $("#back-home"); if (bh) bh.hidden = tab === "wall";
   const tr = $("#top-radar-btn"); if (tr) tr.hidden = (tab === "plan" && ui.planTab === "radar");
   const waiting = state.posts.filter(p => p.status === "waiting" || p.status === "failed").length;
@@ -1896,12 +2073,8 @@ function render(dataChanged) {
   $("#acct-switch").innerHTML = `<option value="">All accounts</option>` + state.accounts.map(a => `<option value="${esc(a.id)}" ${a.id === ui.acct ? "selected" : ""}>${esc(a.label)} · ${esc(PLATFORMS[a.platform] || a.platform)}</option>`).join("");
   document.querySelectorAll("#mode button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === (mode || "showcase"))));
   const key = tab + "|" + mode + "|" + ui.planTab + "|" + ui.calTab;
-  if (key === lastKey && (tab === "wall" || tab === "studio")) {
-    // keep the wall, the orb and anything being typed; refresh only what changed
-    if (dataChanged && tab === "wall") { const f = document.querySelector("[data-figs]"); if (f) f.innerHTML = figuresHtml();
-      document.querySelectorAll(".st span").forEach((n, i) => n.textContent = pipeCounts()[i]);
-      if (mode === "live") paintRail(false); const g = $("#growth"); if (g) g.innerHTML = growthHtml(); if (ui.claudeOpen && document.activeElement?.id !== "prompt") paintHero(); }
-    if (dataChanged && tab === "studio") { const keep = ["job-acct", "job-brief", "job-clip", "job-model", "job-effort"].map(id => [id, document.getElementById(id)?.value]); $("#view").innerHTML = VIEWS.studio(); for (const [id, v] of keep) { const el = document.getElementById(id); if (el && v) el.value = v; } }
+  if (key === lastKey && tab === "studio") {
+    if (dataChanged) { const keep = ["job-acct", "job-brief", "job-clip", "job-model", "job-effort"].map(id => [id, document.getElementById(id)?.value]); $("#view").innerHTML = VIEWS.studio(); for (const [id, v] of keep) { const el = document.getElementById(id); if (el && v) el.value = v; } }
     return;
   }
   lastKey = key;
@@ -1990,9 +2163,71 @@ document.addEventListener("click", async e => {
   if (t.dataset.rfilter) { ui.radarFilter = t.dataset.rfilter; lastKey = ""; render(); return; }
   if (t.id === "toggle-approved-scr") { ui.showApprovedScripts = !ui.showApprovedScripts; lastKey = ""; render(); return; }
   if (t.dataset.tele) { const s = state.scripts.find(x => x.id === t.dataset.tele); if (s) openTeleprompter(s); return; }
-  if (t.dataset.editOpen) { ui.editingPost = t.dataset.editOpen; ui.confirmNow = null; lastKey = ""; render(); return; }
+  if (t.dataset.editOpen) { ui.editingPost = t.dataset.editOpen; ui.confirmNow = null; ui.confirmExpired = null; lastKey = ""; render(); return; }
   if (t.dataset.editCancel) { ui.editingPost = null; lastKey = ""; render(); return; }
-  if (!db && (t.dataset.act || t.dataset.sch || t.id === "sch-save" || t.id === "comp-save" || t.dataset.compRemove || t.id === "job-prompt" || t.id === "job-pack" || t.id === "radar-save" || t.dataset.radar || t.dataset.editSave || t.dataset.resched || t.dataset.markPosted)) return showToast("Sign in to claude.ai to save.");
+  if (!db && (t.dataset.act || t.dataset.sch || t.id === "sch-save" || t.id === "comp-save" || t.dataset.compRemove || t.id === "job-prompt" || t.id === "job-pack" || t.id === "radar-save" || t.dataset.radar || t.dataset.editSave || t.dataset.resched || t.dataset.markPosted || t.id === "radar-script-top3" || t.dataset.remakeEv || t.id === "approve-all-clean" || t.id === "enable-autorun" || t.id === "lrn-save" || t.dataset.learnDel || t.dataset.recycle)) return showToast("Sign in to claude.ai to save.");
+  if (t.id === "enable-autorun") {
+    t.disabled = true;
+    try {
+      await db.collection("schedules").add({ accountId: ui.acct || null, kind: "research", every: "daily", time: "07:30", status: "requested", cloudTaskId: null, note: "Daily 6-source Auto-Run (GitHub + Reddit/HN/YT + Web + Radar + Competitors)", createdAt: nowIso(), updatedAt: nowIso() });
+      showToast("Daily 07:30 IST Auto-Run requested. Claude activates the cloud schedule next.");
+    } catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    t.disabled = false; return;
+  }
+  if (t.id === "lrn-save") {
+    const text = ($("#lrn-text")?.value || "").trim();
+    if (!text) return showToast("Write a rule for Claude first.");
+    const category = $("#lrn-cat")?.value || "voice";
+    t.disabled = true;
+    try {
+      await db.collection("learnings").add({ accountId: ui.acct || null, category, text, source: "Taught manually in dashboard", createdAt: nowIso() });
+      $("#lrn-text").value = ""; showToast("Saved to What Claude learned.");
+    } catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    t.disabled = false; return;
+  }
+  if (t.dataset.learnDel) {
+    t.disabled = true;
+    try { await db.doc(`learnings/${t.dataset.learnDel}`).delete(); showToast("Removed learning. Claude will stop using that rule."); }
+    catch (err) { t.disabled = false; showToast(`Couldn't remove: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.recycle) {
+    const p = state.posts.find(x => x.id === t.dataset.recycle); if (!p) return;
+    t.disabled = true;
+    try {
+      await db.collection("messages").add({ from: "user", kind: "topic", accountId: p.accountId || ui.acct || null, text: `Remake our 90d+ evergreen winner with a fresh hook: "${(p.title || p.caption || "").slice(0, 140)}"`, status: "new", reply: null, createdAt: nowIso() });
+      showToast("Queued evergreen remake. Claude writes fresh options & script next.");
+    } catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    t.disabled = false; return;
+  }
+  if (t.id === "radar-script-top3") {
+    const cands = state.inspirations.filter(i => i.status !== "skipped" && expiryInfo(i).state !== "expired" && i.status !== "scripted" && i.status !== "script" && i.tier !== "skip")
+      .sort((a, b) => (b.score || 0) - (a.score || 0)).slice(0, 3);
+    if (!cands.length) return showToast("No unscripted Radar items ready.");
+    t.disabled = true;
+    try {
+      for (const item of cands) await db.doc(`inspirations/${item.id}`).update({ status: "script", updatedAt: nowIso() });
+      showToast(`Queued top ${cands.length} Radar items for scripting.`);
+    } catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
+    t.disabled = false; return;
+  }
+  if (t.dataset.remakeEv) {
+    t.disabled = true;
+    try {
+      await db.doc(`inspirations/${t.dataset.remakeEv}`).update({ shelfLife: "evergreen", expiresAt: null, tier: "P2", status: "script", updatedAt: nowIso() });
+      showToast("Converted to Evergreen and queued for an improved script.");
+    } catch (err) { t.disabled = false; showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.id === "approve-all-clean") {
+    const clean = state.posts.filter(p => p.status === "waiting" && !(p.problems || []).length && expiryInfo(p).state !== "expired");
+    if (!clean.length) return showToast("No clean non-expired posts waiting.");
+    t.disabled = true;
+    let ok = 0;
+    for (const p of clean) { if (await setStatus(p, "approved")) ok++; }
+    showToast(`Approved ${ok} clean post${ok === 1 ? "" : "s"}.`);
+    t.disabled = false; return;
+  }
   if (t.dataset.lang) { ui.lang[t.dataset.id] = t.dataset.lang; lastKey = ""; render(); return; }
   if (t.dataset.mon) { ui.monthOff = t.dataset.mon === "0" ? 0 : ui.monthOff + +t.dataset.mon; lastKey = ""; render(); return; }
   if (t.dataset.slot) { ui.calPick = t.dataset.slot; lastKey = ""; render(); return; }
@@ -2120,12 +2355,18 @@ document.addEventListener("click", async e => {
   }
   if (t.dataset.act) {
     const p = state.posts.find(x => x.id === t.dataset.id); if (!p) return;
+    const exp = expiryInfo(p);
+    if ((t.dataset.act === "approved" || t.dataset.act === "now") && exp.state === "expired" && ui.confirmExpired !== p.id) {
+      ui.confirmExpired = p.id; lastKey = ""; render();
+      showToast(`This ${exp.shelf} expired ${exp.agoDays || 1}d ago. Tap Approve again to post anyway.`);
+      return;
+    }
     if (t.dataset.act === "now" && ui.confirmNow !== p.id) {
       ui.confirmNow = p.id; lastKey = ""; render();
       showToast("Tap 'Tap again to post now' to confirm immediate publish.");
       return;
     }
-    ui.confirmNow = null;
+    ui.confirmNow = null; ui.confirmExpired = null;
     const fb = t.dataset.act === "draft" ? ($(`#fb-${CSS.escape(p.id)}`)?.value || "").trim() || null : null;
     t.disabled = true;
     if (!(await setStatus(p, t.dataset.act === "now" ? "approved" : t.dataset.act, t.dataset.act === "now", fb ? { feedbackNote: fb } : null))) t.disabled = false;
@@ -2181,43 +2422,64 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") { if (tele) tele.close(); else if (ui.calPick) { ui.calPick = null; lastKey = ""; render(); } else if (document.querySelector(".menu")) closePick(); else if (voice) voice.close(); else if (sheet) closeSheet(); }
   if (e.key === "Enter" && !e.shiftKey && e.target.id === "prompt") { e.preventDefault(); document.querySelector('[data-claude="ask"]')?.click(); }
 });
-/* ---------- background threads: silk lines that bend with the scroll, one dot per platform rides each ---------- */
-(function threads() {
-  const cv = $("#threads"), g = cv.getContext("2d");
-  const COLS = ["#e1306c", "#0a66c2", "#111222", "#ff0033", "#0866ff", "#5b4cf5", "#d97757"];
-  let w = 0, h = 0, dpr = 1, sy = scrollY, vy = scrollY, last = 0;
-  const size = () => { dpr = Math.min(devicePixelRatio || 1, 2); w = innerWidth; h = innerHeight; cv.width = w * dpr; cv.height = h * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); };
-  addEventListener("resize", size); size();
-  addEventListener("scroll", () => { sy = scrollY; }, { passive: true });
-  const yAt = (i, x, t, s) => {
-    const base = h * (.16 + i * .115), k = x / w;
-    return base + Math.sin(k * 3.1 + t * .18 + i * .9 + s * .0021) * (26 + i * 5) + Math.sin(k * 7.3 - t * .11 + i * 1.7 - s * .0013) * (10 + i * 2) + Math.sin(s * .0009 + i) * 34 * k;
-  };
-  function frame(now) {
-    const t = now / 1000;
-    vy += (sy - vy) * .08;                          // eased scroll so the lines glide
-    if (Math.abs(sy - vy) < .5 && now - last < 66 && !REDUCED) { requestAnimationFrame(frame); return; }   // idle: ~15 fps
-    last = now;
-    g.clearRect(0, 0, w, h);
-    const maxS = Math.max(1, document.documentElement.scrollHeight - h), prog = Math.min(1, vy / maxS);
-    for (let i = 0; i < 7; i++) {
-      const grad = g.createLinearGradient(0, 0, w, 0);
-      grad.addColorStop(0, "rgba(91,76,245,0)"); grad.addColorStop(.35, "rgba(91,76,245,.16)"); grad.addColorStop(.7, "rgba(217,119,87,.13)"); grad.addColorStop(1, "rgba(217,119,87,0)");
-      g.strokeStyle = grad; g.lineWidth = i % 3 === 0 ? 1.2 : .8;
-      g.beginPath();
-      for (let x = -20; x <= w + 20; x += 14) { const y = yAt(i, x, t, vy); x === -20 ? g.moveTo(x, y) : g.lineTo(x, y); }
-      g.stroke();
-      // a rider per thread, carried along by the scroll
-      const rx = ((prog * 1.6 + i * .137 + t * .004) % 1) * w, ry = yAt(i, rx, t, vy);
-      const glow = g.createRadialGradient(rx, ry, 0, rx, ry, 14);
-      glow.addColorStop(0, COLS[i] + "55"); glow.addColorStop(1, COLS[i] + "00");
-      g.fillStyle = glow; g.beginPath(); g.arc(rx, ry, 14, 0, Math.PI * 2); g.fill();
-      g.fillStyle = COLS[i]; g.beginPath(); g.arc(rx, ry, 2.2, 0, Math.PI * 2); g.fill();
-    }
-    if (!REDUCED) requestAnimationFrame(frame);
+/* ---------- Apple-grade Multilingual Welcome + Iris Aperture Reveal ---------- */
+(function welcomeIntro() {
+  const intro = $("#intro"), stage = $("#hello-stage"), langEl = $("#hello-lang"), ring = $("#iris-ring"), enterBtn = $("#enter-studio");
+  if (!intro || !stage) return;
+  const HELLOS = [
+    ["Hello", "English", "latin"],
+    ["നമസ്കാരം", "Malayalam", "ml"],
+    ["مرحبا", "Arabic", ""],
+    ["नमस्ते", "Hindi", ""],
+    ["こんにちは", "Japanese", ""],
+    ["Bonjour", "French", "latin"],
+    ["வணக்கம்", "Tamil", ""],
+    ["Hola", "Spanish", "latin"],
+    ["안녕하세요", "Korean", ""],
+  ];
+  let idx = 0, timer = 0, active = false;
+  function showWord(k) {
+    const [word, lang, cls] = HELLOS[k % HELLOS.length];
+    const prev = stage.querySelector(".hello-word.in");
+    if (prev) { prev.classList.remove("in"); prev.classList.add("out"); setTimeout(() => prev.remove(), 750); }
+    const el = document.createElement("h1");
+    el.className = "hello-word" + (cls ? " " + cls : "");
+    el.textContent = word;
+    stage.append(el);
+    if (langEl) langEl.textContent = lang;
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("in")));
   }
-  requestAnimationFrame(frame);
-  if (REDUCED) addEventListener("scroll", () => { vy = sy; requestAnimationFrame(frame); }, { passive: true });
+  function startIntro() {
+    active = true; idx = 0; clearInterval(timer);
+    intro.hidden = false; intro.classList.remove("leaving");
+    ring.classList.remove("go");
+    document.body.classList.remove("intro-open");
+    document.body.classList.add("intro-wait");
+    stage.innerHTML = "";
+    showWord(0);
+    if (!REDUCED) timer = setInterval(() => { if (active && !document.hidden) showWord(++idx); }, 2600);
+    enterBtn?.focus({ preventScroll: true });
+  }
+  function enterStudio() {
+    if (!active) return;
+    active = false; clearInterval(timer);
+    try { sessionStorage.setItem("sos.entered", "1"); } catch {}
+    if (REDUCED) {
+      intro.hidden = true; document.body.classList.remove("intro-wait");
+      requestAnimationFrame(() => orb3d?.resize()); return;
+    }
+    ring.classList.remove("go"); void ring.offsetWidth; ring.classList.add("go");
+    intro.classList.add("leaving");
+    document.body.classList.remove("intro-wait");
+    document.body.classList.add("intro-open");
+    setTimeout(() => { intro.hidden = true; orb3d?.resize(); }, 1050);
+    setTimeout(() => { document.body.classList.remove("intro-open"); ring.classList.remove("go"); }, 1280);
+  }
+  enterBtn?.addEventListener("click", enterStudio);
+  document.addEventListener("click", e => { if (e.target.closest("#replay-intro")) startIntro(); });
+  document.addEventListener("keydown", e => { if (active && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); enterStudio(); } });
+  let seen = false; try { seen = sessionStorage.getItem("sos.entered") === "1"; } catch {}
+  if (seen) intro.hidden = true; else startIntro();
 })();
 
 render();
