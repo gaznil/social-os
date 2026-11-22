@@ -272,6 +272,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   in the Share menu); (5) Showcase mode keeps a stale account filter from localStorage (minor bug). Plan for Meta API / Porotta
   integration discussed and parked by the user. **Next:** user checks the Morning brief on phone, picks/skips the 3 picks.
 
+- **22 Nov 2026 (user ask):** ig-ai-tools gets **pillar 6 "Marketing quick wins"** (25% of posts; goal = clients for Meta ads,
+  SEO, web design/dev + position the user as a marketer). Simple tips, remakes of already-viral marketing reels, never complex.
+  Rules in `private/accounts/ig-ai-tools/pillars.md`. Composio stays (Postiz cloud has no free plan; self-host needs a
+  24/7 server + own platform apps). Saved Instagram posts: no API; only Meta's "Download your information" export.
+  **Next:** competitors list needs 4-6 marketing creators (next research run; Apify credit used up until it resets).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
