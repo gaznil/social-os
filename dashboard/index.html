@@ -580,6 +580,8 @@ body.intro-open .home-grid { animation: stgRise 860ms 420ms cubic-bezier(.16, 1,
 .brief-main b { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
 .brief-main > span { color: var(--muted); font-size: 13px; }
 .brief-score { font: 600 12px var(--font-mono); color: var(--ok); }
+.brief-main em { font-style: normal; font-weight: 600; color: var(--fg); }
+.brief-main > span.brief-what { color: var(--fg); font-size: 13.5px; }
 .brief-acts .btn { min-height: 32px; padding: 0 12px; font-size: 13px; }
 .brief-rows { display: grid; gap: 10px; }
 .brief-rows > div { display: grid; gap: 6px; }
@@ -740,7 +742,7 @@ function showcaseSeed() {
       { id: "demo-brief", date: day(0).slice(0, 10), createdAt: day(0), summary: "Checked 6 sources, found 6 topics, wrote 2 scripts. Apify skipped (free credit low). $0 spent.",
         sources: ["GitHub", "Reddit", "Hacker News", "YouTube", "AI news", "Radar links"],
         top: [
-          { ref: "options", id: "opt-1", accountId: "demo-ig", title: "Claude Code GitHub release: 1 hook that blocks broken deploys", format: "reel", score: 92, shelfLife: "update", expiresAt: hr(14), firstMover: "untapped", why: "4.2K stars this week, nobody covered it in Malayalam yet." },
+          { ref: "options", id: "opt-1", accountId: "demo-ig", title: "Claude Code GitHub release: 1 hook that blocks broken deploys", format: "reel", score: 92, shelfLife: "update", expiresAt: hr(14), firstMover: "untapped", what: "A new Claude Code setting that checks your work and stops a mistake before it goes live.", why: "4.2K stars this week, nobody covered it in Malayalam yet." },
           { ref: "scripts", id: "scr-1", accountId: "demo-ig", title: "3 terminal hooks that catch bugs before you push", format: "reel", score: 96, shelfLife: "trend", expiresAt: hr(18), firstMover: "untapped", why: "14x outlier reel; script ready in your voice." },
           { ref: "options", id: "opt-2", accountId: "demo-ig", title: "5 carousel layout rules that doubled our saves", format: "carousel", score: 74, shelfLife: "evergreen", expiresAt: null, firstMover: "early", why: "Saves-heavy format; can wait if today is busy." },
         ],
@@ -1451,7 +1453,7 @@ function briefItemHtml(t, i) {
   else if (t.ref === "scripts") acts = `<button class="btn primary" data-tab="plan" data-ptab="work">Review script</button>${live ? `<button class="btn ghost" data-tele="${esc(t.id)}">Teleprompter</button>` : ""}`;
   return `<div class="brief-item${dead ? " dead" : ""}"><span class="brief-n">${i + 1}</span>
     <div class="brief-main"><div class="meta">${t.score != null ? `<span class="brief-score">${esc(t.score)}</span>` : ""}${t.format ? `<span>${esc(t.format)}</span>` : ""}${shelfBadge(t)}${firstMoverBadge(t.firstMover)}</div>
-      <b>${esc(t.title || "Untitled")}</b>${t.why ? `<span>${esc(t.why)}</span>` : ""}</div>
+      <b>${esc(t.title || "Untitled")}</b>${t.what ? `<span class="brief-what"><em>What it is:</em> ${esc(t.what)}</span>` : ""}${t.why ? `<span><em>Why now:</em> ${esc(t.why)}</span>` : ""}</div>
     <div class="row brief-acts">${acts}</div></div>`;
 }
 function briefHtml({ dailyAuto, expiringToday, waiting, failed, draftScr }) {
@@ -2016,7 +2018,7 @@ function viewPlan() {
     ${rq.length ? `<p class="muted">${rq.length} request${rq.length > 1 ? "s" : ""} waiting for Claude's next chat.</p>` : ""}
     <section class="list">${band("Options to pick", opts.length, "var(--accent)")}
     ${opts.length ? opts.map(o => `<article class="card"><div class="meta"><span>${esc(slotLabel(o))}</span>${shelfBadge(o)}${firstMoverBadge(o.firstMover)}${o.storyFormat ? `<span>${esc(o.storyFormat)}</span>` : ""}${o.format ? `<span>${esc(o.format)}</span>` : ""}</div>
-      <p class="caption"><b>${esc(o.title)}</b></p>${o.why ? `<span class="muted">Why: ${esc(o.why)}</span>` : ""}
+      <p class="caption"><b>${esc(o.title)}</b></p>${o.what ? `<span><b>What it is:</b> ${esc(o.what)}</span>` : ""}${o.why ? `<span class="muted">Why: ${esc(o.why)}</span>` : ""}
       <div class="row"><button class="btn primary" data-opt="picked" data-id="${esc(o.id)}">Pick this</button><button class="btn" data-opt="dropped" data-id="${esc(o.id)}">Drop</button></div></article>`).join("")
       : emptyBox("No options waiting", "Open Door A or B above, or drop viral URLs in Reel Radar to generate ranked concepts.")}</section>
     <section class="list">${band("Scripts (Gate 1 approval)", scr.length, "var(--warn)")}

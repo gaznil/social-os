@@ -83,3 +83,5 @@ repeats get `seen xN`, not a new entry. Rules here are already copied into the s
 - **Rule:** call `get-dataset-items` in batches of 2 with `fields`; when it saves to a file, parse the saved files with one
   Python script into `private/research/raw/`. Never `cat > file` before a heredoc (it waits for input and hangs).
 - **Fixed in:** `.claude/skills/sos-research/SKILL.md` step 2.
+
+- **22 Nov 2026 (user):** A topic name alone is useless ("Claude diagram skill"). Every brief pick and option carries a plain `what` line: what the thing IS and does, in everyday words a non-developer gets at once, so the user can choose or skip without looking it up. Fixed in sos-research steps 5+7, docs/DATA.md, dashboard brief + Plan cards.
