@@ -624,6 +624,7 @@ body.intro-open .home-grid { animation: stgRise 860ms 420ms cubic-bezier(.16, 1,
         <select class="acct-switch" id="acct-switch" aria-label="Account"></select>
         <div class="mode" id="mode"><button data-mode="live">Live</button><button data-mode="showcase">Showcase</button></div>
         <button class="btn" id="top-radar-btn" data-tab="plan" data-ptab="radar" style="min-height:32px;padding:0 11px;font-size:12.5px">+ Drop viral URLs</button>
+        <button class="btn" data-feedback style="min-height:32px;padding:0 11px;font-size:12.5px" title="Report an issue or idea about this dashboard">Feedback</button>
       </div>
     </header>
     <div class="wrap"><main id="view"></main></div>
@@ -646,7 +647,7 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], learnings: [], runs: [] };
+const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], learnings: [], runs: [], feedback: [] };
 const raw = {};
 // Rich read-only Showcase dataset so every tab can be previewed cleanly without touching Live DB
 function showcaseSeed() {
@@ -792,7 +793,7 @@ async function connect() {
   catch (err) { db = null; showError("database", err); return showOffline(); }
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "learnings", "runs"];
+  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "learnings", "runs", "feedback"];
   let pending = names.length;
   for (const name of names) {
     let first = true;
@@ -1330,6 +1331,44 @@ function openAddAccount() {
   sheet = el;
 }
 function closeSheet() { sheet?.remove(); sheet = null; }
+
+/* ---------- dashboard feedback box: issues/ideas about this page, saved raw for the next update ---------- */
+const FB_KIND = { bug: "Something broke", look: "Looks off", idea: "Idea" };
+function openFeedback() {
+  if (!db) return showToast("Sign in to claude.ai to send feedback.");
+  closeSheet();
+  let kind = "bug";
+  const where = (TABS.find(x => x[0] === tab)?.[1] || tab) + (tab === "plan" ? " · " + ui.planTab : tab === "calendar" ? " · " + ui.calTab : "");
+  const recent = [...state.feedback].sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))).slice(0, 4);
+  const el = document.createElement("div"); el.className = "sheet-bg";
+  el.innerHTML = `<form class="sheet" novalidate>
+    <h2>Dashboard feedback</h2>
+    <p class="muted" style="margin:0">Found a problem or want something changed on this page? Write it here. It's saved for the next dashboard update.</p>
+    <div class="field"><span class="label">What kind</span><div class="plats">${Object.entries(FB_KIND).map(([k, l]) => `<button type="button" data-fbkind="${k}" aria-pressed="${k === kind}">${l}</button>`).join("")}</div></div>
+    <div class="field"><label class="label" for="fb-text">What happened (page: ${esc(where)})</label><textarea class="field-in" id="fb-text" rows="4" maxlength="2000" placeholder="e.g. On phone the Approve button is hidden behind the keyboard"></textarea></div>
+    <div class="row" style="justify-content:flex-end"><button type="button" class="btn" data-sheet="close">Cancel</button><button type="submit" class="btn primary">Send feedback</button></div>
+    ${recent.length ? `<div class="inbox"><span class="label">Your recent feedback</span>${recent.map(f => `<div>${pill(f.status === "done" ? "done" : "new", f.status === "done" ? "fixed" : f.status === "saved" ? "saved" : "new")}<span>${esc(f.reply || f.text)}</span></div>`).join("")}</div>` : ""}
+  </form>`;
+  document.body.append(el);
+  el.querySelector("#fb-text").focus();
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-fbkind]");
+    if (b) { kind = b.dataset.fbkind; el.querySelectorAll("[data-fbkind]").forEach(x => x.setAttribute("aria-pressed", String(x === b))); }
+    if (e.target.closest('[data-sheet="close"]') || e.target === el) closeSheet();
+  });
+  let sending = false;
+  el.querySelector("form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const text = el.querySelector("#fb-text").value.trim();
+    if (!text) return showToast("Write what you noticed first.");
+    if (sending) return; sending = true;
+    try {
+      await db.collection("feedback").add({ kind, text, tab: where, accountId: ui.acct || null, device: isTouch ? "phone" : "desktop", status: "new", reply: null, createdAt: nowIso() });
+      closeSheet(); showToast("Thanks. Saved for the next dashboard update.");
+    } catch (err) { sending = false; showToast(`Couldn't save: ${err.code || "error"}. Try again.`); }
+  });
+  sheet = el;
+}
 
 /* ---------- views ---------- */
 
@@ -2132,6 +2171,7 @@ document.addEventListener("click", async e => {
   if (t.dataset.choose) { const i = t.dataset.choose.indexOf(":"), k = t.dataset.choose.slice(0, i), v = t.dataset.choose.slice(i + 1); store.set(PICKS[k].key, v); closePick();
     if (k === "voice") { refreshVoicePicks(); try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance("Hi, this is how I sound."); const pv = pickedVoice(); if (pv) { u.voice = pv; u.lang = pv.lang; } speechSynthesis.speak(u); } catch {} } else paintHero(); return; }
   if ("addAccount" in t.dataset) { openAddAccount(); return; }
+  if ("feedback" in t.dataset) { openFeedback(); return; }
   const c = t.dataset.claude;
   if (c === "open") { ui.claudeOpen = true; paintHero(); return; }
   if (c === "close") { stopDictate(); ui.claudeOpen = false; paintHero(); return; }
