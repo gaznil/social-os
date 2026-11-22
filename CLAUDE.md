@@ -247,6 +247,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
      + expired-post warning in Approve, and upgraded Teleprompter (active reading line, dimmed `[ON SCREEN]` cues, tap-to-pause,
      `localStorage` speed/font persistence).
 
+- **22 Nov 2026: v26 LIVE + merged to main.** Antigravity built v26 (daily auto-run, self-learning, shelf life). Claude added a
+  **Feedback button** (top bar -> `feedback` collection -> sos-inbox copies raw lines to `docs/dashboard-feedback.md` for
+  Antigravity), fast-forwarded main, published to the same dashboard URL (artifact version 25). **Cloud routine created (user yes
+  in chat 22 Nov):** "Social OS daily research (6 AM IST)", id `trig_01MUBE3T8MeXRUThWfz4XDbP`, cron `30 0 * * *` UTC, Sonnet 5.5,
+  repos social-os + social-os-private, connectors Composio/Apify/Firecrawl. Runs without the PC; never posts. Test run started
+  22 Nov (session `cse_013ppkXvUPU2ukheqhhQe7bd`): **check its log** (RemoteTrigger get_run_log) to confirm the cloud can reach
+  ArtifactData; if not, it writes to `social-os-private/research/daily/`. Not in the cloud: ffmpeg/deepdive, Agent Reach, ElevenLabs key.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
