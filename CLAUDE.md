@@ -255,6 +255,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   22 Nov (session `cse_013ppkXvUPU2ukheqhhQe7bd`): **check its log** (RemoteTrigger get_run_log) to confirm the cloud can reach
   ArtifactData; if not, it writes to `social-os-private/research/daily/`. Not in the cloud: ffmpeg/deepdive, Agent Reach, ElevenLabs key.
 
+- **22 Nov 2026: Morning brief (user ask: phone-first, fast to scan).** Home top card reads `briefs/<date>` (sos-research step 7,
+  routine step 4): max 3 picks with score / shelf-life / first-mover / one-line why + Pick/Skip; Expiring soon; Waiting for you;
+  New this morning. Buttons: **Run research now** (opens the routine page via `schedules/daily-research.cloudTaskId`; the page
+  cannot fire it itself) and **Discuss this brief** (Ask Claude gets the brief as context). Dashboard `schedules/daily-research`
+  doc now links the cloud routine. Replaced the old auto-run strip + expiring banner. Checked at 390 px (Showcase), no errors.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

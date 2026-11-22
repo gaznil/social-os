@@ -568,6 +568,27 @@ body.intro-open .home-grid { animation: stgRise 860ms 420ms cubic-bezier(.16, 1,
 .fm-saturated { background: color-mix(in srgb, var(--bad) 9%, transparent); color: var(--bad); }
 .exp-banner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 16px; border-radius: 12px; background: color-mix(in srgb, var(--warn) 9%, var(--surface)); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 32%, transparent); font-size: 13.5px; color: var(--ink); }
 .exp-banner b { color: var(--warn); font-weight: 600; }
+/* Morning brief card (top of Home) */
+.brief { display: grid; gap: 14px; padding: 18px; }
+.brief-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px; }
+.brief-head h2 { margin: 2px 0 0; font: 600 20px/1.2 var(--font-display); color: var(--ink); letter-spacing: -.02em; }
+.brief-list { display: grid; gap: 8px; }
+.brief-item { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+.brief-item.dead { opacity: .55; }
+.brief-n { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--ink-fg); font: 600 12px var(--font-mono); }
+.brief-main { display: grid; gap: 3px; min-width: 0; }
+.brief-main b { color: var(--ink); font-weight: 600; overflow-wrap: anywhere; }
+.brief-main > span { color: var(--muted); font-size: 13px; }
+.brief-score { font: 600 12px var(--font-mono); color: var(--ok); }
+.brief-acts .btn { min-height: 32px; padding: 0 12px; font-size: 13px; }
+.brief-rows { display: grid; gap: 10px; }
+.brief-rows > div { display: grid; gap: 6px; }
+.brief .chip { border: 0; cursor: pointer; }
+.brief .chip b { color: var(--ink); }
+.chip.warn { color: var(--warn); } .chip.bad { color: var(--bad); }
+.chip.learn { color: var(--claude); background: color-mix(in srgb, var(--claude) 10%, transparent); cursor: default; }
+.brief-foot { font-size: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+@media (max-width: 640px) { .brief-item { grid-template-columns: 26px minmax(0, 1fr); } .brief-acts { grid-column: 2; } }
 .autorun-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); font-size: 13px; }
 .autorun-left { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
 .film-card { background: linear-gradient(180deg, rgba(21,128,61,.04), rgba(255,255,255,0)), var(--surface); box-shadow: 0 0 0 1px color-mix(in srgb, var(--ok) 25%, var(--line)); }
@@ -647,7 +668,7 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], learnings: [], runs: [], feedback: [] };
+const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], learnings: [], runs: [], feedback: [], briefs: [] };
 const raw = {};
 // Rich read-only Showcase dataset so every tab can be previewed cleanly without touching Live DB
 function showcaseSeed() {
@@ -714,6 +735,16 @@ function showcaseSeed() {
     runs: [
       { id: "run-1", kind: "research", summary: "Daily Auto-Run: found 6 topics (2 GitHub releases, 2 reels, 2 trends); 2 scripts ready in your voice.", finishedAt: day(0) },
       { id: "run-2", kind: "analytics", summary: "AI Tools Lab: 24.8K views (2.8x heater), 1 evergreen 90d+ winner ready to remake, best hour 19:00 IST.", finishedAt: day(-1) },
+    ],
+    briefs: [
+      { id: "demo-brief", date: day(0).slice(0, 10), createdAt: day(0), summary: "Checked 6 sources, found 6 topics, wrote 2 scripts. Apify skipped (free credit low). $0 spent.",
+        sources: ["GitHub", "Reddit", "Hacker News", "YouTube", "AI news", "Radar links"],
+        top: [
+          { ref: "options", id: "opt-1", accountId: "demo-ig", title: "Claude Code GitHub release: 1 hook that blocks broken deploys", format: "reel", score: 92, shelfLife: "update", expiresAt: hr(14), firstMover: "untapped", why: "4.2K stars this week, nobody covered it in Malayalam yet." },
+          { ref: "scripts", id: "scr-1", accountId: "demo-ig", title: "3 terminal hooks that catch bugs before you push", format: "reel", score: 96, shelfLife: "trend", expiresAt: hr(18), firstMover: "untapped", why: "14x outlier reel; script ready in your voice." },
+          { ref: "options", id: "opt-2", accountId: "demo-ig", title: "5 carousel layout rules that doubled our saves", format: "carousel", score: 74, shelfLife: "evergreen", expiresAt: null, firstMover: "early", why: "Saves-heavy format; can wait if today is busy." },
+        ],
+        learned: ["Open reels with a direct command in the first 2 seconds; skip greetings."], newHooks: 2 },
     ],
     messages: [], ideas: [], stats: [],
   };
@@ -793,7 +824,7 @@ async function connect() {
   catch (err) { db = null; showError("database", err); return showOffline(); }
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "learnings", "runs", "feedback"];
+  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "learnings", "runs", "feedback", "briefs"];
   let pending = names.length;
   for (const name of names) {
     let first = true;
@@ -955,7 +986,8 @@ async function quickAnswer(text, modelKey, effort, onText, agent) {
   if (!sample) { showToast("Quick answers are off for this page."); return null; }
   const m = MODELS[modelKey] || MODELS.sonnet;
   const opts = { cache: false, model: m.model, modelTier: m.modelTier, effort, ...(onText ? { onText } : {}) };
-  let input = [{ role: "user", content: "You help a social media creator. Answer briefly and concretely.\n\n" + text }];
+  const ctx = ui.briefCtx ? briefContext() : "";
+  let input = [{ role: "user", content: "You help a social media creator. Answer briefly and concretely." + (ctx ? " Use the morning brief below to brainstorm: be concrete, compare the picks, suggest angles and hooks. Short sections, scannable." + "\n\n" + ctx : "") + "\n\n" + text }];
   if (agent) {
     const caps = await sample.limits().catch(() => null);
     if (caps?.tools && db) opts.tools = agentTools(agent.did);
@@ -1381,6 +1413,7 @@ function heroInner() {
         <button aria-pressed="${askMode}" data-hmode="ask">Ask Claude</button>
         <button aria-pressed="${!askMode}" data-hmode="radar">Drop viral URLs (Radar)</button>
       </div>
+      ${askMode && ui.briefCtx ? `<div class="row" style="gap:6px"><span class="chip learn">Using today's brief</span><button class="txtbtn" data-brief-off>Turn off</button></div>` : ""}
       ${askMode ? `<textarea id="prompt" rows="2" placeholder="Ask anything about your channels, hooks, or leave a task for Claude…"></textarea>
         <div class="ptools">
           <div class="pickwrap"><button class="pick" data-pick="model" aria-haspopup="menu" aria-expanded="false">${(MODELS[mk] || MODELS.sonnet).label}${CHEV}</button></div>
@@ -1400,6 +1433,60 @@ function heroInner() {
     ${askMode && ui.answering ? `<div class="answer"><span class="thinking"><i></i><i></i><i></i></span></div>`
       : askMode && ui.answer ? `<div class="answer">${esc(ui.answer.text)}<div class="by">${svg("claude")}${esc(ui.answer.answeredBy)}</div></div>` : ""}
     ${askMode && msgs.length ? `<div class="inbox"><span class="label">Saved for Claude</span>${msgs.map(m => `<div>${pill(m.status === "done" ? "done" : "new", m.status === "done" ? "answered" : "new")}<span>${esc(m.reply || m.text)}</span></div>`).join("")}</div>` : ""}`;
+}
+
+/* ---------- Morning brief: one scannable card the 6 AM run fills (briefs/{YYYY-MM-DD}) ---------- */
+const latestBrief = () => [...state.briefs].sort((a, b) => String(b.date || b.createdAt || "").localeCompare(String(a.date || a.createdAt || "")))[0] || null;
+function briefTopItems(b) {
+  return (b?.top || []).filter(t => !ui.acct || !t.accountId || t.accountId === ui.acct).slice(0, 3);
+}
+function briefItemHtml(t, i) {
+  const exp = expiryInfo(t), dead = exp.state === "expired";
+  const live = t.ref === "options" ? state.options.find(o => o.id === t.id) : t.ref === "inspirations" ? state.inspirations.find(x => x.id === t.id) : t.ref === "scripts" ? state.scripts.find(s => s.id === t.id) : null;
+  let acts = "";
+  if (t.ref === "options") acts = live && live.status !== "new" ? pill(live.status === "picked" ? "done" : "dropped", live.status === "picked" ? "Picked" : "Skipped")
+    : `<button class="btn primary" data-opt="picked" data-id="${esc(t.id)}" ${dead ? "disabled" : ""}>Pick</button><button class="btn ghost" data-opt="dropped" data-id="${esc(t.id)}">Skip</button>`;
+  else if (t.ref === "inspirations") acts = live && !["new", "scored"].includes(live.status) ? pill("done", live.status)
+    : `<button class="btn primary" data-radar="script" data-id="${esc(t.id)}" ${dead ? "disabled" : ""}>Write script</button><button class="btn ghost" data-radar="skipped" data-id="${esc(t.id)}">Skip</button>`;
+  else if (t.ref === "scripts") acts = `<button class="btn primary" data-tab="plan" data-ptab="work">Review script</button>${live ? `<button class="btn ghost" data-tele="${esc(t.id)}">Teleprompter</button>` : ""}`;
+  return `<div class="brief-item${dead ? " dead" : ""}"><span class="brief-n">${i + 1}</span>
+    <div class="brief-main"><div class="meta">${t.score != null ? `<span class="brief-score">${esc(t.score)}</span>` : ""}${t.format ? `<span>${esc(t.format)}</span>` : ""}${shelfBadge(t)}${firstMoverBadge(t.firstMover)}</div>
+      <b>${esc(t.title || "Untitled")}</b>${t.why ? `<span>${esc(t.why)}</span>` : ""}</div>
+    <div class="row brief-acts">${acts}</div></div>`;
+}
+function briefHtml({ dailyAuto, expiringToday, waiting, failed, draftScr }) {
+  const b = latestBrief(), today = dayKey(nowIso());
+  const isToday = b && String(b.date || "").slice(0, 10) === today;
+  const top = briefTopItems(b);
+  const runLink = dailyAuto?.cloudTaskId
+    ? `<a class="btn" href="https://claude.ai/code/routines/${encodeURIComponent(dailyAuto.cloudTaskId)}" target="_blank" rel="noopener" title="Opens your daily routine. Tap Run now there.">Run research now ↗</a>`
+    : `<button class="btn" data-tab="accounts">Set up daily run</button>`;
+  const when = dailyAuto ? `Runs daily at ${esc(dailyAuto.time || "06:00")} IST` : "Daily run not set up";
+  const head = `<div class="brief-head"><div><span class="label">${b ? (isToday ? "Morning brief" : "Last brief") : "Morning brief"} · ${esc(new Intl.DateTimeFormat("en-IN", { timeZone: TZ, weekday: "short", day: "numeric", month: "short" }).format(b ? new Date(b.createdAt || b.date) : new Date()))}</span>
+      <h2>${top.length ? `${top.length} to film today` : "Nothing new yet"}</h2></div>
+    <div class="row">${runLink}${b ? `<button class="btn primary" data-brief-discuss>Discuss this brief</button>` : ""}</div></div>`;
+  const wait = [draftScr.length && `<button class="chip" data-tab="plan" data-ptab="work"><b>${draftScr.length}</b> script${draftScr.length > 1 ? "s" : ""} to approve</button>`,
+    waiting.length && `<button class="chip" data-tab="approve"><b>${waiting.length}</b> post${waiting.length > 1 ? "s" : ""} to approve</button>`,
+    failed.length && `<button class="chip bad" data-tab="approve"><b>${failed.length}</b> failed</button>`].filter(Boolean);
+  const expRows = expiringToday.slice(0, 3).map(x => `<button class="chip warn" data-tab="${esc(x.tab)}" ${x.ptab ? `data-ptab="${esc(x.ptab)}"` : ""}>${esc(x.kind)}: ${esc((x.title || "").slice(0, 40))} · <b>${esc(x.exp.hoursLeft)}h left</b></button>`);
+  const learned = (b?.learned || []).slice(0, 2);
+  return `<section class="card brief">
+    ${head}
+    ${top.length ? `<div class="brief-list">${top.map(briefItemHtml).join("")}</div>`
+      : `<p class="muted" style="margin:0">${b ? "The last run found nothing worth filming. Drop a few viral links in Reel Radar, or tap Run research now." : `The first brief arrives after the next daily run (${when.toLowerCase()}).`}</p>`}
+    <div class="brief-rows">
+      <div><span class="label">Expiring soon</span><div class="row">${expRows.length ? expRows.join("") : `<span class="muted">Nothing expiring today</span>`}</div></div>
+      <div><span class="label">Waiting for you</span><div class="row">${wait.length ? wait.join("") : `<span class="muted">All caught up</span>`}</div></div>
+      ${learned.length || b?.newHooks ? `<div><span class="label">New this morning</span><div class="row">${b?.newHooks ? `<button class="chip" data-tab="plan" data-ptab="hooks"><b>${esc(b.newHooks)}</b> new hooks</button>` : ""}${learned.map(l => `<span class="chip learn">Learned: ${esc(l)}</span>`).join("")}</div></div>` : ""}
+    </div>
+    <div class="brief-foot muted">${when}${b?.summary ? ` · ${esc(b.summary)}` : ""}</div>
+  </section>`;
+}
+function briefContext() {
+  const b = latestBrief(); if (!b) return "";
+  const top = briefTopItems(b).map((t, i) => `${i + 1}. ${t.title} (${t.format || "post"}, score ${t.score ?? "?"}, ${expiryInfo(t).label}${t.firstMover ? ", " + t.firstMover : ""}): ${t.why || ""}`).join("\n");
+  const scr = state.scripts.filter(s => s.status === "draft").slice(0, 3).map(s => `- ${s.title}: ${(s.en || "").slice(0, 300)}`).join("\n");
+  return `Today's morning brief (${b.date || ""}): ${b.summary || ""}\nTop picks:\n${top || "none"}\n${scr ? "Draft scripts:\n" + scr + "\n" : ""}${(b.learned || []).length ? "Learned: " + b.learned.join("; ") + "\n" : ""}`;
 }
 
 function viewWall() {
@@ -1428,16 +1515,7 @@ function viewWall() {
     ...waiting.slice(0, 2).map(p => `<div class="mini-row"><div class="mini-main"><div class="meta">${plat(p.platform)}<span>${esc(p.format)}</span>${pill("waiting", "Gate 2 · Post")}${shelfBadge(p)}</div><b>${esc(p.title || p.caption)}</b><span>${esc(fmtTime(p.plannedAt))}</span></div><button class="btn" data-tab="approve">Approve</button></div>`),
   ];
 
-  return `${expiringToday.length ? `<div class="exp-banner"><div class="row"><b>Expiring today (${expiringToday.length}):</b><span>${esc(expiringToday.slice(0, 2).map(x => `${x.kind}: ${(x.title || "").slice(0, 46)} (${x.exp.hoursLeft}h left)`).join(" · "))}</span></div><button class="btn" style="min-height:30px;padding:0 11px;font-size:12.5px" data-tab="${esc(expiringToday[0].tab)}" ${expiringToday[0].ptab ? `data-ptab="${esc(expiringToday[0].ptab)}"` : ""}>Act now →</button></div>` : ""}
-    <div class="autorun-strip">
-      <div class="autorun-left">
-        <span class="pulse"></span>
-        <b>Daily Auto-Run:</b>
-        ${dailyAuto ? `<span>Active · every day at ${esc(dailyAuto.time || "07:30")} IST (GitHub + Reddit/HN/YT + Web + Radar + Competitors)</span>` : `<span>Off · turn on 1 daily sweep so topics & scripts are ready every morning</span>`}
-        ${runs[0] ? `<span class="muted">· Last: ${esc((runs[0].summary || "").slice(0, 72))}</span>` : ""}
-      </div>
-      ${dailyAuto ? `<button class="btn ghost" style="min-height:30px;padding:0 10px;font-size:12.5px" data-tab="accounts">Schedules</button>` : `<button class="btn primary" style="min-height:30px;padding:0 12px;font-size:12.5px" id="enable-autorun">Enable Daily 07:30 IST Auto-Run</button>`}
-    </div>
+  return `${briefHtml({ dailyAuto, expiringToday, waiting, failed, draftScr })}
 
     <section class="cockpit-top">
       <div class="cockpit-left">
@@ -2142,6 +2220,12 @@ document.addEventListener("click", async e => {
   const t = e.target.closest("button, a"); if (!t || t.closest(".sheet-bg")) return;
   if ("sideToggle" in t.dataset) { toggleSide(); return; }
   if (t.dataset.hmode) { ui.homeMode = t.dataset.hmode; paintHero(); return; }
+  if ("briefOff" in t.dataset) { ui.briefCtx = false; paintHero(); return; }
+  if ("briefDiscuss" in t.dataset) {
+    ui.homeMode = "ask"; ui.briefCtx = true; paintHero();
+    const p = $("#prompt"); if (p) { p.placeholder = "Ask about today's brief, e.g. which one should I film first, and give me 3 hooks"; p.scrollIntoView({ block: "center", behavior: "smooth" }); p.focus(); }
+    showToast("Ask Claude now knows today's brief."); return;
+  }
   if (t.id === "home-radar-save") {
     if (!db) return showToast("Sign in to claude.ai to save.");
     const urls = extractUrls($("#home-radar-urls")?.value || "");
