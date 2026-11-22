@@ -261,6 +261,17 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   cannot fire it itself) and **Discuss this brief** (Ask Claude gets the brief as context). Dashboard `schedules/daily-research`
   doc now links the cloud routine. Replaced the old auto-run strip + expiring banner. Checked at 390 px (Showcase), no errors.
 
+- **22 Nov 2026 HANDOFF (user closed chat).** Done today: v26 live + main; Feedback button; daily cloud routine
+  `trig_01MUBE3T8MeXRUThWfz4XDbP` (6 AM IST) TESTED OK (reads/writes dashboard DB, wrote 4 options + 3 scripts, push
+  notification; Apify skipped = free credit used up; Reddit/HN APIs unreachable from cloud, front pages used; hook scores blank);
+  Morning brief card with plain "What it is" + "Why now" lines (LESSONS 22 Nov); artifact icon = "planet" (claude.ai built-ins
+  only, no custom image); PC shortcuts renamed "Social OS" with custom orb icon (`dashboard/icon/social-os.ico`).
+  **Open / offered, not done:** (1) copy the 8 PC-only skills into the cloud (prompt-guy via its own repo as a routine source,
+  others after licence check); (2) copy the user's working-style rules into the repo so cloud chats reply the same way;
+  (3) "Connect" button with the Composio link on each account card; (4) dashboard link is "anyone with the link" (user's call
+  in the Share menu); (5) Showcase mode keeps a stale account filter from localStorage (minor bug). Plan for Meta API / Porotta
+  integration discussed and parked by the user. **Next:** user checks the Morning brief on phone, picks/skips the 3 picks.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
