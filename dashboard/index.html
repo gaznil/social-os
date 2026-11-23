@@ -2350,7 +2350,7 @@ function viewMonth() {
     </div>
     ${ui.calTab === "month" ? `<div class="row"><button class="btn" data-mon="-1" aria-label="Previous month">‹</button><button class="btn" data-mon="0">Today</button><button class="btn" data-mon="1" aria-label="Next month">›</button></div>` : ""}
   </div>`;
-  const panel = sp ? `<div class="drawer-bg" data-swap="close"><aside class="drawer" onclick="event.stopPropagation()">
+  const panel = sp ? `<div class="drawer-bg" data-swap="close"><aside class="drawer">
     <div class="drawer-head"><b>${esc(accountLabel(sp.accountId))} · ${esc(sp.format)}</b><button class="btn" data-swap="close">Close</button></div>
     <div class="drawer-body">${postMeta(sp)}${renderPostBody(sp)}${metricsBar(sp.metrics)}
       ${sp.status !== "posted" ? `<div class="field"><label class="label" for="resched-dt">Reschedule (IST)</label><div class="row"><input class="field-in" style="flex:1" id="resched-dt" type="datetime-local" value="${esc(toLocalInput(sp.plannedAt))}"><button class="btn" data-resched="${esc(sp.id)}">Save time</button></div></div>` : ""}
@@ -2423,6 +2423,7 @@ function paintHero() {
 /* ---------- events ---------- */
 document.addEventListener("click", async e => {
   if (!e.target.closest(".pickwrap")) closePick();
+  if (e.target.classList?.contains("drawer-bg")) { ui.calPick = null; lastKey = ""; render(); return; }
   const bo = e.target.closest("[data-brief-open]");
   if (bo && !e.target.closest("button, a")) { const [r, ...i] = bo.dataset.briefOpen.split(":"); openBriefSheet(r, i.join(":")); return; }
   const oi = e.target.closest("[data-open-item]");
