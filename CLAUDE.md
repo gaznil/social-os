@@ -294,6 +294,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   the Composio connector. **Not yet pressed by the user.** If a press fails, fallback = button writes a `messages` doc kind `refresh`.
   **Next:** user presses Refresh once on the dashboard (Home, Growth section); Claude then lists `stats` to confirm.
 
+- **23 Nov 2026 (v28, user ask):** tapping a Morning brief pick opens a detail popup (what it is, why now, opening line, the idea, what to check first, Approve / Skip). Backfilled `hook`/`concept`/`needs` on today's 3 options; sos-research step 7 + docs/DATA.md now require them for the top 3.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
