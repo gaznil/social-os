@@ -1795,7 +1795,7 @@ function growthBody() {
   const heatersHtml = heaters.length ? `<div class="list" style="margin-top:4px">${band("Heaters (>= 2x median views)", heaters.length, "var(--ok)")}${heaters.map(h => `<div class="heater-row"><div class="mini-main"><div class="meta">${plat(h.post.platform)}<span class="tier t-P1">${esc(h.mult)}x median</span><span>${num(h.views)} views</span>${h.evergreenRecycle ? `<span class="shelf sh-evergreen">90d+ Evergreen · Remake ready</span>` : ""}</div><b>${esc((h.post.title || h.post.caption || "").slice(0, 76))}</b></div>${h.evergreenRecycle ? `<button class="btn" style="min-height:30px;padding:0 10px;font-size:12px" data-recycle="${esc(h.post.id)}">Remake with fresh hook</button>` : ""}</div>`).join("")}</div>` : "";
   return `<h2>Growth</h2>${btns}${tiles}${chart}${bars}${topHtml}${heatersHtml}${bt}`;
 }
-/* ---------- refresh numbers (v27): the page reads Composio itself, read-only. Live version 1795340996-14d8 merged. ---------- */
+/* ---------- refresh numbers (v27, 7-day pull in v31): the page reads Composio itself, read-only. ---------- */
 const MCP_SERVER = "Composio", MCP_TOOL = "COMPOSIO_MULTI_EXECUTE_TOOL";
 const refresh = { busy: false, note: "", bad: false };
 const MCP_WORDS = { unavailable: "This page cannot reach Composio here", not_granted: "Allow connectors for this page first", not_in_manifest: "Connector access was declined for this page", approval_required: "Composio needs your OK: press Refresh again", needs_reauth: "Reconnect Composio in claude.ai Settings, Connectors", server_not_connected: "Add Composio in claude.ai Settings, Connectors", server_unavailable: "Composio did not answer, try again", tool_error: "Composio reported an error" };
