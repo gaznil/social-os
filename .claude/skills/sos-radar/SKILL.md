@@ -31,3 +31,10 @@ description: Intake one or many viral/trending reel, video, or GitHub/news URLs 
    - ArtifactData `add scripts` with `accountId`, `inspirationId: <id>`, `title`, `storyFormat`, `hookScore`, `shelfLife`, `expiresAt`, `firstMover`, `en` (English script with `[ON SCREEN: ...]` beats), `mlen` (natural Malayalam-English mix in the user's learned voice), `status: "draft"`, `createdAt`, `updatedAt`.
    - Update `inspirations/<id>`: `status: "scripted"`, `scriptId`, `updatedAt`.
 6. **Report:** In chat, show the priority-ranked table (Tier | Score | Shelf Life | First Mover | Title/URL | Hook & Twist) and tell the user which improved scripts are waiting for Gate 1 approval in **Plan -> Scripts**.
+
+## User's saved links (rule, 23 Nov 2026)
+The user's pasted links are hand-picked, not all viral. Some went viral, some are relatable, some got few views but the topic is good, some are old but still worth posting, some are the same topic from different creators, and some are carousels.
+- Never drop a link for low views or age. Judge the TOPIC: fit, relatability, can we prove it. Views are only a bonus signal.
+- Group same-topic links into ONE idea card (keep every source URL; the best one leads). Mark the rest `status: "merged"` with `mergedInto`.
+- Carousels: read the slides (images) + caption; no transcript needed.
+- Process in batches of about 20-25 per chat; save after each batch.
