@@ -96,3 +96,30 @@ def find_heaters(posts, today=None):
 
     heaters.sort(key=lambda h: (-h["multiple"], -h["views"]))
     return heaters
+
+
+SUM_FIELDS = ("views", "reach", "interactions", "profileViews", "followerGain", "posts",
+              "likes", "comments", "shares", "saves")
+
+
+def growth_metrics(stats, account_id, today):
+    """Week totals + % vs the previous 7 days for every Growth metric.
+
+    A field with no number in a window stays None (never 0), so the dashboard can show a dash.
+    pct is None unless the previous window has data above 0. Same maths as the page's growthMetrics().
+    """
+    rows = [s for s in stats if account_id in (None, "all") or s["accountId"] == account_id]
+    end = date.fromisoformat(today)
+    week = {(end - timedelta(days=i)).isoformat() for i in range(7)}
+    prev = {(end - timedelta(days=i)).isoformat() for i in range(7, 14)}
+
+    def total(field, days):
+        vals = [s[field] for s in rows if s["date"] in days and s.get(field) is not None]
+        return sum(vals) if vals else None
+
+    out = {}
+    for f in SUM_FIELDS:
+        cur, old = total(f, week), total(f, prev)
+        pct = None if cur is None or not old else round((cur - old) / old * 100)
+        out[f] = {"week": cur, "prev": old, "pct": pct}
+    return out

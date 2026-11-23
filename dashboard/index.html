@@ -398,15 +398,25 @@ textarea.field-in { min-height: 96px; resize: vertical; }
 .gtip { position: absolute; pointer-events: none; background: var(--ink); color: var(--ink-fg); border-radius: 10px; padding: 8px 11px; box-shadow: var(--lift); font-size: 12px; line-height: 1.5; white-space: nowrap; opacity: 0; transition: opacity 120ms var(--ease); }
 .glegend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); padding: 8px 2px 0; }
 .glegend i { display: inline-block; width: 14px; height: 2px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
-.gtiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-.gtiles div { background: var(--surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--line); padding: 16px; display: flex; flex-direction: column-reverse; gap: 4px; }
+.gtiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+.gtiles button { appearance: none; border: 0; text-align: left; font: inherit; color: inherit; cursor: pointer; background: var(--surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--line); padding: 16px; display: flex; flex-direction: column-reverse; gap: 4px; min-height: 44px; transition: box-shadow 120ms var(--ease); }
+.gtiles button:hover { box-shadow: 0 0 0 1px var(--line-2); }
+.gtiles button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--ink); }
+.gtiles em { font-style: normal; font-size: 12px; color: var(--muted); min-height: 1.2em; }
+.gcap { font-size: 13px; color: var(--muted); padding: 0 2px 6px; }
+.gbox { background: var(--surface); border-radius: 14px; box-shadow: 0 0 0 1px var(--line); padding: 16px 18px; display: grid; gap: 10px; }
+.gbox h3 { margin: 0; font: 500 14px var(--font-body); color: var(--ink); }
+.gbar { display: grid; grid-template-columns: 88px minmax(0, 1fr) 56px; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.gbar i { display: block; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.gbar u { display: block; height: 100%; border-radius: 4px; background: var(--accent); text-decoration: none; }
+.gbar b { text-align: right; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; }
 .gtiles b { display: block; font: 500 22px/1.15 var(--font-body); color: var(--ink); font-variant-numeric: tabular-nums; }
 .gtiles span { font-size: 13px; color: var(--muted); }
 .gempty { color: var(--muted); margin: 0; }
 .grefresh { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .gnote { font-size: 13px; color: var(--muted); }
 .gnote.bad { color: var(--bad, #c0392b); }
-@media (max-width: 640px) { .gtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .growth h2 { font-size: 24px; } }
+@media (max-width: 640px) { .growth h2 { font-size: 24px; } }
 /* v24 + v25: ElevenLabs App underline tabs, lifted paper, Reel Radar, Teleprompter, IG Grid 3:4 */
 .doors { display: grid; grid-template-columns: 1.45fr 1fr; gap: 16px; margin: 0 0 8px; }
 .doors-side { display: grid; gap: 12px; }
@@ -786,7 +796,7 @@ function applyAccount() {
     state[k] = (k === "accounts" || k === "runs" || !ui.acct) ? v : v.filter(d => !d.accountId || d.accountId === ui.acct);
   }
 }
-const ui = { acct: "", lang: {}, calPick: null, monthOff: 0, htype: "all", growth: "all", homeMode: "ask", planTab: "work", calTab: "month", radarFilter: "all", editingPost: null, confirmNow: null, confirmExpired: null, showApprovedScripts: false, loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
+const ui = { acct: "", lang: {}, calPick: null, monthOff: 0, htype: "all", growth: "all", gmetric: "followers", homeMode: "ask", planTab: "work", calTab: "month", radarFilter: "all", editingPost: null, confirmNow: null, confirmExpired: null, showApprovedScripts: false, loaded: false, offline: false, errors: {}, answer: null, answering: false, claudeOpen: false };
 
 const MODELS = {
   haiku:  { model: "claude-haiku-5-5",  modelTier: "quick",   label: "Haiku 5.5" },
@@ -1712,22 +1722,34 @@ function growthData() {
   if (mode === "showcase") {
     const accs = [{ id: "demo-ig", label: "AI tools (Instagram)" }, { id: "demo-li", label: "Founder (LinkedIn)" }], stats = [];
     for (let i = 29; i >= 0; i--) { const date = isoDay(new Date(Date.now() - i * 864e5));
-      stats.push({ accountId: "demo-ig", date, followers: 1200 + (29 - i) * 38 + (i % 4) * 9, views: 2400 + (i % 5) * 700, posts: i % 2 });
-      stats.push({ accountId: "demo-li", date, followers: 640 + (29 - i) * 11, views: 900 + (i % 3) * 220, posts: i % 3 ? 0 : 1 }); }
+      const v = 2400 + (i % 5) * 700, w = 900 + (i % 3) * 220;
+      stats.push({ accountId: "demo-ig", date, followers: 1200 + (29 - i) * 38 + (i % 4) * 9, views: v, reach: Math.round(v * .78), interactions: Math.round(v * .07), profileViews: 90 + (i % 6) * 22, followerGain: 30 + (i % 4) * 9, likes: Math.round(v * .045), comments: Math.round(v * .004), shares: Math.round(v * .008), saves: Math.round(v * .013), posts: i % 2 });
+      stats.push({ accountId: "demo-li", date, followers: 640 + (29 - i) * 11, views: w, reach: Math.round(w * .7), interactions: Math.round(w * .05), profileViews: 40 + (i % 5) * 9, followerGain: 11, likes: Math.round(w * .035), comments: Math.round(w * .006), shares: Math.round(w * .004), saves: Math.round(w * .005), posts: i % 3 ? 0 : 1 }); }
     return { accs, stats };
   }
   return { accs: state.accounts.filter(a => a.status !== "setup" && (!ui.acct || a.id === ui.acct)), stats: state.stats };
 }
+const METRICS = [{ k: "followers", label: "Followers" }, { k: "views", label: "Views" }, { k: "reach", label: "Reach" },
+  { k: "interactions", label: "Interactions" }, { k: "profileViews", label: "Profile visits" }, { k: "posts", label: "Posts" }];
+const WEEK_FIELDS = ["views", "reach", "interactions", "profileViews", "followerGain", "posts", "likes", "comments", "shares", "saves"];
 function growthTiles(stats, today) {
-  // same maths as tools/sos/results.py growth_tiles
+  // same maths as tools/sos/results.py growth_tiles (followers + change vs 7 days ago)
   const back = n => isoDay(new Date(Date.parse(today) - n * 864e5));
-  const wk = new Set([...Array(7)].map((_, i) => back(i)));
   const upTo = day => { const last = {}; for (const r of [...stats].sort((a, b) => a.date < b.date ? -1 : 1)) if (r.date <= day && r.followers != null) last[r.accountId] = r.followers;
     const v = Object.values(last); return v.length ? v.reduce((a, b) => a + b, 0) : null; };
   const now = upTo(today), before = upTo(back(7));
-  return { followers: now, views: stats.filter(r => wk.has(r.date)).reduce((a, r) => a + (r.views || 0), 0),
-    posts: stats.filter(r => wk.has(r.date)).reduce((a, r) => a + (r.posts || 0), 0), change: now == null || before == null ? null : now - before };
+  return { followers: now, change: now == null || before == null ? null : now - before };
 }
+function growthMetrics(stats, today) {
+  // same maths as tools/sos/results.py growth_metrics: week total + % vs the 7 days before; a field with no number stays null
+  const back = n => isoDay(new Date(Date.parse(today) - n * 864e5));
+  const wk = new Set([...Array(7)].map((_, i) => back(i))), pv = new Set([...Array(7)].map((_, i) => back(i + 7)));
+  const total = (f, set) => { const v = stats.filter(r => set.has(r.date) && r[f] != null).map(r => r[f]); return v.length ? v.reduce((a, b) => a + b, 0) : null; };
+  const out = {};
+  for (const f of WEEK_FIELDS) { const w = total(f, wk), p = total(f, pv); out[f] = { week: w, prev: p, pct: w == null || !p ? null : Math.round((w - p) / p * 100) }; }
+  return out;
+}
+const signed = n => (n >= 0 ? "+" : "−") + num(Math.abs(n));
 function growthBody() {
   const { accs, stats } = growthData();
   if (ui.acct) ui.growth = ui.acct;
@@ -1735,28 +1757,43 @@ function growthBody() {
   const pick = ui.growth, color = id => SERIES[Math.max(0, accs.findIndex(a => a.id === id)) % SERIES.length];
   const shown = pick === "all" ? accs : accs.filter(a => a.id === pick);
   const rows = stats.filter(r => shown.some(a => a.id === r.accountId));
-  const t = growthTiles(rows, dayKey(nowIso()));
+  const t = growthTiles(rows, dayKey(nowIso())), m = growthMetrics(rows, dayKey(nowIso()));
+  if (!METRICS.some(x => x.k === ui.gmetric)) ui.gmetric = "followers";
+  const mk = ui.gmetric, mlabel = METRICS.find(x => x.k === mk).label;
+  const val = { followers: t.followers, views: m.views.week, reach: m.reach.week, interactions: m.interactions.week, profileViews: m.profileViews.week, posts: m.posts.week };
+  const sub = k => { if (k === "followers") { const g = t.change ?? m.followerGain.week; return g == null ? "" : signed(g) + " this week"; }
+    const p = m[k].pct; return p != null ? signed(p) + "% vs last week" : val[k] == null ? "no data yet" : "last 7 days"; };
   const btns = accs.length > 1 ? `<div class="gbtns" role="group" aria-label="Account">${[{ id: "all", label: "All" }, ...accs].map(a => `<button data-growth="${esc(a.id)}" aria-pressed="${a.id === pick}">${esc(a.label)}</button>`).join("")}</div>` : "";
-  const tiles = `<div class="gtiles"><div><b>${num(t.followers)}</b><span>Followers</span></div><div><b>${num(t.views)}</b><span>Views this week</span></div>
-    <div><b>${num(t.posts)}</b><span>Posts this week</span></div><div><b>${t.change == null ? "—" : (t.change >= 0 ? "+" : "−") + num(Math.abs(t.change))}</b><span>vs last week</span></div></div>`;
-  const pts = rows.filter(r => r.followers != null);
+  const tiles = `<div class="gtiles" role="group" aria-label="Metric">${METRICS.map(x => `<button data-gmetric="${x.k}" aria-pressed="${x.k === mk}"><em>${esc(sub(x.k))}</em><b>${num(val[x.k])}</b><span>${esc(x.label)}</span></button>`).join("")}</div>`;
+  const pts = rows.filter(r => r[mk] != null);
   ui.gview = null;
-  if (!accs.length || pts.length < 2) return `<h2>Growth</h2>${btns}<p class="gempty">${accs.length ? "The first numbers arrive after the next results run. The line starts on day two." : "Add an account to start tracking growth."}</p>${accs.length ? tiles : ""}`;
-  const days = [...new Set(pts.map(r => r.date))].sort(), W = Math.max(280, Math.min(1000, innerWidth - 66)), H = 260, L = 44, B = 24;
-  const vals = pts.map(r => r.followers), lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo) * .1 || 1;
-  const x = d => L + (days.indexOf(d) / Math.max(1, days.length - 1)) * (W - L - 8), y = v => 8 + (1 - (v - lo + pad) / (hi - lo + 2 * pad)) * (H - B - 8);
-  const ticks = [lo, (lo + hi) / 2, hi].map(v => Math.round(v));
-  const grid = ticks.map(v => `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" vector-effect="non-scaling-stroke"/><text class="ax" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${num(v)}</text>`).join("");
-  const xl = [days[0], days[days.length - 1]].map((d, i) => `<text class="ax" x="${x(d)}" y="${H - 4}" text-anchor="${i ? "end" : "start"}">${esc(fmtDay(d))}</text>`).join("");
-  const lines = shown.map(a => { const r = pts.filter(p => p.accountId === a.id).sort((p, q) => p.date < q.date ? -1 : 1); if (!r.length) return "";
-    return `<path d="${r.map((p, i) => (i ? "L" : "M") + x(p.date).toFixed(1) + " " + y(p.followers).toFixed(1)).join("")}" fill="none" stroke="${color(a.id)}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>`; }).join("");
-  const legend = shown.length > 1 ? `<div class="glegend">${shown.map(a => `<span><i style="background:${color(a.id)}"></i>${esc(a.label)}</span>`).join("")}</div>` : "";
+  if (!accs.length) return `<h2>Growth</h2>${btns}<p class="gempty">Add an account to start tracking growth.</p>`;
+  let chart;
+  if (pts.length < 2) chart = `<p class="gempty">${mk === "followers" ? "The first numbers arrive after the next results run. The line starts on day two." : `No ${esc(mlabel.toLowerCase())} numbers yet. Press Refresh numbers.`}</p>`;
+  else {
+    const days = [...new Set(pts.map(r => r.date))].sort(), W = Math.max(280, Math.min(1000, innerWidth - 66)), H = 260, L = 44, B = 24;
+    const vals = pts.map(r => r[mk]), hi0 = Math.max(...vals), lo = mk === "followers" ? Math.min(...vals) : 0, hi = hi0 === lo ? lo + 1 : hi0, pad = (hi - lo) * .1 || 1;
+    const x = d => L + (days.indexOf(d) / Math.max(1, days.length - 1)) * (W - L - 8), y = v => 8 + (1 - (v - lo + pad) / (hi - lo + 2 * pad)) * (H - B - 8);
+    const ticks = [lo, (lo + hi) / 2, hi].map(v => Math.round(v));
+    const grid = ticks.map(v => `<line x1="${L}" x2="${W}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" vector-effect="non-scaling-stroke"/><text class="ax" x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${num(v)}</text>`).join("");
+    const xl = [days[0], days[days.length - 1]].map((d, i) => `<text class="ax" x="${x(d)}" y="${H - 4}" text-anchor="${i ? "end" : "start"}">${esc(fmtDay(d))}</text>`).join("");
+    const lines = shown.map(a => { const r = pts.filter(p => p.accountId === a.id).sort((p, q) => p.date < q.date ? -1 : 1); if (!r.length) return "";
+      return `<path d="${r.map((p, i) => (i ? "L" : "M") + x(p.date).toFixed(1) + " " + y(p[mk]).toFixed(1)).join("")}" fill="none" stroke="${color(a.id)}" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>`; }).join("");
+    const legend = shown.length > 1 ? `<div class="glegend">${shown.map(a => `<span><i style="background:${color(a.id)}"></i>${esc(a.label)}</span>`).join("")}</div>` : "";
+    ui.gview = { days, x, y, W, field: mk, shown: shown.map(a => ({ id: a.id, label: a.label, c: color(a.id) })), pts };
+    chart = `<div class="gchart"><div class="gcap">${esc(mlabel)}${mk === "followers" ? "" : " per day"}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(mlabel)} over time">${grid}${xl}${lines}<g id="gcross"></g><rect id="ghit" x="${L}" y="0" width="${W - L}" height="${H - B}" fill="transparent"/></svg>
+      <div class="gtip" id="gtip"></div>${legend}</div>`;
+  }
+  const parts = [["Likes", "likes"], ["Comments", "comments"], ["Shares", "shares"], ["Saves", "saves"]].map(([l, k]) => [l, m[k].week]).filter(p => p[1] != null);
+  const topV = Math.max(1, ...parts.map(p => p[1]));
+  const bars = parts.length ? `<div class="gbox"><h3>What people did (last 7 days)</h3>${parts.map(([l, v]) => `<div class="gbar"><span>${l}</span><i><u style="width:${Math.max(2, Math.round(v / topV * 100))}%"></u></i><b>${num(v)}</b></div>`).join("")}</div>` : "";
+  const ids = new Set(shown.map(a => a.id));
+  const topPosts = state.posts.filter(p => ids.has(p.accountId) && p.status === "posted" && p.metrics?.views != null).sort((p, q) => q.metrics.views - p.metrics.views).slice(0, 5);
+  const topHtml = topPosts.length ? `<div class="list">${band("Top posts by views", topPosts.length, "var(--accent)")}${topPosts.map(p => `<div class="heater-row"><div class="mini-main"><div class="meta">${plat(p.platform)}<span>${num(p.metrics.views)} views</span>${p.metrics.reach != null ? `<span>${num(p.metrics.reach)} reach</span>` : ""}${p.metrics.saves != null ? `<span>${num(p.metrics.saves)} saves</span>` : ""}</div><b>${esc((p.title || p.caption || "").slice(0, 76))}</b></div></div>`).join("")}</div>` : "";
+  const bt = shown.filter(a => a.bestTimes?.length).map(a => `<p class="gnote">Best times for ${esc(a.label)}: ${esc(a.bestTimes.join(", "))} IST</p>`).join("");
   const heaters = findHeaters(state.posts).slice(0, 3);
   const heatersHtml = heaters.length ? `<div class="list" style="margin-top:4px">${band("Heaters (>= 2x median views)", heaters.length, "var(--ok)")}${heaters.map(h => `<div class="heater-row"><div class="mini-main"><div class="meta">${plat(h.post.platform)}<span class="tier t-P1">${esc(h.mult)}x median</span><span>${num(h.views)} views</span>${h.evergreenRecycle ? `<span class="shelf sh-evergreen">90d+ Evergreen · Remake ready</span>` : ""}</div><b>${esc((h.post.title || h.post.caption || "").slice(0, 76))}</b></div>${h.evergreenRecycle ? `<button class="btn" style="min-height:30px;padding:0 10px;font-size:12px" data-recycle="${esc(h.post.id)}">Remake with fresh hook</button>` : ""}</div>`).join("")}</div>` : "";
-  ui.gview = { days, x, y, W, shown: shown.map(a => ({ id: a.id, label: a.label, c: color(a.id) })), pts };
-  return `<h2>Growth</h2>${btns}
-    <div class="gchart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Followers over time">${grid}${xl}${lines}<g id="gcross"></g><rect id="ghit" x="${L}" y="0" width="${W - L}" height="${H - B}" fill="transparent"/></svg>
-      <div class="gtip" id="gtip"></div>${legend}</div>${tiles}${heatersHtml}`;
+  return `<h2>Growth</h2>${btns}${tiles}${chart}${bars}${topHtml}${heatersHtml}${bt}`;
 }
 /* ---------- refresh numbers (v27): the page reads Composio itself, read-only. Live version 1795340996-14d8 merged. ---------- */
 const MCP_SERVER = "Composio", MCP_TOOL = "COMPOSIO_MULTI_EXECUTE_TOOL";
@@ -1779,35 +1816,47 @@ function parseExec(res) {
   const p = res?.payload ?? res, list = p?.data?.results || p?.results || [];
   return list.map(r => ({ slug: r.tool_slug, ok: r.response?.successful !== false && !r.error, data: r.response?.data, err: r.response?.error || r.error || "" }));
 }
+const IG_DAY = ["views", "reach", "total_interactions", "profile_views", "accounts_engaged", "likes", "comments", "shares", "saves"];
 async function pullAccount(a, mcp, day, yday) {
   const dayStart = d => Math.floor(Date.parse(d + "T00:00:00+05:30") / 1000);
-  const tools = [], add = (slug, args) => tools.push({ tool_slug: slug, account: a.composioAccountId, arguments: args });
+  const back = n => isoDay(new Date(Date.parse(day) - n * 864e5)), span = [6, 5, 4, 3, 2, 1, 0].map(back);
+  const tools = [], meta = [], add = (slug, args, m) => { tools.push({ tool_slug: slug, account: a.composioAccountId, arguments: args }); meta.push(m); };
   const mine = state.posts.filter(p => p.accountId === a.id && p.status === "posted" && p.platformPostId).sort((p, q) => (q.postedAt || "").localeCompare(p.postedAt || "")).slice(0, 8);
   if (a.platform === "instagram") {
-    add("INSTAGRAM_GET_USER_INFO", { ig_user_id: "me", fields: "id,followers_count" });
-    for (const d of [yday, day]) add("INSTAGRAM_GET_USER_INSIGHTS", { ig_user_id: "me", metric: ["views"], period: "day", metric_type: "total_value", since: dayStart(d), until: Math.min(dayStart(d) + 86400, Math.floor(Date.now() / 1000)) });
-    for (const p of mine) add("INSTAGRAM_GET_IG_MEDIA_INSIGHTS", { ig_media_id: p.platformPostId, metric: ["views", "reach", "likes", "comments", "saved", "shares"] });
+    add("INSTAGRAM_GET_USER_INFO", { ig_user_id: "me", fields: "id,followers_count" }, { t: "info" });
+    add("INSTAGRAM_GET_USER_INSIGHTS", { ig_user_id: "me", metric: ["follower_count"], period: "day", metric_type: "time_series", since: span[0], until: isoDay(new Date(Date.parse(day) + 864e5)) }, { t: "gain" });
+    for (const d of span) add("INSTAGRAM_GET_USER_INSIGHTS", { ig_user_id: "me", metric: IG_DAY, period: "day", metric_type: "total_value", since: dayStart(d), until: Math.min(dayStart(d) + 86400, Math.floor(Date.now() / 1000)) }, { t: "day", d });
+    for (const p of mine) add("INSTAGRAM_GET_IG_MEDIA_INSIGHTS", { ig_media_id: p.platformPostId, metric: ["views", "reach", "likes", "comments", "saved", "shares"] }, { t: "media", id: p.id });
   } else {
-    add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: yday, endDate: day, metrics: "views", dimensions: "day" });
-    if (mine.length) add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: day.slice(0, 4) + "-01-01", endDate: day, metrics: "views,likes,comments,shares", dimensions: "video", sort: "-views", maxResults: 50 });
+    add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: span[0], endDate: day, metrics: "views,likes,comments,shares,subscribersGained,subscribersLost", dimensions: "day" }, { t: "ytday" });
+    if (mine.length) add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: day.slice(0, 4) + "-01-01", endDate: day, metrics: "views,likes,comments,shares", dimensions: "video", sort: "-views", maxResults: 50 }, { t: "ytvideo" });
   }
   let res; try { res = await mcp.callTool(MCP_SERVER, MCP_TOOL, { tools, sync_response_to_workbench: false, thought: "Read-only numbers refresh" }, { cache: false }); } catch (e) { if (e?.code === "tool_error" && e.result) res = e.result; else throw e; }
   const out = parseExec(res.structuredContent ? { payload: res.structuredContent } : res.payload !== undefined ? res : tryJson(res));
-  const views = {}, ig = {}; let followers = null, yt = null, insightIdx = 0, mediaIdx = 0;
+  const days = {}, gains = {}, ig = {}, ytDays = {}; let followers = null, yt = null, gainsOk = false;
   out.forEach((o, i) => {
-    const slug = o.slug || tools[i]?.tool_slug;
-    if (slug === "INSTAGRAM_GET_USER_INSIGHTS") insightIdx++;
-    if (slug === "INSTAGRAM_GET_IG_MEDIA_INSIGHTS") mediaIdx++;
-    if (!o.ok) return;
-    if (slug === "INSTAGRAM_GET_USER_INFO") followers = o.data?.followers_count ?? null;
-    else if (slug === "INSTAGRAM_GET_USER_INSIGHTS") views[insightIdx === 1 ? yday : day] = o.data?.data?.[0]?.total_value?.value ?? null;
-    else if (slug === "INSTAGRAM_GET_IG_MEDIA_INSIGHTS") { const m = {}; for (const r of o.data?.data || []) m[r.name] = r.values?.[0]?.value ?? null; ig[mine[mediaIdx - 1]?.id] = m; }
-    else if (slug === "YOUTUBE_QUERY_ANALYTICS") {
-      const rows = o.data?.rows || [], hdr = (o.data?.columnHeaders || []).map(h => h.name);
-      if (hdr[0] === "day") for (const r of rows) views[r[0]] = r[1]; else yt = { hdr, rows };
+    const m = meta[i]; if (!m || !o.ok) return;
+    if (m.t === "info") followers = o.data?.followers_count ?? null;
+    else if (m.t === "gain") { gainsOk = true; for (const v of o.data?.data?.[0]?.values || []) gains[String(v.end_time).slice(0, 10)] = v.value ?? 0; }
+    else if (m.t === "day") { const x = {}; for (const r of o.data?.data || []) x[r.name] = r.total_value?.value ?? null; days[m.d] = x; }
+    else if (m.t === "media") { const x = {}; for (const r of o.data?.data || []) x[r.name] = r.values?.[0]?.value ?? null; ig[m.id] = x; }
+    else if (m.t === "ytday" || m.t === "ytvideo") {
+      const rows = o.data?.rows || [], hdr = (o.data?.columnHeaders || []).map(h => h.name), g = (r, n) => r[hdr.indexOf(n)] ?? null;
+      if (m.t === "ytvideo") yt = { hdr, rows };
+      else for (const r of rows) { const sg = g(r, "subscribersGained"), sl = g(r, "subscribersLost"), l = g(r, "likes"), c = g(r, "comments"), s = g(r, "shares");
+        ytDays[r[0]] = { views: g(r, "views"), likes: l, comments: c, shares: s, interactions: (l || 0) + (c || 0) + (s || 0), followerGain: sg == null && sl == null ? null : (sg || 0) - (sl || 0) }; }
     }
   });
-  return { views, followers, ig, yt, mine, failed: out.filter(o => !o.ok).length, total: out.length };
+  return { span, days, gains: gainsOk ? gains : null, followers, ig, yt, ytDays, mine, failed: out.filter(o => !o.ok).length, total: out.length };
+}
+// one stats doc per day: only fields that came back replace old ones
+function dayFields(a, r, d) {
+  const f = {}, set = (k, v) => { if (v != null) f[k] = v; };
+  if (a.platform === "instagram") { const x = r.days[d]; if (x) { set("views", x.views); set("reach", x.reach); set("interactions", x.total_interactions); set("profileViews", x.profile_views);
+    set("accountsEngaged", x.accounts_engaged); set("likes", x.likes); set("comments", x.comments); set("shares", x.shares); set("saves", x.saves); }
+    if (r.gains && r.gains[d] != null) set("followerGain", r.gains[d]); }
+  else { const y = r.ytDays[d]; if (y) for (const k of ["views", "likes", "comments", "shares", "interactions", "followerGain"]) set(k, y[k]); }
+  return f;
 }
 async function refreshNumbers() {
   if (refresh.busy || !db) return;
@@ -1821,10 +1870,14 @@ async function refreshNumbers() {
       try {
         const r = await pullAccount(a, mcp, day, yday);
         if (!r.total || r.failed === r.total) throw { code: "all_failed" };
-        for (const d of [yday, day]) {
-          const id = `${a.id}-${d}`, prev = state.stats.find(s => s.id === id) || {};
+        for (const d of r.span) {
+          const id = `${a.id}-${d}`, prev = { ...(state.stats.find(s => s.id === id) || {}) }; delete prev.id;
           const posts = state.posts.filter(p => p.accountId === a.id && p.postedAt && dayKey(p.postedAt) === d).length;
-          await db.doc(`stats/${id}`).set({ accountId: a.id, date: d, followers: d === day && r.followers != null ? r.followers : (prev.followers ?? null), views: r.views[d] ?? prev.views ?? 0, posts, pulledAt: nowIso() });
+          const f = dayFields(a, r, d);
+          let fol = prev.followers ?? null;
+          if (r.followers != null) { if (d === day) fol = r.followers; else if (r.gains) fol = r.followers - r.span.filter(x => x > d).reduce((s, x) => s + (r.gains[x] || 0), 0); }
+          if (!Object.keys(f).length && d !== day) continue;
+          await db.doc(`stats/${id}`).set({ ...prev, ...f, accountId: a.id, date: d, followers: fol, views: f.views ?? prev.views ?? 0, posts, pulledAt: nowIso() });
         }
         for (const p of r.mine) {
           let m = null;
@@ -1842,12 +1895,12 @@ async function refreshNumbers() {
 }
 function onGrowthMove(e) {
   const v = ui.gview, svgEl = $("#growth svg"); if (!v || !svgEl) return;
-  const box = svgEl.getBoundingClientRect(), sx = (e.clientX - box.left) * (v.W / box.width);
+  const box = svgEl.getBoundingClientRect(), sx = (e.clientX - box.left) * (v.W / box.width), f = v.field;
   const day = v.days.reduce((b, d) => Math.abs(v.x(d) - sx) < Math.abs(v.x(b) - sx) ? d : b, v.days[0]);
   const at = v.shown.map(a => ({ ...a, p: v.pts.find(p => p.accountId === a.id && p.date === day) })).filter(a => a.p);
   $("#gcross").innerHTML = `<line x1="${v.x(day)}" x2="${v.x(day)}" y1="8" y2="236" stroke="var(--line-2)"/>` +
-    at.map(a => `<circle cx="${v.x(day)}" cy="${v.y(a.p.followers)}" r="4" fill="${a.c}" stroke="#fff" stroke-width="2"/>`).join("");
-  const tip = $("#gtip"); tip.innerHTML = `<b>${esc(fmtDay(day))}</b>` + at.map(a => `<div>${esc(a.label)}: ${num(a.p.followers)}</div>`).join("");
+    at.map(a => `<circle cx="${v.x(day)}" cy="${v.y(a.p[f])}" r="4" fill="${a.c}" stroke="#fff" stroke-width="2"/>`).join("");
+  const tip = $("#gtip"); tip.innerHTML = `<b>${esc(fmtDay(day))}</b>` + at.map(a => `<div>${esc(a.label)}: ${num(a.p[f])}</div>`).join("");
   const px = 16 + (v.x(day) / v.W) * box.width; tip.style.left = Math.max(8, Math.min(box.width - tip.offsetWidth, px + 12)) + "px"; tip.style.top = "12px"; tip.style.opacity = 1;
 }
 addEventListener("resize", () => { const g = $("#growth"); if (g && tab === "wall") g.innerHTML = growthHtml(); });
@@ -2460,6 +2513,7 @@ document.addEventListener("click", async e => {
   if (t.dataset.pickAcct) { ui.acct = t.dataset.pickAcct; store.set("sos.acct", ui.acct); ui.calPick = null; applyAccount(); lastKey = ""; render(true); return; }
   if (t.dataset.tab) { tab = t.dataset.tab; if (t.dataset.ptab) ui.planTab = t.dataset.ptab; if (t.dataset.ctab) ui.calTab = t.dataset.ctab; if (t.dataset.slot) ui.calPick = t.dataset.slot; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
   if (t.id === "g-refresh") { refreshNumbers(); return; }
+  if (t.dataset.gmetric) { ui.gmetric = t.dataset.gmetric; $("#growth").innerHTML = growthHtml(); return; }
   if (t.dataset.growth) { ui.growth = t.dataset.growth; $("#growth").innerHTML = growthHtml(); return; }
   if (t.dataset.mode) { mode = t.dataset.mode; store.set("sos.mode", mode); ui.calPick = null; applyAccount(); lastKey = ""; render(true); return; }
   if (t.dataset.voice) { voice?.action(t.dataset.voice); return; }

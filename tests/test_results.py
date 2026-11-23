@@ -1,6 +1,6 @@
 import unittest
 
-from tools.sos.results import best_times, find_heaters, growth_tiles
+from tools.sos.results import best_times, find_heaters, growth_metrics, growth_tiles
 
 
 def post(acc, at, views, status="posted", pid=None, shelf="evergreen"):
@@ -77,3 +77,26 @@ class HeatersTest(unittest.TestCase):
         self.assertEqual([h["id"] for h in got], ["old-winner", "recent-heater"])
         self.assertTrue(got[0]["evergreenRecycle"])
         self.assertFalse(got[1]["evergreenRecycle"])
+
+
+class GrowthMetricsTest(unittest.TestCase):
+    STATS = [
+        {"accountId": "ig-a", "date": "2026-10-31", "reach": 300, "likes": 10, "views": 100, "followerGain": 5},
+        {"accountId": "ig-a", "date": "2026-10-30", "reach": 200, "likes": 20, "views": 100, "followerGain": 3},
+        {"accountId": "ig-a", "date": "2026-10-20", "reach": 250, "views": 100},   # previous window
+        {"accountId": "ig-b", "date": "2026-10-31", "reach": 50, "views": 10},
+    ]
+
+    def test_week_prev_and_pct(self):
+        m = growth_metrics(self.STATS, "ig-a", "2026-10-31")
+        self.assertEqual(m["reach"], {"week": 500, "prev": 250, "pct": 100})
+        self.assertEqual(m["views"]["pct"], 100)
+        self.assertEqual(m["likes"]["week"], 30)
+
+    def test_missing_field_is_none_not_zero(self):
+        m = growth_metrics(self.STATS, "ig-a", "2026-10-31")
+        self.assertIsNone(m["profileViews"]["week"])
+        self.assertIsNone(m["followerGain"]["pct"])
+
+    def test_all_accounts_adds_up(self):
+        self.assertEqual(growth_metrics(self.STATS, "all", "2026-10-31")["reach"]["week"], 550)

@@ -302,6 +302,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **23 Nov 2026: USER ASK, NEXT BUILD: Growth section upgrade** (more metrics: reach, interactions, profile visits, engagement breakdown, top posts, tile-switches-chart). Plan + verified Composio call shapes: `docs/plans/2026-11-23-growth-upgrade.md`. Dashboard audit plan: `docs/plans/2026-11-23-dashboard-audit.md`. Do Growth first, then the audit.
 
+- **23 Nov 2026: v31 GROWTH UPGRADE BUILT.** 6 metric tiles (Followers, Views, Reach, Interactions, Profile visits, Posts); tap one and the chart switches to it (`ui.gmetric`). New: engagement breakdown bars, Top posts by views, best posting times, % vs last week. Refresh now pulls 7 days of IG/YT numbers into the new optional `stats` fields (docs/DATA.md; `growth_metrics` in results.py, 3 new tests pass). Checked in Playwright at 390 + 1200 px (all tiles tapped, no errors, no sideways scroll); real Composio call shape for daily follower gains re-verified (end_time date = that day). **Not yet pressed by the user on live data.** Next: dashboard audit (`docs/plans/2026-11-23-dashboard-audit.md`).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
