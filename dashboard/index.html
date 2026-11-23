@@ -109,7 +109,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .comp-tabs button { border: 0; background: none; color: var(--muted); font: 500 12.5px var(--font-body); padding: 5px 10px; border-radius: 7px; cursor: pointer; transition: color 75ms var(--ease), background 75ms var(--ease); }
 .comp-tabs button:hover { color: var(--ink); background: var(--surface-2); }
 .comp-tabs button[aria-pressed="true"] { color: var(--ink); background: rgba(15,15,16,.07); }
-.composer textarea { border: 0; outline: 0; background: transparent; resize: none; min-height: 68px; max-height: 180px; font: 400 14.5px/1.55 var(--font-body); color: var(--ink); width: 100%; padding: 2px 4px; }
+.composer textarea { border: 0; outline: 0; background: transparent; resize: none; min-height: 68px; max-height: 60vh; font: 400 14.5px/1.55 var(--font-body); color: var(--ink); width: 100%; padding: 2px 4px; }
 .composer textarea::placeholder { color: var(--dim); }
 .qchips { display: flex; flex-wrap: wrap; gap: 6px; }
 .qchip { border: 0; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-2); color: var(--muted); font: 500 12.5px var(--font-body); height: 32px; padding: 0 12px; border-radius: 99px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: color 75ms var(--ease), background 75ms var(--ease); }
@@ -147,7 +147,7 @@ main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
 .claude-hi { display: flex; align-items: center; gap: 12px; font: 300 clamp(30px, 4.4vw, 42px)/1.15 var(--font-serif); letter-spacing: -.01em; }
 .claude-hi svg { width: 34px; height: 34px; color: var(--claude); flex: none; }
 .pbox { background: var(--claude-bg); border: 1px solid var(--claude-line); border-radius: 20px; padding: 14px 14px 10px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 40px -18px rgba(60, 40, 20, .3); display: grid; gap: 8px; }
-.pbox textarea { border: 0; outline: 0; background: transparent; resize: none; min-height: 56px; max-height: 220px; font: 400 16px/1.5 var(--font-body); color: var(--claude-fg); width: 100%; padding: 4px 6px; }
+.pbox textarea { border: 0; outline: 0; background: transparent; resize: none; min-height: 56px; max-height: 60vh; font: 400 16px/1.5 var(--font-body); color: var(--claude-fg); width: 100%; padding: 4px 6px; }
 .pbox textarea::placeholder { color: color-mix(in srgb, var(--claude-fg) 45%, transparent); }
 .ptools { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .ptools select { appearance: none; border: 1px solid var(--claude-line); background: transparent; color: var(--claude-fg); font: 400 13px var(--font-body); padding: 6px 10px; border-radius: 10px; cursor: pointer; }
@@ -942,6 +942,21 @@ function normalizeUrl(rawUrl) {
     return u.toString();
   } catch { return rawUrl.trim(); }
 }
+// Drafts survive app switches / refreshes (kept on this device only); every textarea grows with its text.
+const DRAFT_IDS = ["radar-urls", "radar-note", "home-radar-urls", "home-radar-note", "prompt", "door-topic", "job-brief", "fb-text"];
+function growBox(el) { if (!el || el.id === "voice-text") return; el.style.height = "auto"; el.style.height = el.scrollHeight + 2 + "px"; }
+function clearDrafts(...ids) { ids.forEach(id => store.set("sos.draft." + id, "")); countLinks(); }
+function countLinks() {
+  for (const [box, out] of [["radar-urls", "radar-count"]]) {
+    const el = document.getElementById(box), o = document.getElementById(out); if (!el || !o) continue;
+    const n = extractUrls(el.value).length; o.textContent = n ? `${n} link${n > 1 ? "s" : ""} found` : "";
+  }
+}
+function restoreDrafts() {
+  DRAFT_IDS.forEach(id => { const el = document.getElementById(id); const v = store.get("sos.draft." + id, ""); if (el && !el.value && v) el.value = v; });
+  document.querySelectorAll("#view textarea").forEach(growBox);
+  countLinks();
+}
 function extractUrls(text) {
   const m = String(text || "").match(/https?:\/\/[^\s<>"'\]\)]+/gi) || [];
   const seen = new Set(), out = [];
@@ -1566,7 +1581,8 @@ function heroInner() {
         </div>`
         : `<textarea id="home-radar-urls" rows="2" placeholder="Paste 1 or many Instagram Reels, YouTube Shorts, or X URLs…"></textarea>
         <div class="ptools">
-          <input class="field-in" id="home-radar-note" placeholder="Optional angle (e.g. demo with Claude Code hooks)" style="flex:1;padding:6px 10px;font-size:13px">
+          <textarea class="field-in" id="home-radar-note" rows="1" placeholder="Optional angle (e.g. demo with Claude Code hooks)" style="flex:1;min-height:34px;padding:6px 10px;font-size:13px"></textarea>
+          <button class="btn" data-save-draft style="min-height:34px;padding:0 12px;font-size:13px">Save</button>
           <button class="btn primary" id="home-radar-save" style="min-height:34px;padding:0 14px;font-size:13px">Add to Radar</button>
         </div>`}
     </div>
@@ -2202,9 +2218,10 @@ function viewRadar() {
       <p class="muted" style="margin:0">Paste 1 or many Instagram Reels, YouTube Shorts, GitHub repos, or X links. Claude scores virality, relatability, first-mover chance, and shelf-life expiry (Update / Trend / Evergreen).</p>
       <div class="field"><label class="label" for="radar-urls">URLs (one per line)</label>
         <textarea class="field-in" id="radar-urls" placeholder="https://www.instagram.com/reel/...&#10;https://github.com/..."></textarea></div>
-      <div class="field"><label class="label" for="radar-acct">Account</label><select class="field-in" id="radar-acct">${accountOptions(ui.acct)}</select></div>
-      <div class="field"><label class="label" for="radar-note">Your angle (optional)</label><input class="field-in" id="radar-note" placeholder="e.g. demo this with Claude Code hooks" maxlength="160"></div>
-      <div class="row" style="justify-content:flex-end"><button class="btn primary" id="radar-save">Add to Radar</button></div>
+      <span class="muted" id="radar-count" style="font-size:12.5px"></span>
+      <div class="field"><span class="label">Accounts (pick one or more, none = any)</span><div class="row chips" id="radar-accts" style="margin:0">${state.accounts.map(a => `<label class="chip" style="cursor:pointer"><input type="checkbox" value="${esc(a.id)}" ${a.id === ui.acct ? "checked" : ""} style="margin-right:6px">${esc(a.label)} · ${esc(PLATFORMS[a.platform] || a.platform)}</label>`).join("") || `<span class="muted">No accounts yet</span>`}</div></div>
+      <div class="field"><label class="label" for="radar-note">Your angle (optional)</label><textarea class="field-in" id="radar-note" rows="2" style="min-height:48px" placeholder="e.g. demo this with Claude Code hooks"></textarea></div>
+      <div class="row" style="justify-content:flex-end"><button class="btn" data-save-draft>Save draft</button><button class="btn primary" id="radar-save">Add to Radar</button></div>
     </section>
     <div class="list">
       <div class="row" style="justify-content:space-between">
@@ -2232,7 +2249,8 @@ function viewRadar() {
               ${i.relatabilityScore != null ? `<span>relatable ${esc(i.relatabilityScore)}/100</span>` : ""}
               ${i.audioNote ? `<span class="audio-tag">♪ ${esc(i.audioNote)}</span>` : ""}
             </div>
-            <p class="caption" style="font:var(--t-sec);color:var(--ink)">${esc(i.title || i.url)}</p>
+            <p class="caption" style="font:var(--t-sec);color:var(--ink)">${i.title ? esc(i.title) : `<span class="muted">Not read yet. Claude watches it and writes the idea here.</span>`}</p>
+            ${i.concept ? `<p class="caption" style="margin:0">${esc(i.concept)}</p>` : ""}
           </div>
         </div>
         <a class="muted clip" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.url)}</a>
@@ -2463,6 +2481,7 @@ function render(dataChanged) {
   prevKey = key;
   $("#view").innerHTML = html + VIEWS[tab]();
   for (const [id, v] of keep) { const el = document.getElementById(id); if (el) el.value = v; }
+  restoreDrafts();
   if (tab === "plan" && ui.planTab === "hooks") filterHooks();
   if (tab === "wall") { startOrb(); requestAnimationFrame(() => orb3d?.resize()); }
 }
@@ -2505,7 +2524,7 @@ document.addEventListener("click", async e => {
           title: null, hook: null, hookScore: null, outlierMultiple: null, storyFormat: null, whyPopped: null, ourTwist: null,
           audioNote: null, score: null, tier: null, scriptId: null, status: "new", createdAt: nowIso(), updatedAt: nowIso() });
       }
-      $("#home-radar-urls").value = ""; if ($("#home-radar-note")) $("#home-radar-note").value = "";
+      $("#home-radar-urls").value = ""; if ($("#home-radar-note")) $("#home-radar-note").value = ""; clearDrafts("home-radar-urls", "home-radar-note");
       showToast(`Added ${fresh.length} link${fresh.length > 1 ? "s" : ""} to Reel Radar.`);
     } catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
     t.disabled = false; return;
@@ -2632,16 +2651,17 @@ document.addEventListener("click", async e => {
     const existing = new Set((raw.inspirations || []).map(x => normalizeUrl(x.url || "")));
     const fresh = urls.filter(u => !existing.has(u.url));
     if (!fresh.length) return showToast("All pasted URLs are already in Reel Radar.");
-    const acct = $("#radar-acct")?.value || ui.acct || null;
+    const accts = [...document.querySelectorAll("#radar-accts input:checked")].map(x => x.value);
+    const acct = accts[0] || null;
     const note = ($("#radar-note")?.value || "").trim() || null;
     t.disabled = true;
     try {
       for (const item of fresh) {
-        await db.collection("inspirations").add({ accountId: acct, url: item.url, platform: item.platform, userNote: note,
+        await db.collection("inspirations").add({ accountId: acct, accountIds: accts, url: item.url, platform: item.platform, userNote: note,
           title: null, hook: null, hookScore: null, outlierMultiple: null, storyFormat: null, whyPopped: null, ourTwist: null,
           audioNote: null, score: null, tier: null, scriptId: null, status: "new", createdAt: nowIso(), updatedAt: nowIso() });
       }
-      $("#radar-urls").value = ""; if ($("#radar-note")) $("#radar-note").value = "";
+      $("#radar-urls").value = ""; if ($("#radar-note")) $("#radar-note").value = ""; clearDrafts("radar-urls", "radar-note");
       showToast(`Added ${fresh.length} link${fresh.length > 1 ? "s" : ""} to Radar. Claude ranks & scripts them next.`);
     } catch (err) { showToast(`Couldn't save: ${err.code || "error"}.`); }
     t.disabled = false; return;
@@ -2803,7 +2823,18 @@ function filterHooks() {
   const q = ($("#hook-q")?.value || "").toLowerCase().trim(), ty = ui.htype || "all";
   document.querySelectorAll(".card.hook").forEach(c => { c.hidden = (q && !c.dataset.text.includes(q)) || (ty !== "all" && c.dataset.type !== ty); });
 }
-document.addEventListener("input", e => { if (e.target.id === "hook-q") filterHooks(); });
+document.addEventListener("input", e => {
+  if (e.target.id === "hook-q") filterHooks();
+  if (e.target.tagName === "TEXTAREA") growBox(e.target);
+  if (DRAFT_IDS.includes(e.target.id)) store.set("sos.draft." + e.target.id, e.target.value);
+  if (e.target.id === "radar-urls" || e.target.id === "home-radar-urls") countLinks();
+});
+document.addEventListener("click", e => {
+  if (!e.target.closest("[data-save-draft]")) return;
+  DRAFT_IDS.forEach(id => { const el = document.getElementById(id); if (el) store.set("sos.draft." + id, el.value); });
+  showToast("Saved on this phone. Safe to switch apps.");
+});
+document.addEventListener("visibilitychange", () => { DRAFT_IDS.forEach(id => { const el = document.getElementById(id); if (el) store.set("sos.draft." + id, el.value); }); });
 document.addEventListener("change", e => {
   if (e.target.id !== "acct-switch") return;
   ui.acct = e.target.value; store.set("sos.acct", ui.acct); ui.calPick = null; applyAccount(); lastKey = ""; render(true);

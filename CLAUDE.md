@@ -304,6 +304,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **23 Nov 2026: v31 GROWTH UPGRADE BUILT.** 6 metric tiles (Followers, Views, Reach, Interactions, Profile visits, Posts); tap one and the chart switches to it (`ui.gmetric`). New: engagement breakdown bars, Top posts by views, best posting times, % vs last week. Refresh now pulls 7 days of IG/YT numbers into the new optional `stats` fields (docs/DATA.md; `growth_metrics` in results.py, 3 new tests pass). Checked in Playwright at 390 + 1200 px (all tiles tapped, no errors, no sideways scroll); real Composio call shape for daily follower gains re-verified (end_time date = that day). **Published (artifact version 33).** **Not yet pressed by the user on live data.** Next: dashboard audit (`docs/plans/2026-11-23-dashboard-audit.md`).
 
+- **23 Nov 2026: v32 PUBLISHED (artifact version 34, user ask).** Every text box grows with its text (max 60% of screen); "Your angle" is now a box with no length limit; Radar URL box shows "N links found"; typed text is kept on the phone (auto-save on every key + when switching apps + a Save button), cleared after Add to Radar; Radar account = tick one or more accounts (`inspirations.accountIds`). Radar cards show the idea (`title` + new `concept`) instead of the raw URL; unread ones say "Not read yet". sos-radar + docs/DATA.md updated. Checked at 390 px in Playwright (no errors). **Next:** run sos-radar on the ~21 pasted reels so cards show their ideas (Apify credit may be used up; check first).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

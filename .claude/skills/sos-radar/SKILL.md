@@ -17,12 +17,13 @@ description: Intake one or many viral/trending reel, video, or GitHub/news URLs 
 3. **Score with evidence, First-Mover & Shelf Life (never guess — LESSONS 15 Nov):**
    - Load the platform viral & hook skills (`ig-viral` + `ig-reel/hookscore.py` for IG/Shorts; `yt-viral` + `yt-script/hookscore.py` for YT; `x-viral` + `x-post/hookscore.py` for X).
    - Score the extracted 0-2 s hook with `hookscore.py` -> `hookScore` (0-100).
+   - `accountIds` (array, may be empty) = every account the user ticked; score fit for each and use the best one as `accountId`.
    - Check the account's `private/accounts/<accountId>/pillars.md`, `voice.md`, and `RULES.md` realism rule -> `fitScore` (0-100), `relatabilityScore` (0-100, local Kerala/Malayalam-English + AI workflow relatability), `provable` (true/false), `effort` (`low`|`medium`|`high`).
    - Check **first-mover chance** in our niche: `firstMover` = `"untapped"` (0 covered it yet) | `"early"` (1-2 creators) | `"saturated"` (everywhere).
    - Classify **shelf life**: `shelfLife` = `"update"` (24-48h window, set `expiresAt`) | `"trend"` (3-7d window, set `expiresAt`) | `"evergreen"` (`expiresAt: null`).
    - Save the batch to the scratchpad and run `python -m tools.sos.cli score-radar <file.json>` -> deterministic `score` (0-100), `tier` (`P1`|`P2`|`P3`|`skip`|`expired`), `expiryState`, `hoursLeft`, `daysLeft`, and `breakdown`.
 4. **Update `inspirations/<id>`:**
-   - Write `title`, `hook`, `hookScore`, `outlierMultiple`, `relatabilityScore`, `firstMover`, `shelfLife`, `expiresAt`, `storyFormat` (one of Kallaway's 10 formats), `whyPopped` (1 concrete sentence), `ourTwist` (how we make it better/real in our voice), `audioNote` (string or null), `score`, `tier`, `status: "scored"`, `updatedAt`.
+   - Write `title` (the idea in plain words, never the URL), `concept` (1-2 plain sentences: what the reel shows and why it works), `hook`, `hookScore`, `outlierMultiple`, `relatabilityScore`, `firstMover`, `shelfLife`, `expiresAt`, `storyFormat` (one of Kallaway's 10 formats), `whyPopped` (1 concrete sentence), `ourTwist` (how we make it better/real in our voice), `audioNote` (string or null), `score`, `tier`, `status: "scored"`, `updatedAt`.
    - If `hookScore >= 70`, also add a reusable template to `hooks` (Hook Vault) so it compounds.
 5. **Write improved script for Gate 1 approval:**
    - Automatically script the top non-expired `P1` item(s) (live `update`/`trend` items first!) AND any item with `status == "script"` (including expired items the user tapped **"Remake as evergreen"** on, where `shelfLife` was set to `"evergreen"`).
