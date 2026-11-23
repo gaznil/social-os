@@ -296,6 +296,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **23 Nov 2026 (v28, user ask):** tapping a Morning brief pick opens a detail popup (what it is, why now, opening line, the idea, what to check first, Approve / Skip). Backfilled `hook`/`concept`/`needs` on today's 3 options; sos-research step 7 + docs/DATA.md now require them for the top 3.
 
+- **23 Nov 2026 (v29, user ask):** Plan = ONE list "Ideas & scripts" (tap a card -> detail screen shared with the Home brief: idea, hook options with virality scores, beat-by-beat script with EN | Malayalam-English toggle, caption, fill-in chips, Approve / Ask changes / Teleprompter). Approving a script also sets its option to `picked`. The 5 draft scripts were rebuilt with ig-reel `hookscore` + `beats` (hook 75-100, scored by the heuristic, not a guarantee). sos-create step 2 now requires the structured format. Checked at 390 px (no sideways scroll, toggle works). **Next:** user opens Plan, taps an idea, reads/approves a script.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

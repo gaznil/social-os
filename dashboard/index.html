@@ -593,6 +593,22 @@ body.intro-open .home-grid { animation: stgRise 860ms 420ms cubic-bezier(.16, 1,
 .bs-sec p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.6; color: var(--fg); }
 .bs-hook { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font: 500 15px/1.45 var(--font-body); color: var(--ink); }
 .bs-note { font-size: 12.5px; color: var(--muted); margin: 0; }
+.sheet.wide { width: min(760px, 100%); }
+.bs-beat { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; display: grid; gap: 6px; }
+.bs-t { display: flex; gap: 10px; align-items: baseline; font: 500 12px var(--font-mono); color: var(--muted); }
+.bs-t b { color: var(--ink); }
+.bs-beat .say { margin: 0; font: 500 15.5px/1.55 var(--font-body); color: var(--ink); overflow-wrap: anywhere; }
+.bs-beat .show { margin: 0; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+mark.ph { background: color-mix(in srgb, var(--warn) 16%, transparent); color: var(--warn); border-radius: 5px; padding: 0 5px; font-style: normal; font-weight: 500; }
+.bs-hookrow { display: flex; gap: 12px; align-items: center; padding: 9px 12px; border-radius: 10px; box-shadow: inset 0 0 0 1px var(--line); }
+.bs-hookrow > div { min-width: 0; overflow-wrap: anywhere; }
+.hs { flex: none; width: 38px; text-align: center; font: 600 15px var(--font-mono); }
+.hs.ok { color: var(--ok); } .hs.warn { color: var(--warn); } .hs.bad { color: var(--bad); }
+.bs-ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; line-height: 1.5; }
+.bs-cap { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; }
+.bs-foot { position: sticky; bottom: -24px; background: var(--surface); padding: 12px 0 4px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.item { cursor: pointer; }
+.item:hover { box-shadow: 0 0 0 1px var(--line-2); }
 .brief-rows { display: grid; gap: 10px; }
 .brief-rows > div { display: grid; gap: 6px; }
 .brief .chip { border: 0; cursor: pointer; }
@@ -1414,52 +1430,105 @@ function openFeedback() {
   sheet = el;
 }
 
-/* ---------- brief detail popup: tap a pick to see the whole idea, then approve or skip ---------- */
-function openBriefSheet(ref, id) {
-  const b = latestBrief(), t = (b?.top || []).find(x => x.ref === ref && x.id === id); if (!t) return;
-  const live = ref === "options" ? state.options.find(o => o.id === id) : ref === "inspirations" ? state.inspirations.find(x => x.id === id) : ref === "scripts" ? state.scripts.find(x => x.id === id) : null;
-  const d = { ...t, ...(live || {}), title: t.title || live?.title }, exp = expiryInfo(d), dead = exp.state === "expired";
+/* ---------- one detail screen for every idea and script (Home brief + Plan list share it) ---------- */
+const ph = t => esc(t || "").replace(/\{\{(.+?)\}\}/g, '<mark class="ph">$1</mark>');
+const hsCls = n => n >= 70 ? "ok" : n >= 50 ? "warn" : "bad";
+function planItems() {
+  const items = [], used = new Set(), open = s => s && ["draft", "changes"].includes(s.status);
+  for (const o of state.options) {
+    if (o.status === "dropped") continue;
+    const s = state.scripts.find(x => x.optionId === o.id) || state.scripts.find(x => x.id === o.id);
+    if (s) { used.add(s.id); if (!open(s)) continue; items.push({ key: `scripts:${s.id}`, option: o, script: s }); }
+    else items.push({ key: `options:${o.id}`, option: o, script: null });
+  }
+  for (const s of state.scripts) if (!used.has(s.id) && open(s)) items.push({ key: `scripts:${s.id}`, option: state.options.find(o => o.id === s.optionId) || null, script: s });
+  const rank = it => it.script ? 0 : it.option?.status === "picked" ? 2 : 1;
+  const exp = it => Date.parse((it.script || it.option)?.expiresAt || "") || 9e15;
+  return items.sort((a, b) => rank(a) - rank(b) || exp(a) - exp(b));
+}
+function scriptBlock(s, lang) {
+  const ml = lang === "ml", reel = s.format !== "carousel" && !s.slides;
+  const hooks = (s.hookOptions || []).length ? `<div class="bs-sec"><span class="label">Hook options · virality check</span>${s.hookOptions.map(h => `<div class="bs-hookrow"><b class="hs ${hsCls(h.score)}">${esc(h.score)}</b><div><div>${ph(h.text)}</div><span class="muted" style="font-size:12px">${esc(h.formula || "")}${s.hook && (s.hook.spoken === h.text || s.hook.onScreen === h.text) ? " · picked" : ""}</span></div></div>`).join("")}</div>` : "";
+  const open = s.hook && (s.hook.spoken || s.hook.onScreen) ? `<div class="bs-sec"><span class="label">Opening line</span>${s.hook.onScreen ? `<div class="bs-hook"><span class="muted" style="font-size:12px">On screen</span><br>${ph(s.hook.onScreen)}</div>` : ""}${reel && (ml ? s.hook.spokenMl : s.hook.spoken) ? `<div class="bs-hook"><span class="muted" style="font-size:12px">You say</span><br>${ph(ml ? s.hook.spokenMl : s.hook.spoken)}</div>` : ""}</div>` : "";
+  let body = "";
+  if (s.beats?.length) body = `<div class="bs-sec"><span class="label">The script, beat by beat</span>${s.beats.map(b => `<div class="bs-beat"><div class="bs-t"><b>${esc(b.t)}</b><span>${esc(b.label || "")}</span></div><p class="say">${ph(ml ? b.sayMl : b.say)}</p><p class="show"><i>Show:</i> ${ph(b.show)}${b.onScreen ? ` · <i>Text:</i> ${ph(b.onScreen)}` : ""}</p></div>`).join("")}</div>`;
+  else if (s.slides?.length) body = `<div class="bs-sec"><span class="label">The slides</span>${s.slides.map(b => `<div class="bs-beat"><div class="bs-t"><b>Slide ${esc(b.n)}</b></div><p class="say">${ph(b.headline)}</p><p class="show">${ph(b.body)}</p><p class="show"><i>Visual:</i> ${ph(b.visual)}</p></div>`).join("")}</div>`;
+  else body = `<div class="bs-sec"><span class="label">Script</span><div class="answer script">${ph((ml ? s.mlen : s.en) || s.en || "Not written yet.")}</div></div>`;
+  const cta = s.cta ? `<div class="bs-sec"><span class="label">The ask</span><p>${ph(reel && ml ? s.ctaMl || s.cta : s.cta)}</p></div>` : "";
+  const cap = s.caption ? `<div class="bs-sec"><span class="label">Caption</span><p class="bs-cap">${ph(s.caption)}</p></div>` : "";
+  const fill = (s.fillOnFilmDay || []).length ? `<div class="bs-sec"><span class="label">Fill in when you film</span><div class="row">${s.fillOnFilmDay.map(x => `<mark class="ph">${esc(x)}</mark>`).join("")}</div></div>` : "";
+  const notes = (s.notes || []).length ? `<div class="bs-sec"><span class="label">Before you film</span><ul class="bs-ul">${s.notes.map(n => `<li>${ph(n)}</li>`).join("")}</ul></div>` : "";
+  const c = s.checks || {}, why = (c.viral || []).length ? `<div class="bs-sec"><span class="label">Why it should work</span><ul class="bs-ul">${c.viral.map(n => `<li>${ph(n)}</li>`).join("")}</ul></div>` : "";
+  const stats = `<div class="row">${c.hookScore != null ? `<span class="chip learn">Hook ${esc(c.hookScore)}/100</span>` : ""}${c.seconds ? `<span class="chip learn">~${esc(c.seconds)} sec spoken</span>` : ""}${c.slides ? `<span class="chip learn">${esc(c.slides)} slides</span>` : ""}${s.storyFormat ? `<span class="chip learn">${esc(s.storyFormat)}</span>` : ""}</div>`;
+  return stats + hooks + open + body + cta + cap + fill + notes + why;
+}
+function openItemSheet(ref, id, fb = null) {
+  let o = null, s = null, ins = null;
+  if (ref === "options") { o = state.options.find(x => x.id === id) || null; s = o ? state.scripts.find(x => x.optionId === o.id) || state.scripts.find(x => x.id === o.id) || null : null; }
+  else if (ref === "scripts") { s = state.scripts.find(x => x.id === id) || null; o = s ? state.options.find(x => x.id === s.optionId) || null : null; }
+  else if (ref === "inspirations") ins = state.inspirations.find(x => x.id === id) || null;
+  if (!o && !s && !ins && !fb) return;
   closeSheet();
-  const sec = (label, text, cls = "") => text ? `<div class="bs-sec"><span class="label">${esc(label)}</span><p class="${cls}">${esc(text)}</p></div>` : "";
-  const body = [
-    sec("What it is", d.what), sec("Why now", d.why),
-    d.hook ? `<div class="bs-sec"><span class="label">Opening line</span><div class="bs-hook">${esc(d.hook)}</div></div>` : "",
-    sec("The idea", d.concept || d.ourTwist), sec("Why it popped", d.whyPopped),
-    sec("Your script (English)", ref === "scripts" ? d.en : ""), sec("Malayalam-English", ref === "scripts" ? d.mlen : ""),
-    sec("What you need first", d.needs || d.audioNote),
-    d.concept || d.ourTwist || ref === "scripts" ? "" : `<p class="bs-note">The full idea is written when you approve: Claude turns it into a script you can read and approve again before anything is made.</p>`,
-    sec("Story format", d.storyFormat),
-    d.url ? `<div class="bs-sec"><span class="label">Source</span><p><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.url)}</a></p></div>` : "",
-  ].join("");
-  const done = ref === "options" && live && live.status !== "new" ? pill(live.status === "picked" ? "done" : "dropped", live.status === "picked" ? "Approved" : "Skipped")
-    : ref === "inspirations" && live && !["new", "scored"].includes(live.status) ? pill("done", live.status) : "";
-  const acts = done ? done
-    : ref === "options" ? `<button class="btn primary" data-bs="picked" ${dead ? "disabled" : ""}>Approve this idea</button><button class="btn" data-bs="dropped">Skip</button>`
-    : ref === "inspirations" ? `<button class="btn primary" data-bs="script" ${dead ? "disabled" : ""}>Approve: write the script</button><button class="btn" data-bs="skipped">Skip</button>`
-    : `<button class="btn primary" data-bs="plan">Open the script</button>`;
+  const d = { ...(fb || {}), ...(ins || {}), ...(o || {}), title: o?.title || s?.title || fb?.title || ins?.title };
+  const exp = expiryInfo(s || d), dead = exp.state === "expired";
+  const hasBeats = s && (s.beats?.length || s.slides?.length), reel = s && s.format !== "carousel" && !s.slides;
+  let lang = ui.lang[s?.id] || s?.lang || "en", ask = false, note = "";
   const el = document.createElement("div"); el.className = "sheet-bg";
-  el.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(d.title || "Idea")}">
-    <div class="meta">${d.score != null ? `<span class="brief-score">${esc(d.score)}</span>` : ""}${d.format ? `<span>${esc(d.format)}</span>` : ""}${shelfBadge(d)}${firstMoverBadge(d.firstMover)}</div>
-    <h2 style="font-size:22px;line-height:1.25">${esc(d.title || "Untitled")}</h2>
-    ${body}
-    <div class="row" style="justify-content:flex-end">${acts}<button class="btn ghost" data-sheet="close">Close</button></div></div>`;
-  document.body.append(el);
+  function paint() {
+    const sec = (label, text) => text ? `<div class="bs-sec"><span class="label">${esc(label)}</span><p>${ph(text)}</p></div>` : "";
+    let main;
+    if (s) main = `${reel && s.mlen ? `<div class="seg" role="group"><button aria-pressed="${lang === "en"}" data-sl="en">English</button><button aria-pressed="${lang === "ml"}" data-sl="ml">Malayalam-English</button></div>` : ""}${scriptBlock(s, lang)}${sec("What it is", d.what)}${sec("Why now", d.why)}`;
+    else main = `${sec("What it is", d.what)}${sec("Why now", d.why)}
+      ${d.hook ? `<div class="bs-sec"><span class="label">Opening line</span><div class="bs-hook">${ph(d.hook)}</div></div>` : ""}
+      ${sec("The idea", d.concept || d.ourTwist)}${sec("Why it popped", d.whyPopped)}${sec("What you need first", d.needs || d.audioNote)}
+      ${d.concept || d.ourTwist ? "" : `<p class="bs-note">Approve it and Claude writes the full script: hook options scored for virality, beat-by-beat lines, caption and the ask. You read and approve that too before anything is made.</p>`}
+      ${sec("Story format", d.storyFormat)}${d.url ? `<div class="bs-sec"><span class="label">Source</span><p><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.url)}</a></p></div>` : ""}`;
+    const askBox = ask ? `<textarea class="field-in" id="bs-note" rows="2" maxlength="400" placeholder="What should change? (also teaches Claude your voice)">${esc(note)}</textarea>` : "";
+    let acts = "";
+    if (s && s.status === "draft") acts = `<button class="btn primary" data-bs="approve-script">Approve script</button><button class="btn" data-bs="ask">${ask ? "Send changes" : "Ask changes"}</button>${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}`;
+    else if (s && s.status === "changes") acts = `${pill("waiting", "Changes asked · Claude is rewriting")}${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}`;
+    else if (s) acts = `${pill("done", SCRIPT_STATE[s.status] || s.status)}${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}${s.postIds?.length ? `<button class="btn" data-bs="approve-tab">${s.postIds.length} posts in Approve</button>` : ""}`;
+    else if (ref === "options" && o) acts = o.status === "new" ? `<button class="btn primary" data-bs="picked" ${dead ? "disabled" : ""}>Approve this idea</button><button class="btn" data-bs="dropped">Drop</button>` : pill(o.status === "picked" ? "waiting" : "dropped", o.status === "picked" ? "Approved · Claude is writing the script" : "Dropped");
+    else if (ref === "inspirations" && ins) acts = ["new", "scored"].includes(ins.status) ? `<button class="btn primary" data-bs="script" ${dead ? "disabled" : ""}>Approve: write the script</button><button class="btn" data-bs="skipped">Skip</button>` : pill("done", ins.status);
+    el.innerHTML = `<div class="sheet wide" role="dialog" aria-modal="true" aria-label="${esc(d.title || "Idea")}">
+      <div class="meta">${d.score != null ? `<span class="brief-score">${esc(d.score)}</span>` : ""}${(s?.format || d.format) ? `<span>${esc(s?.format || d.format)}</span>` : ""}${shelfBadge(s || d)}${firstMoverBadge(d.firstMover || s?.firstMover)}</div>
+      <h2 style="font-size:22px;line-height:1.25">${esc(d.title || "Untitled")}</h2>
+      ${main}
+      <div class="bs-foot">${askBox}<div class="row" style="justify-content:flex-end">${acts}<button class="btn ghost" data-sheet="close">Close</button></div></div></div>`;
+  }
+  paint(); document.body.append(el);
   el.addEventListener("click", async e => {
     if (e.target === el || e.target.closest('[data-sheet="close"]')) return closeSheet();
-    const btn = e.target.closest("[data-bs]"); if (!btn) return;
-    const a = btn.dataset.bs;
-    if (a === "plan") { closeSheet(); tab = "plan"; ui.planTab = "work"; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
+    const sl = e.target.closest("[data-sl]"); if (sl) { lang = sl.dataset.sl; if (s) ui.lang[s.id] = lang; const sc = el.querySelector(".sheet")?.scrollTop || 0; paint(); el.querySelector(".sheet").scrollTop = sc; return; }
+    const b = e.target.closest("[data-bs]"); if (!b) return;
+    const a = b.dataset.bs;
+    if (a === "tele") { closeSheet(); openTeleprompter(s); return; }
+    if (a === "approve-tab") { closeSheet(); tab = "approve"; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
     if (!db) return showToast("Sign in to claude.ai to save.");
+    if (a === "ask") {
+      if (!ask) { ask = true; paint(); el.querySelector("#bs-note")?.focus(); return; }
+      note = (el.querySelector("#bs-note")?.value || "").trim();
+      if (!note) return showToast("Write what should change first.");
+    }
+    b.disabled = true;
     try {
-      await db.doc(`${ref}/${id}`).update({ status: a, updatedAt: nowIso() });
-      closeSheet(); showToast(a === "picked" || a === "script" ? "Approved. Claude writes the script next." : "Skipped");
-    } catch (err) { showToast(`Couldn't save: ${err.code || "error"}. Try again.`); }
+      if (a === "approve-script") {
+        await db.doc(`scripts/${s.id}`).update({ status: "approved", approvedAt: nowIso(), lang, updatedAt: nowIso() });
+        if (o && o.status !== "picked") await db.doc(`options/${o.id}`).update({ status: "picked", updatedAt: nowIso() });
+        showToast("Script approved. Claude makes every platform version next.");
+      } else if (a === "ask") { await db.doc(`scripts/${s.id}`).update({ status: "changes", note, updatedAt: nowIso() }); showToast("Sent. Claude rewrites it."); }
+      else if (a === "picked" || a === "dropped") { await db.doc(`options/${o.id}`).update({ status: a, updatedAt: nowIso() }); showToast(a === "picked" ? "Approved. Claude writes the script next." : "Dropped"); }
+      else { await db.doc(`inspirations/${ins.id}`).update({ status: a, updatedAt: nowIso() }); showToast(a === "script" ? "Approved. Claude writes the script next." : "Skipped"); }
+      closeSheet();
+    } catch (err) { b.disabled = false; showToast(`Couldn't save: ${err.code || "error"}. Try again.`); }
   });
   sheet = el;
 }
+const openBriefSheet = (ref, id) => openItemSheet(ref, id, (latestBrief()?.top || []).find(x => x.ref === ref && x.id === id) || null);
+const openByKey = key => { const [r, ...i] = key.split(":"); openItemSheet(r, i.join(":")); };
 document.addEventListener("keydown", e => {
-  const t = e.target.closest?.("[data-brief-open]");
-  if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); const [r, ...i] = t.dataset.briefOpen.split(":"); openBriefSheet(r, i.join(":")); }
+  const t = e.target.closest?.("[data-brief-open], [data-open-item]");
+  if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); t.dataset.openItem ? openByKey(t.dataset.openItem) : openBriefSheet(...(() => { const [r, ...i] = t.dataset.briefOpen.split(":"); return [r, i.join(":")]; })()); }
   else if (e.key === "Escape" && sheet) closeSheet();
 });
 
@@ -2047,7 +2116,7 @@ function needAcct() {
 
 function planSubnav() {
   const radarNew = state.inspirations.filter(i => (i.status === "new" || i.tier === "P1") && expiryInfo(i).state !== "expired").length;
-  const workN = state.options.filter(o => o.status === "new").length + state.scripts.filter(s => s.status === "draft").length;
+  const workN = planItems().length;
   return `<div class="row" style="justify-content:space-between"><div class="subnav" role="tablist">
     <button role="tab" aria-selected="${ui.planTab === "work"}" data-ptab="work">Workspace${workN ? `<span class="n">${workN}</span>` : ""}</button>
     <button role="tab" aria-selected="${ui.planTab === "radar"}" data-ptab="radar">Reel Radar${radarNew ? `<span class="n">${radarNew}</span>` : ""}</button>
@@ -2136,8 +2205,8 @@ function viewPlan() {
   const head = `<div class="page-head"><div><h2>Plan</h2><p>Go from daily auto-run topics or viral URLs to approved EN / Malayalam-English scripts (Gate 1).</p></div></div>`;
   if (ui.planTab === "radar") return head + planSubnav() + viewRadar();
   if (ui.planTab === "hooks") return head + planSubnav() + viewHooks();
-  const q = state.posts.filter(p => p.status === "waiting").length, opts = state.options.filter(o => o.status === "new"),
-    scr = state.scripts.filter(s => s.status === "draft"),
+  const items = planItems(), q = state.posts.filter(p => p.status === "waiting").length, opts = items.filter(i => !i.script),
+    scr = items.filter(i => i.script),
     readyScr = state.scripts.filter(s => s.status === "approved" || s.status === "done");
   const rq = state.messages.filter(m => m.kind && m.status === "new");
   const slotLabel = o => {
@@ -2157,20 +2226,14 @@ function viewPlan() {
       </div>
     </div>
     ${rq.length ? `<p class="muted">${rq.length} request${rq.length > 1 ? "s" : ""} waiting for Claude's next chat.</p>` : ""}
-    <section class="list">${band("Options to pick", opts.length, "var(--accent)")}
-    ${opts.length ? opts.map(o => `<article class="card"><div class="meta"><span>${esc(slotLabel(o))}</span>${shelfBadge(o)}${firstMoverBadge(o.firstMover)}${o.storyFormat ? `<span>${esc(o.storyFormat)}</span>` : ""}${o.format ? `<span>${esc(o.format)}</span>` : ""}</div>
-      <p class="caption"><b>${esc(o.title)}</b></p>${o.what ? `<span><b>What it is:</b> ${esc(o.what)}</span>` : ""}${o.why ? `<span class="muted">Why: ${esc(o.why)}</span>` : ""}
-      <div class="row"><button class="btn primary" data-opt="picked" data-id="${esc(o.id)}">Pick this</button><button class="btn" data-opt="dropped" data-id="${esc(o.id)}">Drop</button></div></article>`).join("")
-      : emptyBox("No options waiting", "Open Door A or B above, or drop viral URLs in Reel Radar to generate ranked concepts.")}</section>
-    <section class="list">${band("Scripts (Gate 1 approval)", scr.length, "var(--warn)")}
-    ${scr.length ? scr.map(s => { const l = ui.lang[s.id] || "en"; return `<article class="card"><div class="meta"><span>${esc(s.title || "Script")}</span>${shelfBadge(s)}${firstMoverBadge(s.firstMover)}${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${s.hookScore != null ? `<span>hook ${esc(s.hookScore)}/100</span>` : ""}${pill("waiting", SCRIPT_STATE[s.status] || s.status)}</div>
-      <div class="seg" role="group"><button aria-pressed="${l === "en"}" data-lang="en" data-id="${esc(s.id)}">English</button><button aria-pressed="${l === "ml"}" data-lang="ml" data-id="${esc(s.id)}">Malayalam-English</button></div>
-      <div class="answer script">${esc((l === "ml" ? s.mlen : s.en) || "Not written yet.")}</div>
-      <div class="field"><input class="field-in" id="chg-${esc(s.id)}" placeholder="What should change? (also teaches Claude your voice)" maxlength="400"></div>
-      <div class="row"><button class="btn primary" data-scr="approved" data-id="${esc(s.id)}">Approve script</button><button class="btn" data-scr="changes" data-id="${esc(s.id)}">Ask changes</button><button class="btn" data-tele="${esc(s.id)}">Teleprompter</button></div></article>`; }).join("")
-      : emptyBox("No draft scripts waiting", "Pick an option above or click 'Write improved script' on a Reel Radar card.")}</section>
+    <section class="list">${band("Ideas & scripts", items.length, "var(--accent)")}
+    ${items.length ? items.map(it => { const o = it.option, sc = it.script, d = sc || o, st = sc ? (sc.status === "changes" ? ["waiting", "Changes asked"] : ["waiting", "Script ready · waiting for your yes"]) : o.status === "picked" ? ["waiting", "Approved · Claude is writing the script"] : ["new", "New idea"];
+      return `<article class="card item" data-open-item="${esc(it.key)}" role="button" tabindex="0"><div class="meta"><span>${esc(o ? slotLabel(o) : "Reel Radar")}</span>${shelfBadge(d)}${firstMoverBadge(d.firstMover)}${(sc?.format || o?.format) ? `<span>${esc(sc?.format || o?.format)}</span>` : ""}${sc?.hookScore != null ? `<span>hook ${esc(sc.hookScore)}/100</span>` : ""}${pill(st[0], st[1])}</div>
+      <p class="caption"><b>${esc(o?.title || sc?.title || "Untitled")}</b></p>${o?.what ? `<span class="muted">${esc(o.what)}</span>` : ""}
+      <span class="brief-more">${sc ? "Open the script ›" : "Open the idea ›"}</span></article>`; }).join("")
+      : emptyBox("Nothing waiting", "Open Door A or B above, or drop viral URLs in Reel Radar to generate ranked ideas.")}</section>
     ${readyScr.length ? `<section class="list"><div class="band"><span class="b-left"><span class="b-dot" style="color:var(--ok)"></span>Approved & ready to film</span><div class="row"><span class="b-cnt">${readyScr.length}</span><button class="btn" style="min-height:30px;padding:4px 10px" id="toggle-approved-scr">${ui.showApprovedScripts ? "Hide" : "Show"}</button></div></div>
-      ${ui.showApprovedScripts ? readyScr.map(s => { const l = ui.lang[s.id] || s.lang || "en"; return `<article class="card"><div class="meta"><span>${esc(s.title || "Script")}</span>${shelfBadge(s)}${firstMoverBadge(s.firstMover)}${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${pill(s.status === "done" ? "done" : "approved", SCRIPT_STATE[s.status] || s.status)}</div>
+      ${ui.showApprovedScripts ? readyScr.map(s => { const l = ui.lang[s.id] || s.lang || "en"; return `<article class="card item" data-open-item="scripts:${esc(s.id)}" role="button" tabindex="0"><div class="meta"><span>${esc(s.title || "Script")}</span>${shelfBadge(s)}${firstMoverBadge(s.firstMover)}${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${pill(s.status === "done" ? "done" : "approved", SCRIPT_STATE[s.status] || s.status)}</div>
         <div class="seg" role="group"><button aria-pressed="${l === "en"}" data-lang="en" data-id="${esc(s.id)}">English</button><button aria-pressed="${l === "ml"}" data-lang="ml" data-id="${esc(s.id)}">Malayalam-English</button></div>
         <div class="answer script">${esc((l === "ml" ? s.mlen : s.en) || "")}</div>
         <div class="row"><button class="btn primary" data-tele="${esc(s.id)}">Open Teleprompter</button>${s.postIds?.length ? `<button class="btn" data-tab="approve">${s.postIds.length} posts in Approve</button>` : ""}</div></article>`; }).join("") : ""}</section>` : ""}`;
@@ -2362,6 +2425,8 @@ document.addEventListener("click", async e => {
   if (!e.target.closest(".pickwrap")) closePick();
   const bo = e.target.closest("[data-brief-open]");
   if (bo && !e.target.closest("button, a")) { const [r, ...i] = bo.dataset.briefOpen.split(":"); openBriefSheet(r, i.join(":")); return; }
+  const oi = e.target.closest("[data-open-item]");
+  if (oi && !e.target.closest("button, a")) { openByKey(oi.dataset.openItem); return; }
   const t = e.target.closest("button, a"); if (!t || t.closest(".sheet-bg")) return;
   if ("sideToggle" in t.dataset) { toggleSide(); return; }
   if (t.dataset.hmode) { ui.homeMode = t.dataset.hmode; paintHero(); return; }

@@ -85,3 +85,5 @@ repeats get `seen xN`, not a new entry. Rules here are already copied into the s
 - **Fixed in:** `.claude/skills/sos-research/SKILL.md` step 2.
 
 - **22 Nov 2026 (user):** A topic name alone is useless ("Claude diagram skill"). Every brief pick and option carries a plain `what` line: what the thing IS and does, in everyday words a non-developer gets at once, so the user can choose or skip without looking it up. Fixed in sos-research steps 5+7, docs/DATA.md, dashboard brief + Plan cards.
+
+- **23 Nov 2026 (user):** Scripts were one hard-to-read text block, hook never scored, and Plan showed ideas and scripts as two separate lists. Rule: a script is built with the real workflow (ig-reel/ig-carousel formulas, `hookscore.py`, `beats.py`, story format, voice, humanizer), stored structured, and shown readable in ONE detail screen; Plan has ONE list of ideas+scripts (tap to open). Home and Plan share the same detail screen (`openItemSheet`). Fixed in sos-create step 2, docs/DATA.md, dashboard v29.
