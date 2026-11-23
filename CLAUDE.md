@@ -286,6 +286,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   doc kind `refresh` and the daily run / next chat pulls. Built in Claude Code (not Antigravity: it can't publish or test
   artifact capabilities). Tool list verified via Composio 22 Nov: both connections ACTIVE.
 
+- **23 Nov 2026: v27 REFRESH BUTTON BUILT + PUBLISHED (artifact version 29).** Growth section has "Refresh numbers" + "Updated N min ago".
+  The page calls Composio itself (`mcp` capability, server name "Composio", tool `COMPOSIO_MULTI_EXECUTE_TOOL`), read-only:
+  IG followers + yesterday/today views + per-post insights; YouTube views per day (+ per video). Writes `stats/<acct>-<day>` (`pulledAt`)
+  and post `metrics`. Shapes checked with real read calls 23 Nov. **YouTube limits (23 Nov):** Data API quota exceeded on Composio's side
+  (channel stats + video list refused), so YT followers stay empty and only Analytics views come through. First press asks the user's OK for
+  the Composio connector. **Not yet pressed by the user.** If a press fails, fallback = button writes a `messages` doc kind `refresh`.
+  **Next:** user presses Refresh once on the dashboard (Home, Growth section); Claude then lists `stats` to confirm.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

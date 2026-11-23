@@ -403,6 +403,9 @@ textarea.field-in { min-height: 96px; resize: vertical; }
 .gtiles b { display: block; font: 500 22px/1.15 var(--font-body); color: var(--ink); font-variant-numeric: tabular-nums; }
 .gtiles span { font-size: 13px; color: var(--muted); }
 .gempty { color: var(--muted); margin: 0; }
+.grefresh { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.gnote { font-size: 13px; color: var(--muted); }
+.gnote.bad { color: var(--bad, #c0392b); }
 @media (max-width: 640px) { .gtiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } .growth h2 { font-size: 24px; } }
 /* v24 + v25: ElevenLabs App underline tabs, lifted paper, Reel Radar, Teleprompter, IG Grid 3:4 */
 .doors { display: grid; grid-template-columns: 1.45fr 1fr; gap: 16px; margin: 0 0 8px; }
@@ -1600,7 +1603,7 @@ function growthTiles(stats, today) {
   return { followers: now, views: stats.filter(r => wk.has(r.date)).reduce((a, r) => a + (r.views || 0), 0),
     posts: stats.filter(r => wk.has(r.date)).reduce((a, r) => a + (r.posts || 0), 0), change: now == null || before == null ? null : now - before };
 }
-function growthHtml() {
+function growthBody() {
   const { accs, stats } = growthData();
   if (ui.acct) ui.growth = ui.acct;
   else if (ui.growth !== "all" && !accs.some(a => a.id === ui.growth)) ui.growth = "all";
@@ -1629,6 +1632,88 @@ function growthHtml() {
   return `<h2>Growth</h2>${btns}
     <div class="gchart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Followers over time">${grid}${xl}${lines}<g id="gcross"></g><rect id="ghit" x="${L}" y="0" width="${W - L}" height="${H - B}" fill="transparent"/></svg>
       <div class="gtip" id="gtip"></div>${legend}</div>${tiles}${heatersHtml}`;
+}
+/* ---------- refresh numbers (v27): the page reads Composio itself, read-only. Live version 1795340996-14d8 merged. ---------- */
+const MCP_SERVER = "Composio", MCP_TOOL = "COMPOSIO_MULTI_EXECUTE_TOOL";
+const refresh = { busy: false, note: "", bad: false };
+const MCP_WORDS = { unavailable: "This page cannot reach Composio here", not_granted: "Allow connectors for this page first", not_in_manifest: "Connector access was declined for this page", approval_required: "Composio needs your OK: press Refresh again", needs_reauth: "Reconnect Composio in claude.ai Settings, Connectors", server_not_connected: "Add Composio in claude.ai Settings, Connectors", server_unavailable: "Composio did not answer, try again", tool_error: "Composio reported an error" };
+const refreshable = a => a.composioAccountId && (a.platform === "instagram" || a.platform === "youtube");
+function ago(iso) { const m = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 6e4)); return m < 1 ? "just now" : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
+function growthHtml() {
+  const body = growthBody();
+  if (mode === "showcase" || !db) return body;
+  const accs = growthData().accs.filter(refreshable);
+  const times = state.stats.filter(r => r.pulledAt && accs.some(a => a.id === r.accountId)).map(r => r.pulledAt).sort();
+  const when = times.length ? `Updated ${ago(times[times.length - 1])}` : "Not refreshed yet";
+  const bar = `<div class="grefresh"><button class="btn" id="g-refresh" ${refresh.busy || !accs.length ? "disabled" : ""}>${refresh.busy ? "Refreshing…" : "Refresh numbers"}</button>
+    <span class="gnote${refresh.bad ? " bad" : ""}">${esc(refresh.note || (accs.length ? when : "Connect an account to refresh"))}</span></div>`;
+  return body.replace("</h2>", "</h2>" + bar);
+}
+function tryJson(res) { try { return { payload: JSON.parse(res?.content?.[0]?.text) }; } catch { return res; } }
+function parseExec(res) {
+  const p = res?.payload ?? res, list = p?.data?.results || p?.results || [];
+  return list.map(r => ({ slug: r.tool_slug, ok: r.response?.successful !== false && !r.error, data: r.response?.data, err: r.response?.error || r.error || "" }));
+}
+async function pullAccount(a, mcp, day, yday) {
+  const dayStart = d => Math.floor(Date.parse(d + "T00:00:00+05:30") / 1000);
+  const tools = [], add = (slug, args) => tools.push({ tool_slug: slug, account: a.composioAccountId, arguments: args });
+  const mine = state.posts.filter(p => p.accountId === a.id && p.status === "posted" && p.platformPostId).sort((p, q) => (q.postedAt || "").localeCompare(p.postedAt || "")).slice(0, 8);
+  if (a.platform === "instagram") {
+    add("INSTAGRAM_GET_USER_INFO", { ig_user_id: "me", fields: "id,followers_count" });
+    for (const d of [yday, day]) add("INSTAGRAM_GET_USER_INSIGHTS", { ig_user_id: "me", metric: ["views"], period: "day", metric_type: "total_value", since: dayStart(d), until: Math.min(dayStart(d) + 86400, Math.floor(Date.now() / 1000)) });
+    for (const p of mine) add("INSTAGRAM_GET_IG_MEDIA_INSIGHTS", { ig_media_id: p.platformPostId, metric: ["views", "reach", "likes", "comments", "saved", "shares"] });
+  } else {
+    add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: yday, endDate: day, metrics: "views", dimensions: "day" });
+    if (mine.length) add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: day.slice(0, 4) + "-01-01", endDate: day, metrics: "views,likes,comments,shares", dimensions: "video", sort: "-views", maxResults: 50 });
+  }
+  let res; try { res = await mcp.callTool(MCP_SERVER, MCP_TOOL, { tools, sync_response_to_workbench: false, thought: "Read-only numbers refresh" }, { cache: false }); } catch (e) { if (e?.code === "tool_error" && e.result) res = e.result; else throw e; }
+  const out = parseExec(res.structuredContent ? { payload: res.structuredContent } : res.payload !== undefined ? res : tryJson(res));
+  const views = {}, ig = {}; let followers = null, yt = null, insightIdx = 0, mediaIdx = 0;
+  out.forEach((o, i) => {
+    const slug = o.slug || tools[i]?.tool_slug;
+    if (slug === "INSTAGRAM_GET_USER_INSIGHTS") insightIdx++;
+    if (slug === "INSTAGRAM_GET_IG_MEDIA_INSIGHTS") mediaIdx++;
+    if (!o.ok) return;
+    if (slug === "INSTAGRAM_GET_USER_INFO") followers = o.data?.followers_count ?? null;
+    else if (slug === "INSTAGRAM_GET_USER_INSIGHTS") views[insightIdx === 1 ? yday : day] = o.data?.data?.[0]?.total_value?.value ?? null;
+    else if (slug === "INSTAGRAM_GET_IG_MEDIA_INSIGHTS") { const m = {}; for (const r of o.data?.data || []) m[r.name] = r.values?.[0]?.value ?? null; ig[mine[mediaIdx - 1]?.id] = m; }
+    else if (slug === "YOUTUBE_QUERY_ANALYTICS") {
+      const rows = o.data?.rows || [], hdr = (o.data?.columnHeaders || []).map(h => h.name);
+      if (hdr[0] === "day") for (const r of rows) views[r[0]] = r[1]; else yt = { hdr, rows };
+    }
+  });
+  return { views, followers, ig, yt, mine, failed: out.filter(o => !o.ok).length, total: out.length };
+}
+async function refreshNumbers() {
+  if (refresh.busy || !db) return;
+  refresh.busy = true; refresh.note = ""; refresh.bad = false; $("#growth").innerHTML = growthHtml();
+  let ok = 0; const problems = [];
+  try {
+    const mcp = await claude.use("mcp");
+    if (!mcp) throw { code: "unavailable" };
+    const day = dayKey(nowIso()), yday = dayKey(new Date(Date.now() - 864e5).toISOString());
+    for (const a of growthData().accs.filter(refreshable)) {
+      try {
+        const r = await pullAccount(a, mcp, day, yday);
+        if (!r.total || r.failed === r.total) throw { code: "all_failed" };
+        for (const d of [yday, day]) {
+          const id = `${a.id}-${d}`, prev = state.stats.find(s => s.id === id) || {};
+          const posts = state.posts.filter(p => p.accountId === a.id && p.postedAt && dayKey(p.postedAt) === d).length;
+          await db.doc(`stats/${id}`).set({ accountId: a.id, date: d, followers: d === day && r.followers != null ? r.followers : (prev.followers ?? null), views: r.views[d] ?? prev.views ?? 0, posts, pulledAt: nowIso() });
+        }
+        for (const p of r.mine) {
+          let m = null;
+          if (a.platform === "instagram" && r.ig[p.id]) { const x = r.ig[p.id]; m = { views: x.views ?? null, reach: x.reach ?? null, likes: x.likes ?? null, comments: x.comments ?? null, saves: x.saved ?? null, shares: x.shares ?? null }; }
+          else if (r.yt) { const row = r.yt.rows.find(x => x[0] === p.platformPostId), h = n => row ? (row[r.yt.hdr.indexOf(n)] ?? null) : null; if (row) m = { views: h("views"), reach: null, likes: h("likes"), comments: h("comments"), saves: null, shares: h("shares") }; }
+          if (m) await db.doc(`posts/${p.id}`).update({ metrics: { ...m, checkedAt: nowIso() } });
+        }
+        ok++; if (r.failed) problems.push(`${a.label}: ${r.failed} of ${r.total} reads failed`);
+      } catch (e) { problems.push(`${a.label}: ${e.code === "all_failed" ? "the platform refused the read" : MCP_WORDS[e.code] || "could not read"}`); }
+    }
+  } catch (e) { problems.push(MCP_WORDS[e?.code] || "Could not reach Composio from this page"); }
+  refresh.busy = false; refresh.bad = !ok;
+  refresh.note = ok ? `Updated just now${problems.length ? " · " + problems.join(" · ") : ""}` : (problems.join(" · ") || "Nothing to refresh");
+  const g = $("#growth"); if (g) g.innerHTML = growthHtml();
 }
 function onGrowthMove(e) {
   const v = ui.gview, svgEl = $("#growth svg"); if (!v || !svgEl) return;
@@ -2250,6 +2335,7 @@ document.addEventListener("click", async e => {
   }
   if (t.dataset.pickAcct) { ui.acct = t.dataset.pickAcct; store.set("sos.acct", ui.acct); ui.calPick = null; applyAccount(); lastKey = ""; render(true); return; }
   if (t.dataset.tab) { tab = t.dataset.tab; if (t.dataset.ptab) ui.planTab = t.dataset.ptab; if (t.dataset.ctab) ui.calTab = t.dataset.ctab; if (t.dataset.slot) ui.calPick = t.dataset.slot; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
+  if (t.id === "g-refresh") { refreshNumbers(); return; }
   if (t.dataset.growth) { ui.growth = t.dataset.growth; $("#growth").innerHTML = growthHtml(); return; }
   if (t.dataset.mode) { mode = t.dataset.mode; store.set("sos.mode", mode); ui.calPick = null; applyAccount(); lastKey = ""; render(true); return; }
   if (t.dataset.voice) { voice?.action(t.dataset.voice); return; }
