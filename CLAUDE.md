@@ -298,6 +298,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **23 Nov 2026 (v29, user ask):** Plan = ONE list "Ideas & scripts" (tap a card -> detail screen shared with the Home brief: idea, hook options with virality scores, beat-by-beat script with EN | Malayalam-English toggle, caption, fill-in chips, Approve / Ask changes / Teleprompter). Approving a script also sets its option to `picked`. The 5 draft scripts were rebuilt with ig-reel `hookscore` + `beats` (hook 75-100, scored by the heuristic, not a guarantee). sos-create step 2 now requires the structured format. Checked at 390 px (no sideways scroll, toggle works). **Next:** user opens Plan, taps an idea, reads/approves a script.
 
+- **23 Nov 2026 (v30):** calendar side-panel buttons fixed (stopPropagation bug). **USER ASK, NEXT BUILD: full dashboard audit** (every button, every tab, overlays, phone + desktop). Plan + test recipe: `docs/plans/2026-11-23-dashboard-audit.md`. Also still unpressed by the user: Refresh numbers (v27).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
