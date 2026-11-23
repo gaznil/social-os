@@ -300,6 +300,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **23 Nov 2026 (v30):** calendar side-panel buttons fixed (stopPropagation bug). **USER ASK, NEXT BUILD: full dashboard audit** (every button, every tab, overlays, phone + desktop). Plan + test recipe: `docs/plans/2026-11-23-dashboard-audit.md`. Also still unpressed by the user: Refresh numbers (v27).
 
+- **23 Nov 2026: USER ASK, NEXT BUILD: Growth section upgrade** (more metrics: reach, interactions, profile visits, engagement breakdown, top posts, tile-switches-chart). Plan + verified Composio call shapes: `docs/plans/2026-11-23-growth-upgrade.md`. Dashboard audit plan: `docs/plans/2026-11-23-dashboard-audit.md`. Do Growth first, then the audit.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
