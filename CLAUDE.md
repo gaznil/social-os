@@ -278,6 +278,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   24/7 server + own platform apps). Saved Instagram posts: no API; only Meta's "Download your information" export.
   **Next:** competitors list needs 4-6 marketing creators (next research run; Apify credit used up until it resets).
 
+- **23 Nov 2026: NEXT BUILD = Refresh button (user ask).** Growth section gets "Refresh": the page itself calls Composio
+  (artifact `mcp` capability, load `artifact-capabilities` skill first) and pulls IG (`INSTAGRAM_GET_USER_INSIGHTS`,
+  `INSTAGRAM_GET_IG_USER_MEDIA`, `INSTAGRAM_GET_IG_MEDIA_INSIGHTS`) + YouTube (`YOUTUBE_QUERY_ANALYTICS` ids `channel==MINE`,
+  `YOUTUBE_LIST_CHANNEL_VIDEOS`, `YOUTUBE_GET_VIDEO_DETAILS_BATCH`) into `stats` + post `metrics` (docs/DATA.md), shows
+  "Updated N min ago". Read-only. Test a tiny call from the page first; if blocked, fallback = button writes a `messages`
+  doc kind `refresh` and the daily run / next chat pulls. Built in Claude Code (not Antigravity: it can't publish or test
+  artifact capabilities). Tool list verified via Composio 22 Nov: both connections ACTIVE.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
