@@ -643,6 +643,53 @@ mark.ph { background: color-mix(in srgb, var(--warn) 16%, transparent); color: v
 .tele-line.active { color: #ffffff; background: rgba(255,255,255,.08); box-shadow: inset 3px 0 0 var(--claude); }
 .tele-cue { display: inline-block; font: 500 .58em/1.3 var(--font-mono); color: #ffb59a; background: rgba(217,119,87,.18); border: 1px solid rgba(217,119,87,.35); padding: 2px 8px; border-radius: 6px; margin-bottom: 4px; vertical-align: middle; }
 .heater-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 11px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); font-size: 13px; }
+/* v34 calm reader: short cards -> one clean popup, arrows + swipe, actions pinned at the bottom */
+.clamp1, .clamp2 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+.clamp1 { -webkit-line-clamp: 1; } .clamp2 { -webkit-line-clamp: 2; }
+.qcard { background: var(--surface); box-shadow: 0 0 0 1px var(--line); border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px; min-width: 0; cursor: pointer; text-align: left; transition: box-shadow 150ms var(--ease), transform 150ms var(--ease); }
+.qcard:hover { box-shadow: 0 0 0 1px var(--line-2), 0 8px 24px -16px rgba(15,15,16,.25); }
+.qcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.qcard .q-title { font: 500 15.5px/1.35 var(--font-body); color: var(--ink); margin: 0; }
+.qcard .q-sub { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.45; }
+.qcard .q-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; }
+.q-go { flex: none; color: var(--muted); font-size: 18px; line-height: 1; }
+.qlist { display: grid; gap: 8px; }
+.qscore { flex: none; width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font: 600 15px var(--font-mono); background: var(--surface-2); color: var(--ink); }
+.qstate { font: 500 11.5px var(--font-mono); padding: 2px 8px; border-radius: 99px; background: var(--surface-2); color: var(--muted); white-space: nowrap; }
+.qstate.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 10%, transparent); }
+.qstate.warn { color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+.qstate.bad { color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, transparent); }
+.rd-bg { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(20px); animation: fade .25s; }
+.rd { width: min(720px, 100%); max-height: calc(100dvh - 32px); background: var(--surface); border-radius: 24px; box-shadow: 0 0 0 1px var(--line), 0 40px 100px -30px rgba(20,16,60,.45); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; animation: rise .3s cubic-bezier(.2,.8,.2,1); }
+.rd-head, .sheet .rd-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 14px 24px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.sheet .rd-head { position: sticky; top: -24px; z-index: 2; margin: -24px -24px 0; border-radius: 24px 24px 0 0; }
+.rd-count { font: 500 12.5px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.rd-nav { display: flex; align-items: center; gap: 6px; }
+.rd-btn { width: 40px; height: 40px; border-radius: 12px; border: 0; background: var(--surface-2); color: var(--ink); font-size: 20px; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: background 120ms var(--ease); }
+.rd-btn:hover:not(:disabled) { background: var(--surface-hover); }
+.rd-btn:disabled { opacity: .35; cursor: default; }
+.rd-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rd-body { overflow-y: auto; padding: 24px; display: grid; gap: 16px; align-content: start; min-width: 0; }
+.rd-body h2 { font-size: 24px; line-height: 1.25; margin: 0; text-wrap: balance; }
+.rd-foot { padding: 14px 24px calc(14px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--surface); display: grid; gap: 10px; }
+.rd-foot .row { justify-content: flex-end; }
+.rd-foot .btn.primary { min-width: 140px; }
+.newbox { display: grid; gap: 12px; }
+.acc-rows { display: grid; gap: 8px; }
+.acc-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-radius: 14px; border: 0; background: var(--surface); box-shadow: 0 0 0 1px var(--line); cursor: pointer; text-align: left; font: inherit; color: var(--fg); width: 100%; }
+.acc-row:hover { box-shadow: 0 0 0 1px var(--line-2); }
+.acc-row b { font: 500 15px var(--font-body); color: var(--ink); display: block; }
+.acc-row span { font-size: 13px; color: var(--muted); }
+.calrow { cursor: pointer; }
+.seg-sm { display: inline-flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--surface-2); }
+.seg-sm button { border: 0; background: none; padding: 6px 12px; border-radius: 8px; font: 500 13px var(--font-body); color: var(--muted); cursor: pointer; }
+.seg-sm button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+@media (max-width: 640px) {
+  .rd-bg { padding: 0; place-items: end stretch; }
+  .rd { width: 100%; max-height: 100dvh; height: 100dvh; border-radius: 0; }
+  .rd-body { padding: 20px 16px; } .rd-head { padding: 10px 12px 10px 16px; } .rd-foot { padding-left: 16px; padding-right: 16px; }
+  .rd-foot .row { justify-content: stretch; } .rd-foot .btn { flex: 1 1 auto; }
+}
 @media (max-width: 960px) { .split { grid-template-columns: 1fr; } .split > .sticky-col { position: static; } }
 @media (max-width: 640px) { .doors { grid-template-columns: 1fr; } .mday { min-height: 64px; padding: 4px; } .slot { min-height: 24px; padding: 3px 4px; } .slot > span:last-child { font-size: 9px; } .slot .plat { font-size: 0; gap: 0; } .acct-switch { max-width: 118px; } .two { grid-template-columns: 1fr; } }
 </style>
@@ -1415,7 +1462,8 @@ function openAddAccount() {
   });
   sheet = el;
 }
-function closeSheet() { sheet?.remove(); sheet = null; }
+let itemNav = null;
+function closeSheet() { sheet?.remove(); sheet = null; itemNav = null; document.documentElement.classList.remove("locked"); }
 
 /* ---------- dashboard feedback box: issues/ideas about this page, saved raw for the next update ---------- */
 const FB_KIND = { bug: "Something broke", look: "Looks off", idea: "Idea" };
@@ -1487,13 +1535,13 @@ function scriptBlock(s, lang) {
   const stats = `<div class="row">${c.hookScore != null ? `<span class="chip learn">Hook ${esc(c.hookScore)}/100</span>` : ""}${c.seconds ? `<span class="chip learn">~${esc(c.seconds)} sec spoken</span>` : ""}${c.slides ? `<span class="chip learn">${esc(c.slides)} slides</span>` : ""}${s.storyFormat ? `<span class="chip learn">${esc(s.storyFormat)}</span>` : ""}</div>`;
   return stats + hooks + open + body + cta + cap + fill + notes + why;
 }
-function openItemSheet(ref, id, fb = null) {
+function openItemSheet(ref, id, fb = null, nav = null) {
   let o = null, s = null, ins = null;
   if (ref === "options") { o = state.options.find(x => x.id === id) || null; s = o ? state.scripts.find(x => x.optionId === o.id) || state.scripts.find(x => x.id === o.id) || null : null; }
   else if (ref === "scripts") { s = state.scripts.find(x => x.id === id) || null; o = s ? state.options.find(x => x.id === s.optionId) || null : null; }
   else if (ref === "inspirations") ins = state.inspirations.find(x => x.id === id) || null;
   if (!o && !s && !ins && !fb) return;
-  closeSheet();
+  closeSheet(); itemNav = nav;
   const d = { ...(fb || {}), ...(ins || {}), ...(o || {}), title: o?.title || s?.title || fb?.title || ins?.title };
   const exp = expiryInfo(s || d), dead = exp.state === "expired";
   const hasBeats = s && (s.beats?.length || s.slides?.length), reel = s && s.format !== "carousel" && !s.slides;
@@ -1507,23 +1555,26 @@ function openItemSheet(ref, id, fb = null) {
       ${d.hook ? `<div class="bs-sec"><span class="label">Opening line</span><div class="bs-hook">${ph(d.hook)}</div></div>` : ""}
       ${sec("The idea", d.concept || d.ourTwist)}${sec("Why it popped", d.whyPopped)}${sec("What you need first", d.needs || d.audioNote)}
       ${d.concept || d.ourTwist ? "" : `<p class="bs-note">Approve it and Claude writes the full script: hook options scored for virality, beat-by-beat lines, caption and the ask. You read and approve that too before anything is made.</p>`}
-      ${sec("Story format", d.storyFormat)}${d.url ? `<div class="bs-sec"><span class="label">Source</span><p><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.url)}</a></p></div>` : ""}`;
+      ${sec("Our twist", d.concept && d.ourTwist ? d.ourTwist : "")}${sec("Your note", d.userNote)}${sec("Tool check", d.toolCheck)}${sec("Story format", d.storyFormat)}${d.url ? `<div class="bs-sec"><span class="label">Source</span><p><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.url)}</a></p></div>` : ""}`;
     const askBox = ask ? `<textarea class="field-in" id="bs-note" rows="2" maxlength="400" placeholder="What should change? (also teaches Claude your voice)">${esc(note)}</textarea>` : "";
     let acts = "";
     if (s && s.status === "draft") acts = `<button class="btn primary" data-bs="approve-script">Approve script</button><button class="btn" data-bs="ask">${ask ? "Send changes" : "Ask changes"}</button>${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}`;
     else if (s && s.status === "changes") acts = `${pill("waiting", "Changes asked · Claude is rewriting")}${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}`;
     else if (s) acts = `${pill("done", SCRIPT_STATE[s.status] || s.status)}${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}${s.postIds?.length ? `<button class="btn" data-bs="approve-tab">${s.postIds.length} posts in Approve</button>` : ""}`;
     else if (ref === "options" && o) acts = o.status === "new" ? `<button class="btn primary" data-bs="picked" ${dead ? "disabled" : ""}>Approve this idea</button><button class="btn" data-bs="dropped">Drop</button>` : pill(o.status === "picked" ? "waiting" : "dropped", o.status === "picked" ? "Approved · Claude is writing the script" : "Dropped");
-    else if (ref === "inspirations" && ins) acts = ["new", "scored"].includes(ins.status) ? `<button class="btn primary" data-bs="script" ${dead ? "disabled" : ""}>Approve: write the script</button><button class="btn" data-bs="skipped">Skip</button>` : pill("done", ins.status);
-    el.innerHTML = `<div class="sheet wide" role="dialog" aria-modal="true" aria-label="${esc(d.title || "Idea")}">
+    else if (ref === "inspirations" && ins) acts = dead || ins.tier === "expired" ? `<button class="btn primary" data-bs="remake">Remake as evergreen</button><button class="btn" data-bs="skipped">Skip</button>` : ["new", "scored"].includes(ins.status) ? `<button class="btn primary" data-bs="script">Write the script</button><button class="btn" data-bs="skipped">Skip</button>` : pill(ins.status === "script" ? "waiting" : "done", ins.status === "script" ? "Claude is writing the script" : ins.status === "scripted" ? "Script ready in Plan" : ins.status);
+    const navHead = nav ? `<div class="rd-head"><span class="rd-count">${nav.i + 1} of ${nav.keys.length}</span><div class="rd-nav"><button class="rd-btn" data-bs="nav" data-dir="-1" aria-label="Previous" ${nav.i ? "" : "disabled"}>‹</button><button class="rd-btn" data-bs="nav" data-dir="1" aria-label="Next" ${nav.i < nav.keys.length - 1 ? "" : "disabled"}>›</button><button class="rd-btn" data-sheet="close" aria-label="Close">×</button></div></div>` : "";
+    el.innerHTML = `<div class="sheet wide" role="dialog" aria-modal="true" aria-label="${esc(d.title || "Idea")}">${navHead}
       <div class="meta">${d.score != null ? `<span class="brief-score">${esc(d.score)}</span>` : ""}${(s?.format || d.format) ? `<span>${esc(s?.format || d.format)}</span>` : ""}${shelfBadge(s || d)}${firstMoverBadge(d.firstMover || s?.firstMover)}</div>
       <h2 style="font-size:22px;line-height:1.25">${esc(d.title || "Untitled")}</h2>
       ${main}
-      <div class="bs-foot">${askBox}<div class="row" style="justify-content:flex-end">${acts}<button class="btn ghost" data-sheet="close">Close</button></div></div></div>`;
+      <div class="bs-foot">${askBox}<div class="row" style="justify-content:flex-end">${acts}${nav ? "" : `<button class="btn ghost" data-sheet="close">Close</button>`}</div></div></div>`;
   }
-  paint(); document.body.append(el);
+  paint(); document.body.append(el); if (nav) document.documentElement.classList.add("locked");
+  const done = () => { if (!nav) return closeSheet(); const keys = nav.keys.filter((_, x) => x !== nav.i); if (!keys.length) { closeSheet(); return showToast("That was the last one."); } const i = Math.min(nav.i, keys.length - 1); openByKey(keys[i], { keys, i }); };
   el.addEventListener("click", async e => {
     if (e.target === el || e.target.closest('[data-sheet="close"]')) return closeSheet();
+    const nb = e.target.closest('[data-bs="nav"]'); if (nb) { stepItem(+nb.dataset.dir); return; }
     const sl = e.target.closest("[data-sl]"); if (sl) { lang = sl.dataset.sl; if (s) ui.lang[s.id] = lang; const sc = el.querySelector(".sheet")?.scrollTop || 0; paint(); el.querySelector(".sheet").scrollTop = sc; return; }
     const b = e.target.closest("[data-bs]"); if (!b) return;
     const a = b.dataset.bs;
@@ -1543,19 +1594,53 @@ function openItemSheet(ref, id, fb = null) {
         showToast("Script approved. Claude makes every platform version next.");
       } else if (a === "ask") { await db.doc(`scripts/${s.id}`).update({ status: "changes", note, updatedAt: nowIso() }); showToast("Sent. Claude rewrites it."); }
       else if (a === "picked" || a === "dropped") { await db.doc(`options/${o.id}`).update({ status: a, updatedAt: nowIso() }); showToast(a === "picked" ? "Approved. Claude writes the script next." : "Dropped"); }
+      else if (a === "remake") { await db.doc(`inspirations/${ins.id}`).update({ shelfLife: "evergreen", expiresAt: null, tier: "P2", status: "script", updatedAt: nowIso() }); showToast("Queued as evergreen. Claude writes the script next."); }
       else { await db.doc(`inspirations/${ins.id}`).update({ status: a, updatedAt: nowIso() }); showToast(a === "script" ? "Approved. Claude writes the script next." : "Skipped"); }
-      closeSheet();
+      done();
     } catch (err) { b.disabled = false; showToast(`Couldn't save: ${err.code || "error"}. Try again.`); }
   });
   sheet = el;
 }
 const openBriefSheet = (ref, id) => openItemSheet(ref, id, (latestBrief()?.top || []).find(x => x.ref === ref && x.id === id) || null);
-const openByKey = key => { const [r, ...i] = key.split(":"); openItemSheet(r, i.join(":")); };
+const openByKey = (key, nav = null) => { const [r, ...i] = key.split(":"); openItemSheet(r, i.join(":"), null, nav); };
+function stepItem(dir) {
+  if (!itemNav) return; const j = itemNav.i + dir;
+  if (j < 0 || j >= itemNav.keys.length) return;
+  openByKey(itemNav.keys[j], { keys: itemNav.keys, i: j });
+}
 document.addEventListener("keydown", e => {
+  const pc = e.target.closest?.("[data-ap-open], [data-cal-open]");
+  if (pc && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pc.click(); return; }
   const t = e.target.closest?.("[data-brief-open], [data-open-item]");
-  if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); t.dataset.openItem ? openByKey(t.dataset.openItem) : openBriefSheet(...(() => { const [r, ...i] = t.dataset.briefOpen.split(":"); return [r, i.join(":")]; })()); }
-  else if (e.key === "Escape" && sheet) closeSheet();
+  if (t && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); t.dataset.openItem ? openListItem(t) : openBriefSheet(...(() => { const [r, ...i] = t.dataset.briefOpen.split(":"); return [r, i.join(":")]; })()); return; }
+  const inField = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName || "") || e.target.isContentEditable;
+  if (e.key === "Escape" && sheet) closeSheet();
+  else if (e.key === "Escape" && rdOpen()) rdClose();
+  else if (!inField && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+    const dir = e.key === "ArrowLeft" ? -1 : 1;
+    if (sheet && itemNav) { e.preventDefault(); stepItem(dir); } else if (!sheet && rdOpen()) { e.preventDefault(); rdStep(dir); }
+  }
 });
+// a list item opens with its siblings, so the popup can step through them
+function openListItem(card) {
+  const box = card.closest("[data-nav-list]");
+  if (!box) return openByKey(card.dataset.openItem);
+  const keys = [...box.querySelectorAll("[data-open-item]")].map(x => x.dataset.openItem);
+  openByKey(card.dataset.openItem, { keys, i: Math.max(0, keys.indexOf(card.dataset.openItem)) });
+}
+// swipe left/right inside any reader popup
+let swipe0 = null;
+document.addEventListener("touchstart", e => {
+  const tg = e.target;
+  if (!tg.closest?.(".sheet, .rd") || tg.closest("input, textarea, select, .tele, .strip, [data-noswipe]")) { swipe0 = null; return; }
+  const p = e.touches[0]; swipe0 = { x: p.clientX, y: p.clientY };
+}, { passive: true });
+document.addEventListener("touchend", e => {
+  if (!swipe0) return; const p = e.changedTouches[0], dx = p.clientX - swipe0.x, dy = p.clientY - swipe0.y; swipe0 = null;
+  if (Math.abs(dx) < 60 || Math.abs(dx) < 2 * Math.abs(dy)) return;
+  const dir = dx < 0 ? 1 : -1;
+  if (sheet && itemNav) stepItem(dir); else if (!sheet && rdOpen()) rdStep(dir);
+}, { passive: true });
 
 /* ---------- views ---------- */
 
@@ -2004,44 +2089,78 @@ function band(title, count, colorVar = "var(--ink)") {
   return `<div class="band"><span class="b-left"><span class="b-dot" style="color:${colorVar}"></span>${esc(title)}</span><span class="b-cnt">${count}</span></div>`;
 }
 
+/* ---------- shared post reader (Approve + Calendar): rendered inside the view so every existing button handler keeps working ---------- */
+function rdOpen() { return !!document.querySelector("#view .rd-bg"); }
+function apList() { return [...state.posts.filter(p => p.status === "failed").sort(byTime), ...state.posts.filter(p => p.status === "waiting").sort(byTime)]; }
+function calList() { return state.posts.filter(p => p.plannedAt && p.status !== "rejected").sort(byTime); }
+function rdReset() { ui.draftAsk = null; ui.editingPost = null; ui.confirmNow = null; ui.confirmExpired = null; }
+function rdClose() { if (tab === "approve") ui.apPick = null; else ui.calPick = null; rdReset(); lastKey = ""; render(); }
+function rdStep(dir) {
+  const list = tab === "approve" ? apList() : calList(), cur = tab === "approve" ? ui.apPick : ui.calPick;
+  const i = list.findIndex(p => p.id === cur), j = i + dir;
+  if (i < 0 || j < 0 || j >= list.length) return;
+  if (tab === "approve") { ui.apPick = list[j].id; ui.apIdx = j; } else ui.calPick = list[j].id;
+  rdReset(); lastKey = ""; render();
+}
+function rdShell(id, i, total, body, foot) {
+  return `<div class="rd-bg"><div class="rd" role="dialog" aria-modal="true" data-id="${esc(id)}">
+    <div class="rd-head"><span class="rd-count">${i + 1} of ${total}</span><div class="rd-nav">
+      <button class="rd-btn" data-rd-nav="-1" aria-label="Previous" ${i ? "" : "disabled"}>‹</button>
+      <button class="rd-btn" data-rd-nav="1" aria-label="Next" ${i < total - 1 ? "" : "disabled"}>›</button>
+      <button class="rd-btn" data-rd-close aria-label="Close">×</button></div></div>
+    <div class="rd-body">${body}</div>
+    <div class="rd-foot">${foot}</div></div></div>`;
+}
+function postState(p) {
+  if (p.status === "failed") return ["bad", "Failed"];
+  if ((p.problems || []).length) return ["warn", `${p.problems.length} to fix`];
+  if (expiryInfo(p).state === "expired" && p.status === "waiting") return ["warn", "Expired"];
+  return p.status === "waiting" ? ["ok", "Ready"] : ["", p.status];
+}
+function postCard(p, attr) {
+  const [cls, label] = postState(p);
+  return `<article class="qcard" ${attr}="${esc(p.id)}" role="button" tabindex="0">
+    <div class="q-row"><div class="meta" style="min-width:0">${plat(p.platform)}<span>${esc(p.format)}</span><span>${esc(fmtTime(p.plannedAt))}</span></div><span class="qstate ${cls}">${esc(label)}</span></div>
+    <div class="q-row"><p class="q-title clamp2">${esc(p.title || (p.caption || "").split("\n")[0] || "Untitled")}</p><span class="q-go" aria-hidden="true">›</span></div></article>`;
+}
+
 function viewApprove() {
   const failed = state.posts.filter(p => p.status === "failed").sort(byTime);
   const w = state.posts.filter(p => p.status === "waiting").sort(byTime);
+  const list = [...failed, ...w];
   const cleanWaiting = w.filter(p => !(p.problems || []).length && expiryInfo(p).state !== "expired");
-  const head = `<div class="page-head"><div><h2>Approve</h2><p>Gate 2: nothing publishes until you approve the exact post. Edit inline to teach Claude your voice.</p></div>${cleanWaiting.length > 1 ? `<button class="btn primary" id="approve-all-clean">Approve all clean (${cleanWaiting.length})</button>` : ""}</div>`;
-  const failHtml = failed.length ? `<section class="list">${band("Failed (needs attention)", failed.length, "var(--bad)")}${failed.map(p => `<article class="card failed-box">
-    ${postMeta(p)}<p class="caption">${esc(p.title || p.caption)}</p>
-    <div class="problems" style="padding:10px 14px">${esc(p.error || "Publish failed (no error message recorded).")}</div>
-    <div class="row">
-      <button class="btn primary" data-act="approved" data-id="${esc(p.id)}">Retry (re-approve)</button>
-      <button class="btn danger" data-act="rejected" data-id="${esc(p.id)}">Reject</button>
-    </div></article>`).join("")}</section>` : "";
-  if (!w.length && !failed.length) return `${head}${emptyBox("All caught up", "No drafts waiting for your approval. Approve a script in Plan or run a pack in Studio to queue new posts.", `<button class="btn primary" data-tab="plan">Open Plan</button>`)}`;
-  return `${head}${failHtml}${w.length ? `<section class="list">${band("Waiting for your yes", w.length, "var(--warn)")}${w.map(p => {
-    const probs = p.problems || [];
-    const editing = ui.editingPost === p.id;
-    const confirmingNow = ui.confirmNow === p.id;
-    const exp = expiryInfo(p);
-    const isExpired = exp.state === "expired";
-    const confirmingExp = ui.confirmExpired === p.id;
-    return `<article class="card">${postMeta(p)}
-      ${isExpired ? `<div class="problems" style="padding:10px 14px">This ${esc(exp.shelf)} expired ${esc(exp.agoDays || 1)} day${(exp.agoDays || 1) === 1 ? "" : "s"} ago. Consider sending back to draft to remake as evergreen, or tap Approve twice to post anyway.</div>` : ""}
-      ${editing ? `<div class="field">${p.platform === "youtube" ? `<label class="label">Title</label><input class="field-in" id="ed-title-${esc(p.id)}" value="${esc(p.title || "")}">` : ""}
-        <label class="label">Caption (your edits teach Claude's voice)</label>
-        <textarea class="field-in" id="ed-cap-${esc(p.id)}">${esc(p.caption || "")}</textarea>
-        <div class="row"><button class="btn primary" data-edit-save="${esc(p.id)}">Save edits</button><button class="btn" data-edit-cancel="${esc(p.id)}">Cancel</button></div></div>`
-        : renderPostBody(p)}
-      ${probs.length ? `<ul class="problems">${probs.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
-      ${p.audioNote ? `<span class="muted">Manual audio handoff: post from Instagram app with sound "${esc(p.audioNote)}".</span>` : ""}
-      <div class="field"><input class="field-in" id="fb-${esc(p.id)}" placeholder="Optional note if sending back to draft (teaches Claude what to fix)" maxlength="300"></div>
-      <div class="row">
-        <button class="btn primary" data-act="approved" data-id="${esc(p.id)}" ${probs.length ? "disabled title=\"Fix the problems first\"" : ""}>${isExpired && !confirmingExp ? `Expired · Approve anyway?` : confirmingExp ? `Tap again to post expired item` : `Approve`}</button>
-        ${p.platform !== "x" ? `<button class="btn" data-act="now" data-id="${esc(p.id)}" ${probs.length ? "disabled" : ""}>${confirmingNow ? "Tap again to post now" : "Approve + post now"}</button>` : ""}
-        ${!editing ? `<button class="btn ghost" data-edit-open="${esc(p.id)}">Edit</button>` : ""}
-        <button class="btn ghost" data-act="draft" data-id="${esc(p.id)}">Back to draft</button>
-        <button class="btn ghost danger" data-act="rejected" data-id="${esc(p.id)}">Reject</button>
-      </div></article>`;
-  }).join("")}</section>` : ""}`;
+  const head = `<div class="page-head"><div><h2>Approve</h2><p>Tap a post to read it. Nothing goes out until you approve it.</p></div>${cleanWaiting.length > 1 ? `<button class="btn primary" id="approve-all-clean">Approve all ready (${cleanWaiting.length})</button>` : ""}</div>`;
+  if (!list.length) { ui.apPick = null; return `${head}${emptyBox("All caught up", "No posts waiting for your approval. Approve a script in Plan or run a pack in Studio to queue new posts.", `<button class="btn primary" data-tab="plan">Open Plan</button>`)}`; }
+  let i = -1;
+  if (ui.apPick) {
+    i = list.findIndex(p => p.id === ui.apPick);
+    if (i < 0) { i = Math.min(ui.apIdx || 0, list.length - 1); ui.apPick = list[i].id; rdReset(); }
+    ui.apIdx = i;
+  }
+  const cards = `<section class="list">${band("Waiting for your yes", list.length, failed.length ? "var(--bad)" : "var(--warn)")}<div class="qlist">${list.map(p => postCard(p, "data-ap-open")).join("")}</div></section>`;
+  if (i < 0) return head + cards;
+  const p = list[i], probs = p.problems || [], exp = expiryInfo(p), isExpired = exp.state === "expired";
+  const editing = ui.editingPost === p.id, confirmingNow = ui.confirmNow === p.id, confirmingExp = ui.confirmExpired === p.id;
+  const body = `${postMeta(p)}<h2>${esc(p.title || (p.caption || "").split("\n")[0] || "Untitled")}</h2>
+    ${p.status === "failed" ? `<div class="problems" style="padding:10px 14px">${esc(p.error || "Publish failed (no error message recorded).")}</div>` : ""}
+    ${isExpired ? `<div class="problems" style="padding:10px 14px">This ${esc(exp.shelf)} expired ${esc(exp.agoDays || 1)} day${(exp.agoDays || 1) === 1 ? "" : "s"} ago. Send it back to draft to remake it as evergreen, or approve it twice to post anyway.</div>` : ""}
+    ${editing ? `<div class="field">${p.platform === "youtube" ? `<label class="label" for="ed-title-${esc(p.id)}">Title</label><input class="field-in" id="ed-title-${esc(p.id)}" value="${esc(p.title || "")}">` : ""}
+      <label class="label" for="ed-cap-${esc(p.id)}">Caption (your edits teach Claude your voice)</label>
+      <textarea class="field-in" id="ed-cap-${esc(p.id)}">${esc(p.caption || "")}</textarea>
+      <div class="row"><button class="btn primary" data-edit-save="${esc(p.id)}">Save edits</button><button class="btn" data-edit-cancel="${esc(p.id)}">Cancel</button></div></div>` : renderPostBody(p)}
+    ${probs.length ? `<ul class="problems">${probs.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}
+    ${p.audioNote ? `<span class="muted">Add the sound by hand: post from the Instagram app with "${esc(p.audioNote)}".</span>` : ""}`;
+  let foot;
+  if (p.status === "failed") foot = `<div class="row"><button class="btn ghost danger" data-act="rejected" data-id="${esc(p.id)}">Reject</button><button class="btn primary" data-act="approved" data-id="${esc(p.id)}">Retry</button></div>`;
+  else if (ui.draftAsk === p.id) foot = `<input class="field-in" id="fb-${esc(p.id)}" placeholder="What should change? (optional, teaches Claude)" maxlength="300">
+    <div class="row"><button class="btn ghost" data-draft-ask="">Cancel</button><button class="btn primary" data-act="draft" data-id="${esc(p.id)}">Send back to draft</button></div>`;
+  else foot = `<div class="row">
+      <button class="btn ghost danger" data-act="rejected" data-id="${esc(p.id)}">Reject</button>
+      <button class="btn ghost" data-draft-ask="${esc(p.id)}">Back to draft</button>
+      ${!editing ? `<button class="btn ghost" data-edit-open="${esc(p.id)}">Edit</button>` : ""}
+      ${p.platform !== "x" ? `<button class="btn" data-act="now" data-id="${esc(p.id)}" ${probs.length ? "disabled" : ""}>${confirmingNow ? "Tap again to post now" : "Approve + post now"}</button>` : ""}
+      <button class="btn primary" data-act="approved" data-id="${esc(p.id)}" ${probs.length ? "disabled title=\"Fix the problems first\"" : ""}>${isExpired && !confirmingExp ? "Expired · Approve anyway?" : confirmingExp ? "Tap again to approve" : "Approve"}</button></div>`;
+  return head + cards + rdShell(p.id, i, list.length, body, foot);
 }
 
 function toLocalInput(iso) {
@@ -2061,15 +2180,9 @@ function viewCalendarList() {
   const dayName = d => new Intl.DateTimeFormat("en-IN", { timeZone: TZ, weekday: "long", day: "numeric", month: "short" }).format(new Date(d + "T12:00:00+05:30"));
   return `${any ? "" : `<div class="empty">No posts planned in the next two weeks.</div>`}
     ${days.filter(d => groups[d].length).map(d => `<section class="day"><h3>${esc(dayName(d))}<span>${groups[d].length} posts</span></h3>
-      ${groups[d].sort(byTime).map(p => `<div class="calpost s-${esc(p.status)}"><div class="barc"></div><div>
+      ${groups[d].sort(byTime).map(p => `<div class="calpost calrow s-${esc(p.status)}" data-cal-open="${esc(p.id)}" role="button" tabindex="0"><div class="barc"></div><div>
         <div class="meta"><span>${esc(fmtHour(p.plannedAt))}</span>${plat(p.platform)}<span>${esc(accountLabel(p.accountId))}</span>${pill(p.status)}</div>
         <div class="clip">${esc(p.title || p.caption)}</div>
-        ${metricsBar(p.metrics)}
-        <div class="row">
-          <button class="btn" data-slot="${esc(p.id)}">Details / Swap</button>
-          ${p.permalink ? `<a class="btn" href="${esc(p.permalink)}" target="_blank" rel="noopener">View live</a>` : ""}
-          ${MANUAL[p.platform] && p.status !== "posted" ? `<button class="btn" data-copy="${esc(p.id)}">Copy text</button><a class="btn" href="${MANUAL[p.platform]}" target="_blank" rel="noopener">Open ${esc(PLATFORMS[p.platform])}</a>${p.status === "approved" ? `<button class="btn primary" data-mark-posted="${esc(p.id)}">Mark posted</button>` : ""}` : ""}
-        </div>
       </div></div>`).join("")}</section>`).join("")}`;
 }
 
@@ -2096,15 +2209,8 @@ function viewAccounts() {
   const learnings = [...state.learnings].sort((a, b) => String(b.createdAt || "").localeCompare(String(a.createdAt || "")));
   const profAcc = (ui.acct && state.accounts.find(a => a.id === ui.acct)) || state.accounts.find(a => a.voiceProfile) || state.accounts[0];
   const vp = profAcc?.voiceProfile;
-  return `<h2>Accounts</h2><div class="acc-grid">
-    ${state.accounts.map(a => `<article class="acc">
-      <div class="acc-top"><span class="mark" style="color:${BRAND[a.platform] || "currentColor"}">${ICONS[a.platform] ? svg(a.platform) : ""}</span><div><b>${esc(a.label)}</b><span>${esc(PLATFORMS[a.platform] || a.platform)}</span></div></div>
-      <dl><dt>Topic</dt><dd>${esc(a.niche)}</dd><dt>Per week</dt><dd>${esc(a.postsPerWeek)} posts</dd><dt>Language</dt><dd>${esc(a.language || "English")}</dd>
-        <dt>Connected</dt><dd>${a.composioAccountId ? "Yes" : "Not yet"}</dd>
-        ${a.bestTimes?.length ? `<dt>Best times</dt><dd>${esc(a.bestTimes.join(", "))} IST</dd>` : ""}</dl>
-      <div>${pill(a.status, ACC_STATE[a.status] || a.status)}</div></article>`).join("")}
-    <button class="acc add" data-add-account><span class="plus">+</span>Add account<small>Pick a platform and a topic. Claude does the rest.</small></button>
-  </div>
+  const back = `<button class="btn ghost" data-acc-panel="" style="justify-self:start">‹ Accounts</button>`;
+  if (ui.accPanel === "learned") return `${back}
   <section class="card" id="learned-section">
     <div class="row" style="justify-content:space-between">
       <div><h2>What Claude learned</h2><p class="muted" style="margin:4px 0 0">Learned automatically from your video transcripts, inline caption edits, script change requests, rejections, and 2x+ heaters. Remove any rule you disagree with.</p></div>
@@ -2131,6 +2237,8 @@ function viewAccounts() {
       </div>`).join("") : `<span class="muted">No learnings recorded yet. Edit a caption in Approve, ask changes on a script, or run sos-results to populate this list.</span>`}
     </div>
   </section>
+`;
+  if (ui.accPanel === "comp") return `${back}
   <section class="card"><h2>Competitors & profiles I like</h2>
     <p class="muted" style="margin:0 0 10px">Paste any competitor or profile you like. Claude studies all of it in the next research run: reels, carousels, hooks, captions, what gets views.</p>
     <div class="field"><label class="label" for="comp-link">Profile link or @handle</label><input class="field-in" id="comp-link" placeholder="instagram.com/… or @name" maxlength="200"></div>
@@ -2143,6 +2251,8 @@ function viewAccounts() {
       <div><b>${esc(c.link)}</b><br><span class="muted">${esc(c.note || "")}</span></div>
       <div class="row">${pill(c.status === "tracked" ? "active" : "setup", c.status === "tracked" ? "Studied" : "Waiting")}<button class="btn" data-comp-remove="${esc(c.id)}">Remove</button></div></div>`).join("")}
   </section>
+`;
+  if (ui.accPanel === "sched") return `${back}
   <section class="card"><h2>Schedules</h2>
     <p class="muted" style="margin:0">Claude syncs these to cloud scheduled tasks (confirm in chat once). Every post still waits for your approval.</p>
     <div class="two">
@@ -2160,7 +2270,26 @@ function viewAccounts() {
         ${r.status === "remove" ? "" : `<button class="btn danger" data-sch="remove" data-id="${esc(r.id)}">Remove</button>`}</div></div>`).join("")
       : `<span class="muted">No schedules yet.</span>`}
   </section>
-  ${runs.length ? `<section class="card"><h2>Recent engine runs</h2><div class="runs-list">${runs.map(r => `<div>${pill("active", r.kind || "run")}<b>${esc(r.summary || "")}</b><span>${esc(fmtTime(r.finishedAt || r.startedAt))}</span></div>`).join("")}</div></section>` : ""}`;
+`;
+  if (ui.accPanel === "runs") return `${back}
+  <section class="card"><h2>Recent engine runs</h2><div class="runs-list">${runs.map(r => `<div>${pill("active", r.kind || "run")}<b>${esc(r.summary || "")}</b><span>${esc(fmtTime(r.finishedAt || r.startedAt))}</span></div>`).join("")}</div></section>`;
+  const tracked = state.competitors.filter(c => c.status !== "remove").length;
+  const row = (k, title, sub) => `<button class="acc-row" data-acc-panel="${k}"><div><b>${title}</b><span>${sub}</span></div><span class="q-go" aria-hidden="true">›</span></button>`;
+  return `<div class="page-head"><div><h2>Accounts</h2><p>Your accounts, and what Claude keeps for each one.</p></div></div><div class="acc-grid">
+    ${state.accounts.map(a => `<article class="acc">
+      <div class="acc-top"><span class="mark" style="color:${BRAND[a.platform] || "currentColor"}">${ICONS[a.platform] ? svg(a.platform) : ""}</span><div><b>${esc(a.label)}</b><span>${esc(PLATFORMS[a.platform] || a.platform)}</span></div></div>
+      <dl><dt>Topic</dt><dd>${esc(a.niche)}</dd><dt>Per week</dt><dd>${esc(a.postsPerWeek)} posts</dd><dt>Language</dt><dd>${esc(a.language || "English")}</dd>
+        <dt>Connected</dt><dd>${a.composioAccountId ? "Yes" : "Not yet"}</dd>
+        ${a.bestTimes?.length ? `<dt>Best times</dt><dd>${esc(a.bestTimes.join(", "))} IST</dd>` : ""}</dl>
+      <div>${pill(a.status, ACC_STATE[a.status] || a.status)}</div></article>`).join("")}
+    <button class="acc add" data-add-account><span class="plus">+</span>Add account<small>Pick a platform and a topic. Claude does the rest.</small></button>
+  </div>
+  <div class="acc-rows">
+    ${row("learned", "What Claude learned", `${learnings.length} rule${learnings.length === 1 ? "" : "s"} about your voice and style`)}
+    ${row("comp", "Competitors & profiles I like", tracked ? `${tracked} profile${tracked === 1 ? "" : "s"} tracked` : "Add profiles Claude should study")}
+    ${row("sched", "Schedules", rows.length ? `${rows.length} running` : "When Claude researches and posts")}
+    ${runs.length ? row("runs", "Recent engine runs", `Last: ${esc(fmtTime(runs[0].finishedAt || runs[0].startedAt))}`) : ""}
+  </div>`;
 }
 
 function accountOptions(sel) {
@@ -2210,7 +2339,7 @@ function planSubnav() {
   const radarNew = state.inspirations.filter(i => (i.status === "new" || i.tier === "P1") && expiryInfo(i).state !== "expired").length;
   const workN = planItems().length;
   return `<div class="row" style="justify-content:space-between"><div class="subnav" role="tablist">
-    <button role="tab" aria-selected="${ui.planTab === "work"}" data-ptab="work">Workspace${workN ? `<span class="n">${workN}</span>` : ""}</button>
+    <button role="tab" aria-selected="${ui.planTab === "work"}" data-ptab="work">Ideas${workN ? `<span class="n">${workN}</span>` : ""}</button>
     <button role="tab" aria-selected="${ui.planTab === "radar"}" data-ptab="radar">Reel Radar${radarNew ? `<span class="n">${radarNew}</span>` : ""}</button>
     <button role="tab" aria-selected="${ui.planTab === "hooks"}" data-ptab="hooks">Hook Vault${state.hooks.length ? `<span class="n">${state.hooks.length}</span>` : ""}</button>
   </div></div>`;
@@ -2236,101 +2365,73 @@ function viewRadar() {
     if (isExp) return false;
     return ui.radarFilter === "new" ? i.status === "new" : ui.radarFilter === "scripted" ? i.status === "scripted" : i.tier === ui.radarFilter;
   });
-  return `<div class="split">
-    <section class="card sticky-col"><b>Drop viral URLs</b>
-      <p class="muted" style="margin:0">Paste 1 or many Instagram Reels, YouTube Shorts, GitHub repos, or X links. Claude scores virality, relatability, first-mover chance, and shelf-life expiry (Update / Trend / Evergreen).</p>
-      <div class="field"><label class="label" for="radar-urls">URLs (one per line)</label>
+  const showAdd = ui.radarAdd ?? !!store.get("sos.draft.radar-urls", "");
+  const form = showAdd ? `<section class="card newbox"><b>Add viral links</b>
+      <div class="field"><label class="label" for="radar-urls">Links (one per line): Instagram, YouTube, GitHub or X</label>
         <textarea class="field-in" id="radar-urls" placeholder="https://www.instagram.com/reel/...&#10;https://github.com/..."></textarea></div>
       <span class="muted" id="radar-count" style="font-size:12.5px"></span>
       <div class="field"><span class="label">Accounts (pick one or more, none = any)</span><div class="row chips" id="radar-accts" style="margin:0">${state.accounts.map(a => `<label class="chip" style="cursor:pointer"><input type="checkbox" value="${esc(a.id)}" ${a.id === ui.acct ? "checked" : ""} style="margin-right:6px">${esc(a.label)} · ${esc(PLATFORMS[a.platform] || a.platform)}</label>`).join("") || `<span class="muted">No accounts yet</span>`}</div></div>
       <div class="field"><label class="label" for="radar-note">Your angle (optional)</label><textarea class="field-in" id="radar-note" rows="2" style="min-height:48px" placeholder="e.g. demo this with Claude Code hooks"></textarea></div>
       <div class="row" style="justify-content:flex-end"><button class="btn" data-save-draft>Save draft</button><button class="btn primary" id="radar-save">Add to Radar</button></div>
-    </section>
-    <div class="list">
-      <div class="row" style="justify-content:space-between">
-        <div class="row chips" style="margin:0">${[["all", "All"], ["P1", "P1 · Film Now"], ["P2", "P2 · Queue"], ["new", "Waiting score"], ["scripted", "Scripted"], ["expired", "Expired"]].map(([k, l]) =>
-          `<button class="chip" aria-pressed="${ui.radarFilter === k}" data-rfilter="${k}">${l}</button>`).join("")}</div>
-        ${topUnscripted.length ? `<button class="btn primary" id="radar-script-top3">Script top ${topUnscripted.length}</button>` : ""}
-      </div>
-      ${band("Priority queue (live trends & updates outrank evergreen)", shown.length, "var(--ok)")}
-      ${shown.length ? shown.map(i => {
-        const exp = expiryInfo(i);
-        const isExp = exp.state === "expired" || i.tier === "expired";
-        const dispTier = isExp ? "expired" : (i.tier || "new");
-        return `<article class="card">
-        <div class="radar-head">
-          <div class="score-box t-${esc(dispTier === "expired" ? "skip" : dispTier)}">${i.score != null ? esc(i.score) : "—"}</div>
-          <div style="min-width:0;display:grid;gap:4px;flex:1">
-            <div class="meta">
-              ${i.tier || isExp ? `<span class="tier t-${esc(dispTier === "expired" ? "skip" : dispTier)}">${esc(TIER_LABEL[dispTier] || dispTier)}</span>` : `<span class="tier t-new">Waiting for sos-radar</span>`}
-              ${shelfBadge(i)}
-              ${firstMoverBadge(i.firstMover)}
-              ${plat(i.platform || "instagram")}
-              ${i.accountId ? `<span>${esc(accountLabel(i.accountId))}</span>` : ""}
-              ${i.outlierMultiple ? `<span><b>${esc(i.outlierMultiple)}x</b> median</span>` : ""}
-              ${i.hookScore != null ? `<span>hook ${esc(i.hookScore)}/100</span>` : ""}
-              ${i.relatabilityScore != null ? `<span>relatable ${esc(i.relatabilityScore)}/100</span>` : ""}
-              ${i.audioNote ? `<span class="audio-tag">♪ ${esc(i.audioNote)}</span>` : ""}
-            </div>
-            <p class="caption" style="font:var(--t-sec);color:var(--ink)">${i.title ? esc(i.title) : `<span class="muted">Not read yet. Claude watches it and writes the idea here.</span>`}</p>
-            ${i.concept ? `<p class="caption" style="margin:0">${esc(i.concept)}</p>` : ""}
-          </div>
-        </div>
-        <a class="muted clip" href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.url)}</a>
-        ${i.userNote ? `<span class="muted">Your note: ${esc(i.userNote)}</span>` : ""}
-        ${i.hook ? `<div class="textpost"><span class="label">Original hook</span><p class="caption" style="margin-top:4px">${esc(i.hook)}</p></div>` : ""}
-        ${i.whyPopped || i.ourTwist ? `<div class="radar-grid">
-          ${i.whyPopped ? `<div><b>Why it popped</b><span>${esc(i.whyPopped)}</span></div>` : ""}
-          ${i.ourTwist ? `<div><b>Our twist</b><span>${esc(i.ourTwist)}</span></div>` : ""}
-        </div>` : ""}
-        <div class="row">
-          ${isExp ? `<button class="btn primary" data-remake-ev="${esc(i.id)}">Remake as evergreen</button>`
-            : i.status === "scripted" ? `<button class="btn primary" data-ptab="work">Open script in Workspace</button>`
-            : `<button class="btn primary" data-radar="script" data-id="${esc(i.id)}" ${i.status === "script" ? "disabled" : ""}>${i.status === "script" ? "Queued for script…" : "Write improved script"}</button>`}
-          <button class="btn ghost" data-radar="skipped" data-id="${esc(i.id)}">Skip</button>
-        </div>
-      </article>`;
-      }).join("") : emptyBox("Reel Radar is clear", "Paste one or many viral Instagram/YouTube/GitHub URLs on the left (or share them in VS Code chat) to score and script them.")}
+    </section>` : "";
+  const card = i => {
+    const exp = expiryInfo(i), isExp = exp.state === "expired" || i.tier === "expired", dispTier = isExp ? "expired" : (i.tier || "new");
+    return `<article class="qcard" data-open-item="inspirations:${esc(i.id)}" role="button" tabindex="0">
+      <div class="q-row" style="align-items:flex-start;justify-content:flex-start">
+        <div class="qscore">${i.score != null ? esc(i.score) : "–"}</div>
+        <div style="min-width:0;flex:1;display:grid;gap:4px">
+          <div class="meta">${i.tier || isExp ? `<span class="tier t-${esc(dispTier === "expired" ? "skip" : dispTier)}">${esc(TIER_LABEL[dispTier] || dispTier)}</span>` : `<span class="tier t-new">Not read yet</span>`}${plat(i.platform || "instagram")}${shelfBadge(i)}${i.status === "script" ? `<span class="qstate">Claude is writing</span>` : i.status === "scripted" ? `<span class="qstate ok">Script ready</span>` : ""}</div>
+          <p class="q-title clamp2">${i.title ? esc(i.title) : `<span class="muted">Not read yet. Claude watches it and writes the idea here.</span>`}</p>
+          ${i.concept ? `<p class="q-sub clamp1">${esc(i.concept)}</p>` : ""}
+        </div><span class="q-go" aria-hidden="true">›</span></div></article>`;
+  };
+  return `<div class="row" style="justify-content:space-between">
+      <div class="row chips" style="margin:0">${[["all", "All"], ["P1", "P1 · Film now"], ["P2", "P2 · Queue"], ["new", "Not read"], ["scripted", "Scripted"], ["expired", "Expired"]].map(([k, l]) =>
+        `<button class="chip" aria-pressed="${ui.radarFilter === k}" data-rfilter="${k}">${l}</button>`).join("")}</div>
+      <div class="row">${topUnscripted.length ? `<button class="btn" id="radar-script-top3">Script top ${topUnscripted.length}</button>` : ""}<button class="btn${showAdd ? "" : " primary"}" data-radar-add>${showAdd ? "Close" : "+ Add links"}</button></div>
     </div>
-  </div>`;
+    ${form}
+    <section class="list">${band("Best first", shown.length, "var(--ok)")}
+    ${shown.length ? `<div class="qlist" data-nav-list>${shown.map(card).join("")}</div>` : emptyBox("Reel Radar is clear", "Tap + Add links to paste viral Instagram, YouTube or GitHub links.")}</section>`;
 }
 
 function viewPlan() {
-  const head = `<div class="page-head"><div><h2>Plan</h2><p>Go from daily auto-run topics or viral URLs to approved EN / Malayalam-English scripts (Gate 1).</p></div></div>`;
+  const head = `<div class="page-head"><div><h2>Plan</h2><p>Tap an idea or script to read it, then approve or skip.</p></div></div>`;
   if (ui.planTab === "radar") return head + planSubnav() + viewRadar();
   if (ui.planTab === "hooks") return head + planSubnav() + viewHooks();
-  const items = planItems(), q = state.posts.filter(p => p.status === "waiting").length, opts = items.filter(i => !i.script),
-    scr = items.filter(i => i.script),
+  const items = planItems(), opts = items.filter(i => !i.script), scr = items.filter(i => i.script),
     readyScr = state.scripts.filter(s => s.status === "approved" || s.status === "done");
   const rq = state.messages.filter(m => m.kind && m.status === "new");
   const slotLabel = o => {
     if (o.door === "slot" && o.postId) { const sp = state.posts.find(p => p.id === o.postId); return sp ? `Swap ${fmtTime(sp.plannedAt)}` : "Slot swap"; }
-    return o.door === "auto" ? "Daily Auto-Run" : o.door === "topic" ? "Your topic" : o.door === "video" ? "Your video" : "Plan";
+    return o.door === "auto" ? "Daily research" : o.door === "topic" ? "Your topic" : o.door === "video" ? "Your video" : "Plan";
   };
-  return `${head}${planSubnav()}${needAcct()}<p class="muted" style="margin:0">${esc(greeting())}. <b>${opts.length}</b> option${opts.length === 1 ? "" : "s"} to pick, <b>${scr.length}</b> script${scr.length === 1 ? "" : "s"} to approve, <b>${q}</b> post${q === 1 ? "" : "s"} waiting.</p>
-    <div class="doors">
-      <section class="card door hero-door"><div><b>Start from a topic, raw idea, or GitHub repo</b><p class="muted" style="margin-top:6px">Claude researches it across 6 sources, checks first-mover chance and shelf life, and brings ranked options + EN & Malayalam-English scripts.</p>
-        <textarea class="field-in" style="margin-top:10px;min-height:72px" id="door-topic" placeholder="e.g. github.com/… or 3 Claude Code hooks that saved me hours"></textarea></div>
-        <div class="row"><button class="btn primary" data-door="topic">Get options</button></div></section>
-      <div class="doors-side">
-        <section class="card door"><div><b>Plan my week or month</b><p class="muted" style="margin-top:4px">Pulls GitHub trending, Reddit/HN/YouTube, competitors, and profiles you like into calendar options.</p></div>
-          <div class="row"><button class="btn" data-door="week">Plan my week</button><button class="btn" data-door="month">Plan my month</button></div></section>
-        <section class="card door"><div><b>Have viral links or raw footage?</b><p class="muted" style="margin-top:4px">Score Instagram/YouTube URLs in Reel Radar or get a Prompt Guy brief in Studio.</p></div>
-          <div class="row"><button class="btn" data-ptab="radar">Open Reel Radar</button><button class="btn ghost" data-tab="studio">Open Studio</button></div></section>
-      </div>
-    </div>
-    ${rq.length ? `<p class="muted">${rq.length} request${rq.length > 1 ? "s" : ""} waiting for Claude's next chat.</p>` : ""}
+  const showNew = ui.planNew ?? !!store.get("sos.draft.door-topic", "");
+  const newBox = showNew ? `<section class="card newbox">
+      <div class="field"><label class="label" for="door-topic">A topic, raw idea or GitHub link</label>
+        <textarea class="field-in" style="min-height:64px" id="door-topic" placeholder="e.g. github.com/… or 3 Claude Code hooks that saved me hours"></textarea></div>
+      <div class="row" style="justify-content:space-between">
+        <div class="row"><button class="btn" data-door="week">Plan my week</button><button class="btn" data-door="month">Plan my month</button><button class="btn ghost" data-ptab="radar">Viral links</button><button class="btn ghost" data-tab="studio">My video</button></div>
+        <button class="btn primary" data-door="topic">Get options</button></div>
+    </section>` : "";
+  const card = it => {
+    const o = it.option, sc = it.script, d = sc || o;
+    const st = sc ? (sc.status === "changes" ? ["warn", "Changes asked"] : ["ok", "Script ready"]) : o.status === "picked" ? ["", "Claude is writing"] : ["", "New idea"];
+    return `<article class="qcard" data-open-item="${esc(it.key)}" role="button" tabindex="0">
+      <div class="q-row"><div class="meta" style="min-width:0"><span>${esc(o ? slotLabel(o) : "Reel Radar")}</span>${(sc?.format || o?.format) ? `<span>${esc(sc?.format || o?.format)}</span>` : ""}${shelfBadge(d)}</div><span class="qstate ${st[0]}">${esc(st[1])}</span></div>
+      <div class="q-row"><p class="q-title clamp2">${esc(o?.title || sc?.title || "Untitled")}</p><span class="q-go" aria-hidden="true">›</span></div>
+      ${o?.what ? `<p class="q-sub clamp1">${esc(o.what)}</p>` : ""}</article>`;
+  };
+  return `${head}${planSubnav()}${needAcct()}
+    <div class="row" style="justify-content:space-between"><p class="muted" style="margin:0"><b>${opts.length}</b> idea${opts.length === 1 ? "" : "s"} · <b>${scr.length}</b> script${scr.length === 1 ? "" : "s"} to read${rq.length ? ` · ${rq.length} request${rq.length > 1 ? "s" : ""} waiting for Claude` : ""}</p>
+      <button class="btn${showNew ? "" : " primary"}" data-plan-new>${showNew ? "Close" : "+ New"}</button></div>
+    ${newBox}
     <section class="list">${band("Ideas & scripts", items.length, "var(--accent)")}
-    ${items.length ? items.map(it => { const o = it.option, sc = it.script, d = sc || o, st = sc ? (sc.status === "changes" ? ["waiting", "Changes asked"] : ["waiting", "Script ready · waiting for your yes"]) : o.status === "picked" ? ["waiting", "Approved · Claude is writing the script"] : ["new", "New idea"];
-      return `<article class="card item" data-open-item="${esc(it.key)}" role="button" tabindex="0"><div class="meta"><span>${esc(o ? slotLabel(o) : "Reel Radar")}</span>${shelfBadge(d)}${firstMoverBadge(d.firstMover)}${(sc?.format || o?.format) ? `<span>${esc(sc?.format || o?.format)}</span>` : ""}${sc?.hookScore != null ? `<span>hook ${esc(sc.hookScore)}/100</span>` : ""}${pill(st[0], st[1])}</div>
-      <p class="caption"><b>${esc(o?.title || sc?.title || "Untitled")}</b></p>${o?.what ? `<span class="muted">${esc(o.what)}</span>` : ""}
-      <span class="brief-more">${sc ? "Open the script ›" : "Open the idea ›"}</span></article>`; }).join("")
-      : emptyBox("Nothing waiting", "Open Door A or B above, or drop viral URLs in Reel Radar to generate ranked ideas.")}</section>
+    ${items.length ? `<div class="qlist" data-nav-list>${items.map(card).join("")}</div>` : emptyBox("Nothing waiting", "Tap + New to start from a topic, or drop viral links in Reel Radar.")}</section>
     ${readyScr.length ? `<section class="list"><div class="band"><span class="b-left"><span class="b-dot" style="color:var(--ok)"></span>Approved & ready to film</span><div class="row"><span class="b-cnt">${readyScr.length}</span><button class="btn" style="min-height:30px;padding:4px 10px" id="toggle-approved-scr">${ui.showApprovedScripts ? "Hide" : "Show"}</button></div></div>
-      ${ui.showApprovedScripts ? readyScr.map(s => { const l = ui.lang[s.id] || s.lang || "en"; return `<article class="card item" data-open-item="scripts:${esc(s.id)}" role="button" tabindex="0"><div class="meta"><span>${esc(s.title || "Script")}</span>${shelfBadge(s)}${firstMoverBadge(s.firstMover)}${s.storyFormat ? `<span>${esc(s.storyFormat)}</span>` : ""}${pill(s.status === "done" ? "done" : "approved", SCRIPT_STATE[s.status] || s.status)}</div>
-        <div class="seg" role="group"><button aria-pressed="${l === "en"}" data-lang="en" data-id="${esc(s.id)}">English</button><button aria-pressed="${l === "ml"}" data-lang="ml" data-id="${esc(s.id)}">Malayalam-English</button></div>
-        <div class="answer script">${esc((l === "ml" ? s.mlen : s.en) || "")}</div>
-        <div class="row"><button class="btn primary" data-tele="${esc(s.id)}">Open Teleprompter</button>${s.postIds?.length ? `<button class="btn" data-tab="approve">${s.postIds.length} posts in Approve</button>` : ""}</div></article>`; }).join("") : ""}</section>` : ""}`;
+      ${ui.showApprovedScripts ? `<div class="qlist" data-nav-list>${readyScr.map(s => `<article class="qcard" data-open-item="scripts:${esc(s.id)}" role="button" tabindex="0">
+        <div class="q-row"><div class="meta" style="min-width:0">${s.format ? `<span>${esc(s.format)}</span>` : ""}${shelfBadge(s)}</div><span class="qstate ok">${esc(SCRIPT_STATE[s.status] || s.status)}</span></div>
+        <div class="q-row"><p class="q-title clamp2">${esc(s.title || "Script")}</p><span class="q-go" aria-hidden="true">›</span></div></article>`).join("")}</div>` : ""}</section>` : ""}`;
 }
 
 const HOOK_TYPES = ["swap", "build", "claim", "list", "contrarian"];
@@ -2437,25 +2538,23 @@ function viewMonth() {
   }
   const sp = ui.calPick && state.posts.find(p => p.id === ui.calPick);
   const sub = `<div class="row" style="justify-content:space-between">
-    <div class="subnav" role="tablist">
+    <div class="seg-sm" role="tablist" aria-label="Calendar view">
       <button role="tab" aria-selected="${ui.calTab === "month"}" data-ctab="month">Month</button>
-      <button role="tab" aria-selected="${ui.calTab === "list"}" data-ctab="list">14-day list</button>
-      <button role="tab" aria-selected="${ui.calTab === "grid"}" data-ctab="grid">IG Grid 3:4</button>
+      <button role="tab" aria-selected="${ui.calTab === "list"}" data-ctab="list">Next 14 days</button>
+      <button role="tab" aria-selected="${ui.calTab === "grid"}" data-ctab="grid">IG grid</button>
     </div>
     ${ui.calTab === "month" ? `<div class="row"><button class="btn" data-mon="-1" aria-label="Previous month">‹</button><button class="btn" data-mon="0">Today</button><button class="btn" data-mon="1" aria-label="Next month">›</button></div>` : ""}
   </div>`;
-  const panel = sp ? `<div class="drawer-bg" data-swap="close"><aside class="drawer">
-    <div class="drawer-head"><b>${esc(accountLabel(sp.accountId))} · ${esc(sp.format)}</b><button class="btn" data-swap="close">Close</button></div>
-    <div class="drawer-body">${postMeta(sp)}${renderPostBody(sp)}${metricsBar(sp.metrics)}
-      ${sp.status !== "posted" ? `<div class="field"><label class="label" for="resched-dt">Reschedule (IST)</label><div class="row"><input class="field-in" style="flex:1" id="resched-dt" type="datetime-local" value="${esc(toLocalInput(sp.plannedAt))}"><button class="btn" data-resched="${esc(sp.id)}">Save time</button></div></div>` : ""}
-    </div>
-    <div class="drawer-foot">
-      ${sp.permalink ? `<a class="btn primary" href="${esc(sp.permalink)}" target="_blank" rel="noopener">Open live</a>` : ""}
+  const cl = calList(), ci = sp ? cl.findIndex(p => p.id === sp.id) : -1;
+  const panel = sp && ci >= 0 ? rdShell(sp.id, ci, cl.length, `${postMeta(sp)}<h2>${esc(sp.title || (sp.caption || "").split("\n")[0] || "Untitled")}</h2>${renderPostBody(sp)}${metricsBar(sp.metrics)}
+      ${sp.status !== "posted" ? `<div class="field"><label class="label" for="resched-dt">Move to another time (India)</label><div class="row"><input class="field-in" style="flex:1" id="resched-dt" type="datetime-local" value="${esc(toLocalInput(sp.plannedAt))}"><button class="btn" data-resched="${esc(sp.id)}">Save time</button></div></div>` : ""}`,
+    `<div class="row">
+      ${canMove(sp.status, "rejected") ? `<button class="btn ghost danger" data-swap="remove">Remove</button>` : ""}
+      ${sp.status !== "posted" ? `<button class="btn ghost" data-swap="own">Use my own</button><button class="btn ghost" data-swap="options">New options</button>` : ""}
       ${MANUAL[sp.platform] && sp.status !== "posted" ? `<button class="btn" data-copy="${esc(sp.id)}">Copy text</button><a class="btn" href="${MANUAL[sp.platform]}" target="_blank" rel="noopener">Open ${esc(PLATFORMS[sp.platform])}</a>${sp.status === "approved" ? `<button class="btn primary" data-mark-posted="${esc(sp.id)}">Mark posted</button>` : ""}` : ""}
-      ${sp.status !== "posted" ? `<button class="btn" data-swap="own">Use my own</button><button class="btn" data-swap="options">New options</button>` : ""}
-      ${canMove(sp.status, "rejected") ? `<button class="btn danger" data-swap="remove">Remove</button>` : ""}
-    </div></aside></div>` : "";
-  const head = `<div class="page-head"><div><h2>Calendar</h2><p>Schedule, swap slots, or preview your next 9 Instagram covers in 3:4 crop.</p></div></div>`;
+      ${sp.permalink ? `<a class="btn primary" href="${esc(sp.permalink)}" target="_blank" rel="noopener">Open live</a>` : ""}
+    </div>`) : "";
+  const head = `<div class="page-head"><div><h2>Calendar</h2><p>Tap a post to read it, move it, or swap it.</p></div></div>`;
   if (ui.calTab === "list") return `${head}${sub}${panel}${viewCalendarList()}`;
   if (ui.calTab === "grid") return `${head}${sub}${panel}${viewGrid34()}`;
   return `${head}${sub}<h3>${esc(title)}</h3>
@@ -2502,7 +2601,10 @@ function render(dataChanged) {
   stopLoops();
   const keep = key === prevKey ? [...document.querySelectorAll("#view [id]")].filter(e => "value" in e && e.value).map(e => [e.id, e.value]) : [];
   prevKey = key;
+  const rb = $("#view .rd-body"), keepRd = rb ? [rb.closest(".rd")?.dataset.id, rb.scrollTop] : null;
   $("#view").innerHTML = html + VIEWS[tab]();
+  const nrd = $("#view .rd"); if (nrd && keepRd && nrd.dataset.id === keepRd[0]) nrd.querySelector(".rd-body").scrollTop = keepRd[1];
+  document.documentElement.classList.toggle("locked", !!nrd || !!sheet);
   for (const [id, v] of keep) { const el = document.getElementById(id); if (el) el.value = v; }
   restoreDrafts();
   if (tab === "plan" && ui.planTab === "hooks") filterHooks();
@@ -2521,10 +2623,21 @@ document.addEventListener("click", async e => {
   if (e.target.classList?.contains("drawer-bg")) { ui.calPick = null; lastKey = ""; render(); return; }
   const bo = e.target.closest("[data-brief-open]");
   if (bo && !e.target.closest("button, a")) { const [r, ...i] = bo.dataset.briefOpen.split(":"); openBriefSheet(r, i.join(":")); return; }
+  if (e.target.classList?.contains("rd-bg")) { rdClose(); return; }
+  const apo = e.target.closest("[data-ap-open]");
+  if (apo && !e.target.closest("button, a")) { ui.apPick = apo.dataset.apOpen; rdReset(); lastKey = ""; render(); return; }
+  const cao = e.target.closest("[data-cal-open]");
+  if (cao && !e.target.closest("button, a")) { ui.calPick = cao.dataset.calOpen; rdReset(); lastKey = ""; render(); return; }
   const oi = e.target.closest("[data-open-item]");
-  if (oi && !e.target.closest("button, a")) { openByKey(oi.dataset.openItem); return; }
+  if (oi && !e.target.closest("button, a")) { openListItem(oi); return; }
   const t = e.target.closest("button, a"); if (!t || t.closest(".sheet-bg")) return;
   if ("sideToggle" in t.dataset) { toggleSide(); return; }
+  if (t.dataset.rdNav) { rdStep(+t.dataset.rdNav); return; }
+  if ("accPanel" in t.dataset) { ui.accPanel = t.dataset.accPanel || null; lastKey = ""; render(); window.scrollTo(0, 0); return; }
+  if ("planNew" in t.dataset) { ui.planNew = !(ui.planNew ?? !!store.get("sos.draft.door-topic", "")); lastKey = ""; render(); if (ui.planNew) $("#door-topic")?.focus(); return; }
+  if ("radarAdd" in t.dataset) { ui.radarAdd = !(ui.radarAdd ?? !!store.get("sos.draft.radar-urls", "")); lastKey = ""; render(); if (ui.radarAdd) $("#radar-urls")?.focus(); return; }
+  if ("rdClose" in t.dataset) { rdClose(); return; }
+  if ("draftAsk" in t.dataset) { ui.draftAsk = t.dataset.draftAsk || null; lastKey = ""; render(); if (ui.draftAsk) $(`#fb-${CSS.escape(ui.draftAsk)}`)?.focus(); return; }
   if (t.dataset.hmode) { ui.homeMode = t.dataset.hmode; paintHero(); return; }
   if ("briefOff" in t.dataset) { ui.briefCtx = false; paintHero(); return; }
   if ("briefDiscuss" in t.dataset) {
@@ -2553,7 +2666,7 @@ document.addEventListener("click", async e => {
     t.disabled = false; return;
   }
   if (t.dataset.pickAcct) { ui.acct = t.dataset.pickAcct; store.set("sos.acct", ui.acct); ui.calPick = null; applyAccount(); lastKey = ""; render(true); return; }
-  if (t.dataset.tab) { tab = t.dataset.tab; if (t.dataset.ptab) ui.planTab = t.dataset.ptab; if (t.dataset.ctab) ui.calTab = t.dataset.ctab; if (t.dataset.slot) ui.calPick = t.dataset.slot; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
+  if (t.dataset.tab) { ui.apPick = null; ui.accPanel = null; rdReset(); tab = t.dataset.tab; if (t.dataset.ptab) ui.planTab = t.dataset.ptab; if (t.dataset.ctab) ui.calTab = t.dataset.ctab; if (t.dataset.slot) ui.calPick = t.dataset.slot; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
   if (t.id === "g-refresh") { refreshNumbers(); return; }
   if (t.dataset.gmetric) { ui.gmetric = t.dataset.gmetric; $("#growth").innerHTML = growthHtml(); return; }
   if (t.dataset.growth) { ui.growth = t.dataset.growth; $("#growth").innerHTML = growthHtml(); return; }
