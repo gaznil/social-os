@@ -356,6 +356,12 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   `claude-desktop.exe --artifact-app=...`). Both shortcuts now point at the orb icon `dashboard/icon/social-os.ico` (was Claude's
   generic icon). If a Claude update resets it, set IconLocation again on those two .lnk files.
 
+- **28 Nov 2026: v36 "pearl bloom" entrance (artifact version 39, user: Enter Studio was laggy/weak; skills: motion-design + gsap-performance).**
+  Old version blurred + clip-pathed the whole page (the lag). New: button gives, welcome words lift away, a thin light ring leads and an
+  iridescent pearl disc (orb colours) swells from the button to fill the screen, then dissolves outward while the page rises in a stagger.
+  Only transform/opacity animate (WAAPI); the 3D orb skips rendering while the welcome screen is up. Frames checked in Playwright; a real
+  fps number could not be measured here (hidden window throttled to 1 fps). Replay: sidebar "Welcome ↺".
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
