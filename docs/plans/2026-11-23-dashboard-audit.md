@@ -8,6 +8,9 @@ Why: the calendar side panel had NO working button (inline `onclick="event.stopP
 3. **Live-mode test:** stub `window.claude.use("db")` with an in-memory fake (via `page.addInitScript`) so the `!db` guards pass and the write paths run; check each write goes to the right doc and the UI updates.
 4. **Report** what was broken / fixed / left (with the reason) in plain words; log lessons (`sos-learn`); update this file.
 
+**28 Nov 2026 (v34):** the calendar `.drawer-bg` side panel is gone. Approve + Calendar now use the in-view `.rd-bg` reader
+(`rdShell`, handled by the main click handler); Plan + Radar use `openItemSheet` with a `nav` list (own handler). Sweep those instead.
+
 ## Test recipe (works, used 23 Nov)
 - Build a test copy: take `dashboard/index.html`, insert `window.__t={state,ui,openItemSheet};` before the LAST `</script>`, save in the scratchpad.
 - `page.route('https://sos.test/', r => r.fulfill({path, contentType:'text/html'}))`, `goto('https://sos.test/')`, wait 2.5 s.

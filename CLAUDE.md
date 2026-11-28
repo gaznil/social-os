@@ -346,6 +346,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   cards + 4 rows (What Claude learned, Competitors, Schedules, Engine runs), each opens its own page with "‹ Accounts". Back to draft
   asks for the note on the first tap. Checked in Playwright at 390 px (Showcase): every popup opens, arrows/keys/Escape work, no errors,
   no sideways scroll. Not checked by the user yet; writes were not live-tested (Showcase can't write), they use the same handlers as before.
+  Safety: approve-type taps are ignored for 0.7 s after a new item slides in (stops a double tap approving the next post). Version 37.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).

@@ -1571,6 +1571,7 @@ function openItemSheet(ref, id, fb = null, nav = null) {
       <div class="bs-foot">${askBox}<div class="row" style="justify-content:flex-end">${acts}${nav ? "" : `<button class="btn ghost" data-sheet="close">Close</button>`}</div></div></div>`;
   }
   paint(); document.body.append(el); if (nav) document.documentElement.classList.add("locked");
+  const shownAt = Date.now(); // ignore approve taps for 0.7 s after a new item appears (stops a double tap approving the next one)
   const done = () => { if (!nav) return closeSheet(); const keys = nav.keys.filter((_, x) => x !== nav.i); if (!keys.length) { closeSheet(); return showToast("That was the last one."); } const i = Math.min(nav.i, keys.length - 1); openByKey(keys[i], { keys, i }); };
   el.addEventListener("click", async e => {
     if (e.target === el || e.target.closest('[data-sheet="close"]')) return closeSheet();
@@ -1578,6 +1579,7 @@ function openItemSheet(ref, id, fb = null, nav = null) {
     const sl = e.target.closest("[data-sl]"); if (sl) { lang = sl.dataset.sl; if (s) ui.lang[s.id] = lang; const sc = el.querySelector(".sheet")?.scrollTop || 0; paint(); el.querySelector(".sheet").scrollTop = sc; return; }
     const b = e.target.closest("[data-bs]"); if (!b) return;
     const a = b.dataset.bs;
+    if (["approve-script", "picked", "script", "remake"].includes(a) && Date.now() - shownAt < 700) return;
     if (a === "tele") { closeSheet(); openTeleprompter(s); return; }
     if (a === "approve-tab") { closeSheet(); tab = "approve"; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
     if (!db) return showToast("Sign in to claude.ai to save.");
@@ -2140,6 +2142,7 @@ function viewApprove() {
   const cards = `<section class="list">${band("Waiting for your yes", list.length, failed.length ? "var(--bad)" : "var(--warn)")}<div class="qlist">${list.map(p => postCard(p, "data-ap-open")).join("")}</div></section>`;
   if (i < 0) return head + cards;
   const p = list[i], probs = p.problems || [], exp = expiryInfo(p), isExpired = exp.state === "expired";
+  if (ui.rdShownId !== p.id) { ui.rdShownId = p.id; ui.rdShownAt = Date.now(); } // approve taps are ignored for 0.7 s after a new post slides in
   const editing = ui.editingPost === p.id, confirmingNow = ui.confirmNow === p.id, confirmingExp = ui.confirmExpired === p.id;
   const body = `${postMeta(p)}<h2>${esc(p.title || (p.caption || "").split("\n")[0] || "Untitled")}</h2>
     ${p.status === "failed" ? `<div class="problems" style="padding:10px 14px">${esc(p.error || "Publish failed (no error message recorded).")}</div>` : ""}
@@ -2604,7 +2607,7 @@ function render(dataChanged) {
   const rb = $("#view .rd-body"), keepRd = rb ? [rb.closest(".rd")?.dataset.id, rb.scrollTop] : null;
   $("#view").innerHTML = html + VIEWS[tab]();
   const nrd = $("#view .rd"); if (nrd && keepRd && nrd.dataset.id === keepRd[0]) nrd.querySelector(".rd-body").scrollTop = keepRd[1];
-  document.documentElement.classList.toggle("locked", !!nrd || !!sheet);
+  document.documentElement.classList.toggle("locked", !!nrd || !!sheet || !!tele || !!document.querySelector(".voice:not(.mini)"));
   for (const [id, v] of keep) { const el = document.getElementById(id); if (el) el.value = v; }
   restoreDrafts();
   if (tab === "plan" && ui.planTab === "hooks") filterHooks();
@@ -2710,6 +2713,7 @@ document.addEventListener("click", async e => {
   if (t.dataset.tele) { const s = state.scripts.find(x => x.id === t.dataset.tele); if (s) openTeleprompter(s); return; }
   if (t.dataset.editOpen) { ui.editingPost = t.dataset.editOpen; ui.confirmNow = null; ui.confirmExpired = null; lastKey = ""; render(); return; }
   if (t.dataset.editCancel) { ui.editingPost = null; lastKey = ""; render(); return; }
+  if ((t.dataset.act === "approved" || t.dataset.act === "now") && tab === "approve" && Date.now() - (ui.rdShownAt || 0) < 700) return;
   if (!db && (t.dataset.act || t.dataset.sch || t.id === "sch-save" || t.id === "comp-save" || t.dataset.compRemove || t.id === "job-prompt" || t.id === "job-pack" || t.id === "radar-save" || t.dataset.radar || t.dataset.editSave || t.dataset.resched || t.dataset.markPosted || t.id === "radar-script-top3" || t.dataset.remakeEv || t.id === "approve-all-clean" || t.id === "enable-autorun" || t.id === "lrn-save" || t.dataset.learnDel || t.dataset.recycle)) return showToast("Sign in to claude.ai to save.");
   if (t.id === "enable-autorun") {
     t.disabled = true;
