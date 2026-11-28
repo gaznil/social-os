@@ -352,7 +352,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   from the queue = old post goes back to the queue; from another day = the two swap days) and **Back to queue**; under the month grid a
   **Queue** list (posts with `plannedAt` null, never published) with "Put on this day". Popup no longer re-fades on every data refresh.
 
-- **28 Nov 2026:** user installed the dashboard as a Claude desktop app ("Social OS (Artifact)", Desktop + Start Menu > Claude Apps,
+- **28 Nov 2026:** user installed the dashboard as a Claude desktop app (shortcuts renamed "Social OS", Desktop + Start Menu > Claude Apps,
   `claude-desktop.exe --artifact-app=...`). Both shortcuts now point at the orb icon `dashboard/icon/social-os.ico` (was Claude's
   generic icon). If a Claude update resets it, set IconLocation again on those two .lnk files.
 
