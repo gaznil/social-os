@@ -338,6 +338,15 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **28 Nov 2026: RADAR BATCH 3 of 4 DONE (reels 49-72).** 21 cards scored + saved to `inspirations` (batch 3; 59 merged into 60 LLM Council, 52 merged into 69 Agency Agents). 3 Leftovers done the same day: 4 unreadable-audio reels re-read with ElevenLabs (p6a2e1 is a song only, so still topic-by-caption), 5 carousels read from their slides via Apify (`apify/instagram-scraper`, ~$0.02) + `whicbz` (CLI-Anything, video) transcribed; all 9 saved. Best new: 5 AI skills for vibecoded sites 48 (P3), 20 motion-design repos 44, CLI-Anything 42. Facts: public APIs repo is public-apis/public-apis (~502K stars), Impeccable/gstack star counts on the slides are far out of date, 'built by Anthropic' on MCP slides is overstated. Still needs a human watch: `p6a2e1` only. **Radar batches 1-4 are ALL done (96 saved links).** Next = end-of-radar questions to the user, then the own-posts clash check and the 'shoot today' pick from the best cards.
 
+- **28 Nov 2026: DASHBOARD v34 "CALM READER" PUBLISHED (artifact version 36, user ask: "everything feels stacked").** Home untouched.
+  Plan, Approve, Calendar, Reel Radar = short tappable cards -> ONE clean popup per item, ← → arrows + swipe + arrow keys, actions pinned
+  at the bottom, no index (user's call). Approve/Calendar reader renders INSIDE the view (`rdShell`, `ui.apPick`/`ui.calPick`) so the
+  existing click handler keeps working (the handler skips `.sheet-bg`); Plan/Radar reuse `openItemSheet` with a `nav` list (Home brief
+  opens it without arrows, unchanged). Plan's 3 "doors" + Radar's link form hide behind "+ New" / "+ Add links". Accounts = account
+  cards + 4 rows (What Claude learned, Competitors, Schedules, Engine runs), each opens its own page with "‹ Accounts". Back to draft
+  asks for the note on the first tap. Checked in Playwright at 390 px (Showcase): every popup opens, arrows/keys/Escape work, no errors,
+  no sideways scroll. Not checked by the user yet; writes were not live-tested (Showcase can't write), they use the same handlers as before.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
