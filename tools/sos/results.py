@@ -51,6 +51,64 @@ def growth_tiles(stats, account_id, today):
     }
 
 
+def _rate(m, top, bottom="reach"):
+    a, b = m.get(top), m.get(bottom)
+    if a is None or not b or b <= 0:
+        return None
+    return a / b
+
+
+def signal_rates(metrics):
+    """The three numbers Instagram's head names as top ranking signals, per post.
+
+    sharesPerReach = closest public number to 'sends per reach' (the API has no separate DM-send count).
+    avgWatchSec is the raw average watch time; never turned into a % without a known video length.
+    Any missing input gives None, never 0.
+    """
+    m = metrics or {}
+    return {
+        "sharesPerReach": _rate(m, "shares"),
+        "likesPerReach": _rate(m, "likes"),
+        "savesPerReach": _rate(m, "saves"),
+        "avgWatchSec": m.get("avgWatchSec"),
+        "skipRate": m.get("skipRate"),
+    }
+
+
+SIGNALS = ("sharesPerReach", "likesPerReach", "avgWatchSec")
+
+
+def scorecard(posts):
+    """Per posted item: the signal rates and each one as a multiple of the account's own median.
+
+    Needs >= 3 posted items per account that have the signal; otherwise the multiple is None.
+    The three multiples are shown separately; `signalMean` is only their plain average (for sorting).
+    """
+    by_acc = defaultdict(list)
+    for p in posts or []:
+        if p.get("status") != "posted" or not p.get("metrics"):
+            continue
+        by_acc[p.get("accountId") or "unknown"].append((p, signal_rates(p["metrics"])))
+    out = []
+    for acc, items in by_acc.items():
+        meds = {}
+        for s in SIGNALS:
+            vals = [r[s] for _, r in items if r[s] is not None and r[s] > 0]
+            meds[s] = float(median(vals)) if len(vals) >= 3 else None
+        for p, r in items:
+            mult = {s: (round(r[s] / meds[s], 1) if r[s] is not None and meds[s] else None) for s in SIGNALS}
+            have = [v for v in mult.values() if v is not None]
+            out.append({
+                "id": p.get("id"), "accountId": acc, "format": p.get("format"),
+                "views": (p["metrics"] or {}).get("views"),
+                "rates": {k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items()},
+                "multiples": mult,
+                "signalMean": round(sum(have) / len(have), 1) if have else None,
+            })
+    out.sort(key=lambda x: (x["signalMean"] is None, -(x["signalMean"] or 0)))
+    return out
+
+
 def find_heaters(posts, today=None):
     """Find outlier posts ('heaters') that beat >= 2x their account's median views.
 
@@ -94,6 +152,13 @@ def find_heaters(posts, today=None):
                 "evergreenRecycle": age_days >= EVERGREEN_RECYCLE_DAYS and shelf == "evergreen",
             })
 
+    # additive: attach the signal multiples (shares/likes per reach, avg watch time vs own median) when known
+    cards = {c["id"]: c for c in scorecard(posts)}
+    for h in heaters:
+        c = cards.get(h["id"])
+        if c:
+            h["signalMultiples"] = c["multiples"]
+            h["signalMean"] = c["signalMean"]
     heaters.sort(key=lambda h: (-h["multiple"], -h["views"]))
     return heaters
 

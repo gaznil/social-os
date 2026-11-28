@@ -25,8 +25,17 @@ Order of authority: the user's words > `LESSONS.md` > this file > any skill.
 | LinkedIn | 2-3 formulas picked by goal (`linkedin-post-writer` F1-F20) | linkedin-humanizer audit | one |
 | Carousel cover | 3 covers, max 6 words each | ig-reel `hookscore.py` | top one |
 
+## Reach design (added 28 Nov 2026; adds to the rules around it, replaces none)
+Instagram's head names three top ranking signals: **watch time, likes per reach, sends per reach** (sends matter most for non-followers; metric list confirmed in Meta's API docs, the ranking claim is as reported by trade press quoting him, Jan 2025). Every Reel, Short and carousel script answers three lines, stored in `scripts.reach`:
+1. **sendTrigger:** who would forward this, and why, with NO spoken ask. Build it into the content: a tip for a named role ("if your boss still copies data by hand"), a surprising number, a standalone recap slide. Never write "send this to a friend", "share", "tag someone": Instagram said (June 2024, as quoted by Social Media Today; not found on a live Instagram page) it won't recommend content that explicitly asks for shares, comments or tags.
+2. **retentionDevice:** what keeps people to the last second: payoff held to the final beat or an open loop opened in beat 1, a last line that flows back into line 1 (rewatch), no dead second. Shortest length that still delivers the payoff; never over 90 s (not recommended above that, same report).
+3. **saveReason:** why someone comes back to it (a list, a prompt to copy, a checklist).
+- **Ask by goal:** reach posts (pillars 1-4) end on the payoff or the loop, no ask. Lead posts (pillars 5-6) keep the one-word keyword ask for Porotta (rule below stays; it is the one place we accept the 2024 "comment a specific word" risk, because replies and DMs that genuinely engage were named as fine).
+- **Originality:** a remake of a viral reel uses our own footage, voice and tested example. Instagram does not recommend copied or lightly edited reposts (creators.instagram.com, Apr 2024).
+- **Judge by rates, not raw views:** `python -m tools.sos.cli scorecard` (shares per reach, likes per reach, average watch time, each vs the account's own median). `sharesPerReach` is the closest public number to sends; the API has no DM-send count.
+
 ## Instagram
-- **Reel:** 15-45 s. Hook spoken + on screen by frame 1, inside 3 s. Frame change every beat (max 4 s). No intro/greeting. Ends on one ask. Run `beats.py` clean.
+- **Reel:** 15-45 s. Hook spoken + on screen by frame 1, inside 3 s. Frame change every beat (max 4 s). No intro/greeting. Ends on one ask for lead posts, or on the payoff/loop line for reach posts (see Reach design). Run `beats.py` clean.
 - **On-screen text:** 6 words max per card; 1080x1920 safe zone y 230-1440, right 230 px clear. Burned-in captions on the body.
 - **Carousel:** 6-10 slides, 1080x1350, type 32 px+, numbered (3/8), handle on every slide, 120 px clear margin, cover 6 words, a standalone recap slide (the one people send), no slide over 25 words. Copy approved before rendering.
 - **Story:** 3-7 frames, face or hand on frame 1, ask on frame 4, text inside y 250-1600.

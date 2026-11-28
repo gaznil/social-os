@@ -79,6 +79,35 @@ class HeatersTest(unittest.TestCase):
         self.assertFalse(got[1]["evergreenRecycle"])
 
 
+class ScorecardTest(unittest.TestCase):
+    def mk(self, pid, views, reach, shares, likes, watch=None):
+        return {"id": pid, "accountId": "ig-a", "status": "posted", "format": "reel",
+                "metrics": {"views": views, "reach": reach, "shares": shares, "likes": likes, "avgWatchSec": watch}}
+
+    def test_rates_and_multiples_vs_own_median(self):
+        from tools.sos.results import scorecard, signal_rates
+        self.assertEqual(signal_rates({"reach": 100, "shares": 5, "likes": 10})["sharesPerReach"], 0.05)
+        self.assertIsNone(signal_rates({"reach": 0, "shares": 5})["sharesPerReach"])
+        posts = [self.mk("a", 1000, 800, 8, 40), self.mk("b", 1200, 900, 9, 45),
+                 self.mk("c", 900, 700, 7, 35), self.mk("star", 800, 400, 40, 60)]
+        cards = {c["id"]: c for c in scorecard(posts)}
+        self.assertGreater(cards["star"]["multiples"]["sharesPerReach"], 4)
+        self.assertIsNone(cards["a"]["multiples"]["avgWatchSec"])  # no watch data -> None, not 0
+        self.assertEqual(scorecard(posts)[0]["id"], "star")  # ranked by signals, not views
+
+    def test_under_three_posts_has_no_multiple(self):
+        from tools.sos.results import scorecard
+        c = scorecard([self.mk("a", 10, 10, 1, 1), self.mk("b", 10, 10, 1, 1)])
+        self.assertIsNone(c[0]["signalMean"])
+
+    def test_heaters_keep_old_shape_and_add_signals(self):
+        posts = [post("ig-a", "2026-11-10T13:30:00Z", 1000, pid="p1"), post("ig-a", "2026-11-12T13:30:00Z", 900, pid="p2"),
+                 post("ig-a", "2026-11-15T13:30:00Z", 1100, pid="p3"), post("ig-a", "2026-11-18T13:30:00Z", 2500, pid="h")]
+        got = find_heaters(posts, today="2026-11-21")
+        self.assertEqual(got[0]["id"], "h")
+        self.assertIn("multiple", got[0])
+
+
 class GrowthMetricsTest(unittest.TestCase):
     STATS = [
         {"accountId": "ig-a", "date": "2026-10-31", "reach": 300, "likes": 10, "views": 100, "followerGain": 5},

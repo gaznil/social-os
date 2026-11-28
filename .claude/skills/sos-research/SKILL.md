@@ -31,6 +31,7 @@ Read `engine/research/README.md` first. Never log in anywhere; public data only.
      - `"update"` (news, launch, new model/repo release): 24-48 hour window (`expiresAt` set).
      - `"trend"` (viral format, hot topic): 3-7 day window (`expiresAt` set).
      - `"evergreen"` (how-to, workflow, timeless tool guide): `expiresAt: null`.
+   - **Engagement per view (added 28 Nov, display only, does not change the score):** for every competitor/popular reel add `likesPerView` and `commentsPerView` to its note (Apify gives likes, comments, views; sends and watch time of OTHER people's reels are invisible, so say "proxy"). Prefer, among equal picks, the one with the higher likes per view: it means the views came with approval, not just reach.
    - Run `python -m tools.sos.cli score-radar <items.json>` so live `update`/`trend` P1s automatically outrank `evergreen` P1s and expired items are flagged `tier: "expired"`.
 4. **Deep dive (top 3 videos, PC only):** `python -m tools.sos.deepdive <video file or direct link> --out private/research/deepdive/<date>-<id>-<n> --source <post link>` -> `frames.jpg`, `transcript.json`, `card.md`. Also extract voice/hook learnings into `learnings` via `sos-learn`.
 5. **Write Options & Auto-Draft Top Scripts in Learned Voice:**

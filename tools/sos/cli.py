@@ -1,6 +1,6 @@
 """Command line for skills: `due` and `check` on a JSON list of posts (each with an "id");
 `studio-check <job.json>` and `pack-plan <job.json> <accounts.json>` for video studio jobs;
-`best-times <posts.json>`, `heaters <posts.json> [--today YYYY-MM-DD]`, and `growth <stats.json> --account <id|all> --today YYYY-MM-DD` for results;
+`best-times <posts.json>`, `heaters <posts.json> [--today YYYY-MM-DD]`, `scorecard <posts.json>` (shares/likes per reach + avg watch time vs own median), and `growth <stats.json> --account <id|all> --today YYYY-MM-DD` for results;
 `score-radar <items.json> [--now ISO]` for Reel Radar priority ranking."""
 import argparse
 import json
@@ -17,7 +17,7 @@ def load(path):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="python -m tools.sos.cli")
-    ap.add_argument("command", choices=["due", "check", "studio-check", "pack-plan", "best-times", "heaters", "growth", "score-radar"])
+    ap.add_argument("command", choices=["due", "check", "studio-check", "pack-plan", "best-times", "heaters", "scorecard", "growth", "score-radar"])
     ap.add_argument("file")
     ap.add_argument("accounts", nargs="?", help="pack-plan only: JSON list of accounts")
     ap.add_argument("--now", help="ISO time with offset; default = now")
@@ -31,6 +31,8 @@ def main(argv=None):
         result = results.best_times(posts)
     elif args.command == "heaters":
         result = results.find_heaters(posts, today=args.today)
+    elif args.command == "scorecard":
+        result = results.scorecard(posts)
     elif args.command == "growth":
         result = results.growth_tiles(posts, args.account, args.today or datetime.now().date().isoformat())
     elif args.command == "score-radar":
