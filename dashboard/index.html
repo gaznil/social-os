@@ -706,7 +706,7 @@ const ALLOWED = {
 };
 const canMove = (from, to) => (ALLOWED[from] || []).includes(to);
 const nowIso = () => new Date().toISOString();
-const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], learnings: [], runs: [], feedback: [], briefs: [] };
+const state = { accounts: [], posts: [], messages: [], ideas: [], inspirations: [], schedules: [], competitors: [], jobs: [], stats: [], options: [], scripts: [], hooks: [], learnings: [], runs: [], feedback: [], briefs: [], archive: [] };
 const raw = {};
 // Rich read-only Showcase dataset so every tab can be previewed cleanly without touching Live DB
 function showcaseSeed() {
@@ -862,7 +862,7 @@ async function connect() {
   catch (err) { db = null; showError("database", err); return showOffline(); }
   if (!db) return showOffline();
   const timer = setTimeout(() => { if (!ui.loaded) showToast("Still loading your data…"); }, 10000);
-  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "learnings", "runs", "feedback", "briefs"];
+  const names = ["accounts", "posts", "messages", "ideas", "inspirations", "schedules", "competitors", "jobs", "stats", "options", "scripts", "hooks", "learnings", "runs", "feedback", "briefs", "archive"];
   let pending = names.length;
   for (const name of names) {
     let first = true;
@@ -1809,7 +1809,7 @@ function growthBody() {
   const bt = shown.filter(a => a.bestTimes?.length).map(a => `<p class="gnote">Best times for ${esc(a.label)}: ${esc(a.bestTimes.join(", "))} IST</p>`).join("");
   const heaters = findHeaters(state.posts).slice(0, 3);
   const heatersHtml = heaters.length ? `<div class="list" style="margin-top:4px">${band("Heaters (>= 2x median views)", heaters.length, "var(--ok)")}${heaters.map(h => `<div class="heater-row"><div class="mini-main"><div class="meta">${plat(h.post.platform)}<span class="tier t-P1">${esc(h.mult)}x median</span><span>${num(h.views)} views</span>${h.evergreenRecycle ? `<span class="shelf sh-evergreen">90d+ Evergreen · Remake ready</span>` : ""}</div><b>${esc((h.post.title || h.post.caption || "").slice(0, 76))}</b></div>${h.evergreenRecycle ? `<button class="btn" style="min-height:30px;padding:0 10px;font-size:12px" data-recycle="${esc(h.post.id)}">Remake with fresh hook</button>` : ""}</div>`).join("")}</div>` : "";
-  return `<h2>Growth</h2>${btns}${tiles}${chart}${bars}${topHtml}${heatersHtml}${bt}`;
+  return `<h2>Growth</h2>${btns}${tiles}${chart}${bars}${signalsHtml(ids)}${topHtml}${heatersHtml}${bt}`;
 }
 /* ---------- refresh numbers (v27, 7-day pull in v31): the page reads Composio itself, read-only. ---------- */
 const MCP_SERVER = "Composio", MCP_TOOL = "COMPOSIO_MULTI_EXECUTE_TOOL";
@@ -1817,6 +1817,25 @@ const refresh = { busy: false, note: "", bad: false };
 const MCP_WORDS = { unavailable: "This page cannot reach Composio here", not_granted: "Allow connectors for this page first", not_in_manifest: "Connector access was declined for this page", approval_required: "Composio needs your OK: press Refresh again", needs_reauth: "Reconnect Composio in claude.ai Settings, Connectors", server_not_connected: "Add Composio in claude.ai Settings, Connectors", server_unavailable: "Composio did not answer, try again", tool_error: "Composio reported an error" };
 const refreshable = a => a.composioAccountId && (a.platform === "instagram" || a.platform === "youtube");
 function ago(iso) { const m = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 6e4)); return m < 1 ? "just now" : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; }
+/* ---------- v33 reach signals (28 Nov): the three rates Instagram ranks on, each against the account's own median ---------- */
+function signalCards(posts) {
+  const rate = (m, k) => (m[k] != null && m.reach > 0) ? m[k] / m.reach : null;
+  const rows = posts.filter(p => p.metrics && p.metrics.reach > 0).map(p => ({ p, send: rate(p.metrics, "shares"), like: rate(p.metrics, "likes"), watch: p.metrics.avgWatchSec ?? null, skip: p.metrics.skipRate ?? null }));
+  const med = a => { const v = a.filter(x => x != null && x > 0).sort((x, y) => x - y); return v.length >= 3 ? (v.length % 2 ? v[(v.length - 1) / 2] : (v[v.length / 2 - 1] + v[v.length / 2]) / 2) : null; };
+  const m = { send: med(rows.map(r => r.send)), like: med(rows.map(r => r.like)), watch: med(rows.map(r => r.watch)), skip: med(rows.map(r => r.skip)) };
+  rows.forEach(r => { const xs = ["send", "like", "watch"].map(k => (r[k] != null && m[k]) ? r[k] / m[k] : null).filter(x => x != null); r.mean = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null; });
+  return { rows: rows.filter(r => r.mean != null).sort((a, b) => b.mean - a.mean), m };
+}
+function signalsHtml(ids) {
+  const posts = [...state.posts.filter(p => p.status === "posted"), ...state.archive.filter(d => ids.has(d.accountId)).flatMap(d => (d.posts || []).map(p => ({ ...p, accountId: d.accountId })))].filter(p => ids.has(p.accountId));
+  const seen = new Set(), uniq = posts.filter(p => { const k = p.platformPostId || p.id; if (seen.has(k)) return false; seen.add(k); return true; });
+  const { rows, m } = signalCards(uniq);
+  if (rows.length < 3) return "";
+  const pc = v => v == null ? "–" : (v * 100).toFixed(1) + "%";
+  const head = `<p class="gnote">Your middle (median) post: ${pc(m.send)} shares per reach · ${pc(m.like)} likes per reach${m.watch != null ? ` · ${m.watch.toFixed(1)} s average watch` : ""}${m.skip != null ? ` · ${Math.round(m.skip)}% leave in the first 3 s` : ""}. Shares per reach is the closest number to sends.</p>`;
+  const line = r => `<div class="heater-row"><div class="mini-main"><div class="meta"><span class="tier t-P1">${r.mean.toFixed(1)}x your median</span><span>${pc(r.send)} shares</span><span>${pc(r.like)} likes</span>${r.watch != null ? `<span>${r.watch.toFixed(1)} s watch</span>` : ""}${r.skip != null ? `<span>${Math.round(r.skip)}% skip</span>` : ""}</div><b>${esc((r.p.title || r.p.caption || "").slice(0, 76))}</b></div></div>`;
+  return `<div class="list" style="margin-top:4px">${band("Reach signals: best posts by what Instagram ranks", Math.min(5, rows.length), "var(--ok)")}${head}${rows.slice(0, 5).map(line).join("")}</div>`;
+}
 function growthHtml() {
   const body = growthBody();
   if (mode === "showcase" || !db) return body;
@@ -1843,6 +1862,8 @@ async function pullAccount(a, mcp, day, yday) {
     add("INSTAGRAM_GET_USER_INSIGHTS", { ig_user_id: "me", metric: ["follower_count"], period: "day", metric_type: "time_series", since: span[0], until: isoDay(new Date(Date.parse(day) + 864e5)) }, { t: "gain" });
     for (const d of span) add("INSTAGRAM_GET_USER_INSIGHTS", { ig_user_id: "me", metric: IG_DAY, period: "day", metric_type: "total_value", since: dayStart(d), until: Math.min(dayStart(d) + 86400, Math.floor(Date.now() / 1000)) }, { t: "day", d });
     for (const p of mine) add("INSTAGRAM_GET_IG_MEDIA_INSIGHTS", { ig_media_id: p.platformPostId, metric: ["views", "reach", "likes", "comments", "saved", "shares"] }, { t: "media", id: p.id });
+    // reel-only numbers go in their own call: a carousel refuses them and would lose its other numbers
+    for (const p of mine.filter(p => p.format === "reel")) add("INSTAGRAM_GET_IG_MEDIA_INSIGHTS", { ig_media_id: p.platformPostId, metric: ["ig_reels_avg_watch_time", "reels_skip_rate"] }, { t: "reel", id: p.id });
   } else {
     add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: span[0], endDate: day, metrics: "views,likes,comments,shares,subscribersGained,subscribersLost", dimensions: "day" }, { t: "ytday" });
     if (mine.length) add("YOUTUBE_QUERY_ANALYTICS", { ids: "channel==MINE", startDate: day.slice(0, 4) + "-01-01", endDate: day, metrics: "views,likes,comments,shares", dimensions: "video", sort: "-views", maxResults: 50 }, { t: "ytvideo" });
@@ -1855,7 +1876,7 @@ async function pullAccount(a, mcp, day, yday) {
     if (m.t === "info") followers = o.data?.followers_count ?? null;
     else if (m.t === "gain") { gainsOk = true; for (const v of o.data?.data?.[0]?.values || []) gains[String(v.end_time).slice(0, 10)] = v.value ?? 0; }
     else if (m.t === "day") { const x = {}; for (const r of o.data?.data || []) x[r.name] = r.total_value?.value ?? null; days[m.d] = x; }
-    else if (m.t === "media") { const x = {}; for (const r of o.data?.data || []) x[r.name] = r.values?.[0]?.value ?? null; ig[m.id] = x; }
+    else if (m.t === "media" || m.t === "reel") { const x = {}; for (const r of o.data?.data || []) x[r.name] = r.values?.[0]?.value ?? null; ig[m.id] = { ...(ig[m.id] || {}), ...x }; }
     else if (m.t === "ytday" || m.t === "ytvideo") {
       const rows = o.data?.rows || [], hdr = (o.data?.columnHeaders || []).map(h => h.name), g = (r, n) => r[hdr.indexOf(n)] ?? null;
       if (m.t === "ytvideo") yt = { hdr, rows };
@@ -1897,7 +1918,9 @@ async function refreshNumbers() {
         }
         for (const p of r.mine) {
           let m = null;
-          if (a.platform === "instagram" && r.ig[p.id]) { const x = r.ig[p.id]; m = { views: x.views ?? null, reach: x.reach ?? null, likes: x.likes ?? null, comments: x.comments ?? null, saves: x.saved ?? null, shares: x.shares ?? null }; }
+          if (a.platform === "instagram" && r.ig[p.id]) { const x = r.ig[p.id]; m = { views: x.views ?? null, reach: x.reach ?? null, likes: x.likes ?? null, comments: x.comments ?? null, saves: x.saved ?? null, shares: x.shares ?? null };
+            if (x.ig_reels_avg_watch_time != null) m.avgWatchSec = Math.round(x.ig_reels_avg_watch_time / 100) / 10; // API gives milliseconds
+            if (x.reels_skip_rate != null) m.skipRate = x.reels_skip_rate; }
           else if (r.yt) { const row = r.yt.rows.find(x => x[0] === p.platformPostId), h = n => row ? (row[r.yt.hdr.indexOf(n)] ?? null) : null; if (row) m = { views: h("views"), reach: null, likes: h("likes"), comments: h("comments"), saves: null, shares: h("shares") }; }
           if (m) await db.doc(`posts/${p.id}`).update({ metrics: { ...m, checkedAt: nowIso() } });
         }

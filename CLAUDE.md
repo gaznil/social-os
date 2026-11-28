@@ -317,6 +317,19 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 
 - **28 Nov 2026: RADAR BATCH 1 of 4 DONE (reels 1-24 of the 96 saved links).** Method that works (free): yt-dlp (no cookie flag; plain `yt-dlp` works) -> video+caption; local Whisper small on ffmpeg-piped audio (faster-whisper's own decoder is broken with av 19, so audio goes in as a numpy array; ffmpeg is NOT on the bash PATH, add the WinGet Gyan folder); 3 Sonnet agents read ~8 reels each; 2 Sonnet agents verify real tool names/prices/licences + better alternatives; Claude scores (`score-radar`) and writes. Cards saved to dashboard `inspirations` (status scored/merged, `toolCheck` line), files in `private/research/radar/`. Script used: scratchpad build1.py/mkwrites.py (rebuild from this note if lost). **Next: batch 2 = reels 25-48** (sorted by createdAt), then 3, 4; ask the user the questions at the END of each batch only. Still pending from the 23 Nov asks: own-posts archive (Composio) + clash check against it (only the 22 old posts are known so far).
 
+- **28 Nov 2026: REACH DESIGN BUILT (user yes; additive, nothing replaced).** Algorithm facts checked: top signals = watch time,
+  likes per reach, sends per reach (trade press quoting Mosseri, Jan 2025; metrics confirmed in Meta API docs). Instagram said (Jun 2024,
+  via Social Media Today, not on a live IG page) it won't recommend content that explicitly asks for shares/comments/tags and reels over 90 s
+  -> NO spoken send-asks; send trigger is built into content. Built: `results.py` `signal_rates`/`scorecard` + CLI `scorecard` (heaters keep
+  old shape + add `signalMultiples`; 3 new tests; 5 old deepdive tests fail only for lack of ffmpeg, same before my change), RULES.md "Reach design",
+  sos-create step 2b (`scripts.reach` = sendTrigger/retentionDevice/saveReason), sos-results (reel-only watch-time call, scorecard), sos-research
+  (likes/comments per view display), docs/DATA.md (`archive/{accountId}` doc, metrics `avgWatchSec`/`skipRate`). Dashboard **v33 (artifact version 35)**:
+  "Reach signals" box under Growth + Refresh pulls watch time/skip in a separate reel-only call. Units verified with a real read: watch time = ms,
+  skip rate = %. Own 50 posts archived (`private/accounts/ig-ai-tools/archive/`, db `archive/ig-ai-tools`) + `reach-baseline.md`: reels with skip rate under 50%
+  reached ~14x more people (median 92.8K vs 6.5K at 60%+). **Not done:** keyword-comment CTA risk left as is (user's call); Approve/Plan screens do not show
+  `scripts.reach` yet; the dashboard Refresh reel call is untested on a real press; reel length unknown so no watch %; **X trending is NOT fetched**
+  (no X source in sos-research; free route unverified) and Apify popular-reels broad lane first runs 29 Nov 6 AM. Radar saved links (~96) still unread.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
