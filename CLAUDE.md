@@ -330,6 +330,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   `scripts.reach` yet; the dashboard Refresh reel call is untested on a real press; reel length unknown so no watch %; **X trending is NOT fetched**
   (no X source in sos-research; free route unverified) and Apify popular-reels broad lane first runs 29 Nov 6 AM. Radar saved links (~96) still unread.
 
+- **28 Nov 2026 (user answers after batch 1):** KEEP EVERYTHING; only prioritise by score, remove an idea only if there is truly no way to make it (unverified tool names get found first; overpromising claims get corrected honestly in our version; clashes with the user's own posts get a new angle). Questions go to the user once at the END of each batch. **Batch 2 (reels 25-48) is already downloaded + transcribed** (`private/research/radar/`, 34 transcripts in total; the rest are carousels/failed fetches to check). **Resume in a new chat with: "continue social os radar batch 2".** Steps: run the same pipeline on batch 2 (agents read, agents verify tools, score, save to `inspirations`), commit, then ask the end-of-batch questions.
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.

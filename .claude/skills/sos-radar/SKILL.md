@@ -38,3 +38,5 @@ The user's pasted links are hand-picked, not all viral. Some went viral, some ar
 - Group same-topic links into ONE idea card (keep every source URL; the best one leads). Mark the rest `status: "merged"` with `mergedInto`.
 - Carousels: read the slides (images) + caption; no transcript needed.
 - Process in batches of about 20-25 per chat; save after each batch.
+- Keep everything (user, 28 Nov): never drop a saved link; low score = low priority only. Remove only when no version can be made. Unverified tool name -> find it; false claim -> correct it in our version; clash with own post -> new angle. Ask the user once at the END of each batch (not per reel).
+- Batch pipeline (works, free): yt-dlp download -> local Whisper on ffmpeg-piped numpy audio -> Sonnet agents read ~8 each -> Sonnet agents verify tools + alternatives -> `score-radar` -> ArtifactData batch update.
