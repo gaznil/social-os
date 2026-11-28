@@ -191,8 +191,7 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   browser ffmpeg for simple edits, Composio cloud sandbox for ffmpeg, a VS Code session as worker. Plan if resumed: test button first, Run log strip, Pause-everything button.
   **Nothing to build until the user says.** YouTube account `yt-ai-tools` is connected; the user posts Shorts by hand meanwhile.
 
-- **2 Nov 2026:** Apify free credit is USED UP for this billing cycle ($0.0006 left; search-scraper run refused). Until it
-  resets, research uses free sources only: last30days (needs `LAST30DAYS_ALLOW_ENGINE_PLAN=1 ... --auto-resolve` when run
+- **2 Nov 2026 (OUTDATED, fixed 28 Nov):** Apify free credit was used up that cycle. The cycle reset 17 Nov (now $5, ends 16 Dec; checked live 28 Nov: $0.0017 used). Never trust this line: check `users/me/limits` live (see sos-research). Free sources still used: last30days (needs `LAST30DAYS_ALLOW_ENGINE_PLAN=1 ... --auto-resolve` when run
   inside Claude Code), Firecrawl, Agent Reach. Used today for the explainer page's first topic (Prompt Guy project).
 
 - **8 Nov 2026: STORY FORMATS + NEW MAIN IDEA (user notes, discussing, not built yet).** Kallaway 10 story formats in
@@ -307,6 +306,14 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
 - **23 Nov 2026: v32 PUBLISHED (artifact version 34, user ask).** Every text box grows with its text (max 60% of screen); "Your angle" is now a box with no length limit; Radar URL box shows "N links found"; typed text is kept on the phone (auto-save on every key + when switching apps + a Save button), cleared after Add to Radar; Radar account = tick one or more accounts (`inspirations.accountIds`). Radar cards show the idea (`title` + new `concept`) instead of the raw URL; unread ones say "Not read yet". sos-radar + docs/DATA.md updated. Checked at 390 px in Playwright (no errors). **Next:** run sos-radar on the ~21 pasted reels so cards show their ideas (Apify credit may be used up; check first).
 
 - **23 Nov 2026: USER ASKS, NEXT BUILD (nothing started; user's weekly limit near):** (1) fetch ALL the user's posted reels + numbers (Composio Instagram, free) and save them; keep saving every new post; give improvement advice from them. (2) Read the ~96 radar links in batches of 20-25 (rules in sos-radar "User's saved links": topic over views, merge same-topic duplicates, carousels = slides, old/low-view still OK). (3) Compare each radar idea with the user's own posts: flag "already posted" / clash, or suggest a fresh angle. (4) Tool reels: research better / newer / free / official alternatives so our version is more helpful. (5) Improve every time, but ASK the user before any big change (idea, tool, style). Radar reading needs the PC (deepdive + ElevenLabs/whisper); the cloud run can't watch video.
+
+- **28 Nov 2026: BROAD-REACH LANE + APIFY SKIP FIXED (user yes in chat).** Found: the 28 Nov cloud run never tried Apify (it
+  trusted the stale 2 Nov line). Routine prompt `trig_01MUBE3T8MeXRUThWfz4XDbP` rewritten: Apify allowed, caps $0.20/run
+  ($0.30 Sunday), 4 keywords x 15 popular reels (`apify/instagram-search-scraper` `popular`, $0.0027/result), weekly scan of
+  broad accounts, "would a non-tech person need this this week?" filter, "Claude can do this" frame. Keywords + idea bank:
+  `private/accounts/ig-ai-tools/broad-keywords.md`. sos-research step 2 updated. **Not done, needs checking first:** the
+  follower gate (Porotta `create_automation` follow check? Meta rules on comment-and-follow asks?). **Next:** read the
+  29 Nov run log (RemoteTrigger get_run_log) to confirm Apify ran and what it cost.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
