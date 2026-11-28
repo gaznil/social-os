@@ -661,6 +661,7 @@ mark.ph { background: color-mix(in srgb, var(--warn) 16%, transparent); color: v
 .qstate.bad { color: var(--bad); background: color-mix(in srgb, var(--bad) 10%, transparent); }
 .rd-bg { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(20px); animation: fade .25s; }
 .rd { width: min(720px, 100%); max-height: calc(100dvh - 32px); background: var(--surface); border-radius: 24px; box-shadow: 0 0 0 1px var(--line), 0 40px 100px -30px rgba(20,16,60,.45); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; overflow: hidden; animation: rise .3s cubic-bezier(.2,.8,.2,1); }
+.rd-bg.noanim, .rd-bg.noanim .rd { animation: none; }
 .rd-head, .sheet .rd-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px 14px 24px; border-bottom: 1px solid var(--line); background: var(--surface); }
 .sheet .rd-head { position: sticky; top: -24px; z-index: 2; margin: -24px -24px 0; border-radius: 24px 24px 0 0; }
 .rd-count { font: 500 12.5px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -1561,7 +1562,7 @@ function openItemSheet(ref, id, fb = null, nav = null) {
     if (s && s.status === "draft") acts = `<button class="btn primary" data-bs="approve-script">Approve script</button><button class="btn" data-bs="ask">${ask ? "Send changes" : "Ask changes"}</button>${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}`;
     else if (s && s.status === "changes") acts = `${pill("waiting", "Changes asked · Claude is rewriting")}${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}`;
     else if (s) acts = `${pill("done", SCRIPT_STATE[s.status] || s.status)}${reel ? `<button class="btn" data-bs="tele">Teleprompter</button>` : ""}${s.postIds?.length ? `<button class="btn" data-bs="approve-tab">${s.postIds.length} posts in Approve</button>` : ""}`;
-    else if (ref === "options" && o) acts = o.status === "new" ? `<button class="btn primary" data-bs="picked" ${dead ? "disabled" : ""}>Approve this idea</button><button class="btn" data-bs="dropped">Drop</button>` : pill(o.status === "picked" ? "waiting" : "dropped", o.status === "picked" ? "Approved · Claude is writing the script" : "Dropped");
+    else if (ref === "options" && o) acts = o.status === "new" ? (dead ? `<span class="muted" style="flex-basis:100%">Its news window has passed, but you can still approve it.</span><button class="btn primary" data-bs="picked-ever">Approve anyway</button>` : `<button class="btn primary" data-bs="picked">Approve this idea</button>`) + `<button class="btn" data-bs="dropped">Drop</button>` : pill(o.status === "picked" ? "waiting" : "dropped", o.status === "picked" ? "Approved · Claude is writing the script" : "Dropped");
     else if (ref === "inspirations" && ins) acts = dead || ins.tier === "expired" ? `<button class="btn primary" data-bs="remake">Remake as evergreen</button><button class="btn" data-bs="skipped">Skip</button>` : ["new", "scored"].includes(ins.status) ? `<button class="btn primary" data-bs="script">Write the script</button><button class="btn" data-bs="skipped">Skip</button>` : pill(ins.status === "script" ? "waiting" : "done", ins.status === "script" ? "Claude is writing the script" : ins.status === "scripted" ? "Script ready in Plan" : ins.status);
     const navHead = nav ? `<div class="rd-head"><span class="rd-count">${nav.i + 1} of ${nav.keys.length}</span><div class="rd-nav"><button class="rd-btn" data-bs="nav" data-dir="-1" aria-label="Previous" ${nav.i ? "" : "disabled"}>‹</button><button class="rd-btn" data-bs="nav" data-dir="1" aria-label="Next" ${nav.i < nav.keys.length - 1 ? "" : "disabled"}>›</button><button class="rd-btn" data-sheet="close" aria-label="Close">×</button></div></div>` : "";
     el.innerHTML = `<div class="sheet wide" role="dialog" aria-modal="true" aria-label="${esc(d.title || "Idea")}">${navHead}
@@ -1579,7 +1580,7 @@ function openItemSheet(ref, id, fb = null, nav = null) {
     const sl = e.target.closest("[data-sl]"); if (sl) { lang = sl.dataset.sl; if (s) ui.lang[s.id] = lang; const sc = el.querySelector(".sheet")?.scrollTop || 0; paint(); el.querySelector(".sheet").scrollTop = sc; return; }
     const b = e.target.closest("[data-bs]"); if (!b) return;
     const a = b.dataset.bs;
-    if (["approve-script", "picked", "script", "remake"].includes(a) && Date.now() - shownAt < 700) return;
+    if (["approve-script", "picked", "picked-ever", "script", "remake"].includes(a) && Date.now() - shownAt < 700) return;
     if (a === "tele") { closeSheet(); openTeleprompter(s); return; }
     if (a === "approve-tab") { closeSheet(); tab = "approve"; store.set("sos.tab3", tab); lastKey = ""; render(); window.scrollTo(0, 0); return; }
     if (!db) return showToast("Sign in to claude.ai to save.");
@@ -1596,6 +1597,7 @@ function openItemSheet(ref, id, fb = null, nav = null) {
         showToast("Script approved. Claude makes every platform version next.");
       } else if (a === "ask") { await db.doc(`scripts/${s.id}`).update({ status: "changes", note, updatedAt: nowIso() }); showToast("Sent. Claude rewrites it."); }
       else if (a === "picked" || a === "dropped") { await db.doc(`options/${o.id}`).update({ status: a, updatedAt: nowIso() }); showToast(a === "picked" ? "Approved. Claude writes the script next." : "Dropped"); }
+      else if (a === "picked-ever") { await db.doc(`options/${o.id}`).update({ status: "picked", shelfLife: "evergreen", expiresAt: null, updatedAt: nowIso() }); showToast("Approved. Claude writes the script next."); }
       else if (a === "remake") { await db.doc(`inspirations/${ins.id}`).update({ shelfLife: "evergreen", expiresAt: null, tier: "P2", status: "script", updatedAt: nowIso() }); showToast("Queued as evergreen. Claude writes the script next."); }
       else { await db.doc(`inspirations/${ins.id}`).update({ status: a, updatedAt: nowIso() }); showToast(a === "script" ? "Approved. Claude writes the script next." : "Skipped"); }
       done();
@@ -2095,7 +2097,7 @@ function band(title, count, colorVar = "var(--ink)") {
 function rdOpen() { return !!document.querySelector("#view .rd-bg"); }
 function apList() { return [...state.posts.filter(p => p.status === "failed").sort(byTime), ...state.posts.filter(p => p.status === "waiting").sort(byTime)]; }
 function calList() { return state.posts.filter(p => p.plannedAt && p.status !== "rejected").sort(byTime); }
-function rdReset() { ui.draftAsk = null; ui.editingPost = null; ui.confirmNow = null; ui.confirmExpired = null; }
+function rdReset() { ui.swapOpen = false; ui.draftAsk = null; ui.editingPost = null; ui.confirmNow = null; ui.confirmExpired = null; }
 function rdClose() { if (tab === "approve") ui.apPick = null; else ui.calPick = null; rdReset(); lastKey = ""; render(); }
 function rdStep(dir) {
   const list = tab === "approve" ? apList() : calList(), cur = tab === "approve" ? ui.apPick : ui.calPick;
@@ -2549,19 +2551,32 @@ function viewMonth() {
     ${ui.calTab === "month" ? `<div class="row"><button class="btn" data-mon="-1" aria-label="Previous month">‹</button><button class="btn" data-mon="0">Today</button><button class="btn" data-mon="1" aria-label="Next month">›</button></div>` : ""}
   </div>`;
   const cl = calList(), ci = sp ? cl.findIndex(p => p.id === sp.id) : -1;
-  const panel = sp && ci >= 0 ? rdShell(sp.id, ci, cl.length, `${postMeta(sp)}<h2>${esc(sp.title || (sp.caption || "").split("\n")[0] || "Untitled")}</h2>${renderPostBody(sp)}${metricsBar(sp.metrics)}
+  const movable = p => ["draft", "waiting", "approved"].includes(p.status);
+  const swapList = sp && ui.swapOpen ? state.posts.filter(p => p.id !== sp.id && p.accountId === sp.accountId && movable(p)).sort((a, b) => (a.plannedAt ? 1 : 0) - (b.plannedAt ? 1 : 0) || byTime(a, b)) : [];
+  const swapBox = sp && ui.swapOpen ? `<div class="bs-sec"><span class="label">Pick what goes in this slot instead</span>
+      <p class="bs-note">From the queue: this post goes back to the queue. From another day: the two swap days.</p>
+      ${swapList.length ? `<div class="qlist">${swapList.map(p => `<button class="qcard" data-swap-pick="${esc(p.id)}"><div class="q-row"><div class="meta">${plat(p.platform)}<span>${esc(p.format)}</span>${pill(p.status)}</div><span class="qstate${p.plannedAt ? "" : " ok"}">${p.plannedAt ? esc(fmtTime(p.plannedAt)) : "In queue"}</span></div><p class="q-title clamp2">${esc(p.title || (p.caption || "").split("\n")[0] || "Untitled")}</p></button>`).join("")}</div>`
+        : `<p class="muted" style="margin:0">Nothing else ready for this account yet. Tap New options and Claude writes some.</p>`}</div>` : "";
+  const panel = sp && ci >= 0 ? rdShell(sp.id, ci, cl.length, `${postMeta(sp)}<h2>${esc(sp.title || (sp.caption || "").split("\n")[0] || "Untitled")}</h2>${swapBox}${renderPostBody(sp)}${metricsBar(sp.metrics)}
       ${sp.status !== "posted" ? `<div class="field"><label class="label" for="resched-dt">Move to another time (India)</label><div class="row"><input class="field-in" style="flex:1" id="resched-dt" type="datetime-local" value="${esc(toLocalInput(sp.plannedAt))}"><button class="btn" data-resched="${esc(sp.id)}">Save time</button></div></div>` : ""}`,
     `<div class="row">
       ${canMove(sp.status, "rejected") ? `<button class="btn ghost danger" data-swap="remove">Remove</button>` : ""}
       ${sp.status !== "posted" ? `<button class="btn ghost" data-swap="own">Use my own</button><button class="btn ghost" data-swap="options">New options</button>` : ""}
+      ${movable(sp) ? `<button class="btn ghost" data-to-queue="${esc(sp.id)}">Back to queue</button><button class="btn${ui.swapOpen ? "" : " primary"}" data-swap-open>${ui.swapOpen ? "Cancel swap" : "Swap"}</button>` : ""}
       ${MANUAL[sp.platform] && sp.status !== "posted" ? `<button class="btn" data-copy="${esc(sp.id)}">Copy text</button><a class="btn" href="${MANUAL[sp.platform]}" target="_blank" rel="noopener">Open ${esc(PLATFORMS[sp.platform])}</a>${sp.status === "approved" ? `<button class="btn primary" data-mark-posted="${esc(sp.id)}">Mark posted</button>` : ""}` : ""}
       ${sp.permalink ? `<a class="btn primary" href="${esc(sp.permalink)}" target="_blank" rel="noopener">Open live</a>` : ""}
     </div>`) : "";
   const head = `<div class="page-head"><div><h2>Calendar</h2><p>Tap a post to read it, move it, or swap it.</p></div></div>`;
   if (ui.calTab === "list") return `${head}${sub}${panel}${viewCalendarList()}`;
   if (ui.calTab === "grid") return `${head}${sub}${panel}${viewGrid34()}`;
+  const queue = state.posts.filter(p => !p.plannedAt && movable(p)).sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+  const queueHtml = `<section class="list">${band("Queue · ready, not on a day yet", queue.length, "var(--accent)")}
+    ${queue.length ? `<div class="qlist">${queue.map(p => `<div class="qcard" style="cursor:default"><div class="q-row"><div class="meta">${plat(p.platform)}<span>${esc(accountLabel(p.accountId))}</span><span>${esc(p.format)}</span>${pill(p.status)}</div></div>
+      <p class="q-title clamp2">${esc(p.title || (p.caption || "").split("\n")[0] || "Untitled")}</p>
+      <div class="row"><input class="field-in" style="flex:1;min-width:0" id="q-dt-${esc(p.id)}" type="datetime-local" aria-label="Day and time"><button class="btn" data-q-place="${esc(p.id)}">Put on this day</button></div></div>`).join("")}</div>`
+      : `<p class="muted" style="margin:0">Empty. Posts you swap out land here, ready to put on another day.</p>`}</section>`;
   return `${head}${sub}<h3>${esc(title)}</h3>
-    <div class="month">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => `<div class="mhead">${d}</div>`).join("")}${cells}</div>${panel}`;
+    <div class="month">${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => `<div class="mhead">${d}</div>`).join("")}${cells}</div>${queueHtml}${panel}`;
 }
 
 const VIEWS = { plan: viewPlan, wall: viewWall, approve: viewApprove, calendar: viewMonth, accounts: viewAccounts, studio: viewStudio };
@@ -2607,6 +2622,7 @@ function render(dataChanged) {
   const rb = $("#view .rd-body"), keepRd = rb ? [rb.closest(".rd")?.dataset.id, rb.scrollTop] : null;
   $("#view").innerHTML = html + VIEWS[tab]();
   const nrd = $("#view .rd"); if (nrd && keepRd && nrd.dataset.id === keepRd[0]) nrd.querySelector(".rd-body").scrollTop = keepRd[1];
+  if (nrd && keepRd) nrd.parentElement.classList.add("noanim"); // already open: no fade on refresh or arrows
   document.documentElement.classList.toggle("locked", !!nrd || !!sheet || !!tele || !!document.querySelector(".voice:not(.mini)"));
   for (const [id, v] of keep) { const el = document.getElementById(id); if (el) el.value = v; }
   restoreDrafts();
@@ -2636,6 +2652,33 @@ document.addEventListener("click", async e => {
   const t = e.target.closest("button, a"); if (!t || t.closest(".sheet-bg")) return;
   if ("sideToggle" in t.dataset) { toggleSide(); return; }
   if (t.dataset.rdNav) { rdStep(+t.dataset.rdNav); return; }
+  if ("swapOpen" in t.dataset) { ui.swapOpen = !ui.swapOpen; lastKey = ""; render(); return; }
+  if ((t.dataset.swapPick || t.dataset.toQueue || t.dataset.qPlace) && !db) return showToast("Sign in to claude.ai to save.");
+  if (t.dataset.swapPick) {
+    const cur = state.posts.find(x => x.id === ui.calPick), pick = state.posts.find(x => x.id === t.dataset.swapPick); if (!cur || !pick) return;
+    t.disabled = true;
+    try {
+      await db.doc(`posts/${pick.id}`).update({ plannedAt: cur.plannedAt, updatedAt: nowIso() });
+      await db.doc(`posts/${cur.id}`).update({ plannedAt: pick.plannedAt || null, updatedAt: nowIso() });
+      showToast(pick.plannedAt ? "Swapped days." : "Swapped. The old post is back in the queue.");
+      ui.calPick = pick.id; rdReset(); lastKey = ""; render();
+    } catch (err) { t.disabled = false; showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.toQueue) {
+    t.disabled = true;
+    try { await db.doc(`posts/${t.dataset.toQueue}`).update({ plannedAt: null, updatedAt: nowIso() }); showToast("Moved to the queue. It won't post until you put it on a day.");
+      ui.calPick = null; rdReset(); lastKey = ""; render(); }
+    catch (err) { t.disabled = false; showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
+  if (t.dataset.qPlace) {
+    const val = $(`#q-dt-${CSS.escape(t.dataset.qPlace)}`)?.value; if (!val) return showToast("Pick a day and time first.");
+    t.disabled = true;
+    try { await db.doc(`posts/${t.dataset.qPlace}`).update({ plannedAt: val + ":00+05:30", updatedAt: nowIso() }); showToast("Put on the calendar."); }
+    catch (err) { t.disabled = false; showToast(`Couldn't save: ${err.code || "error"}.`); }
+    return;
+  }
   if ("accPanel" in t.dataset) { ui.accPanel = t.dataset.accPanel || null; lastKey = ""; render(); window.scrollTo(0, 0); return; }
   if ("planNew" in t.dataset) { ui.planNew = !(ui.planNew ?? !!store.get("sos.draft.door-topic", "")); lastKey = ""; render(); if (ui.planNew) $("#door-topic")?.focus(); return; }
   if ("radarAdd" in t.dataset) { ui.radarAdd = !(ui.radarAdd ?? !!store.get("sos.draft.radar-urls", "")); lastKey = ""; render(); if (ui.radarAdd) $("#radar-urls")?.focus(); return; }
@@ -2779,7 +2822,7 @@ document.addEventListener("click", async e => {
   }
   if (t.dataset.lang) { ui.lang[t.dataset.id] = t.dataset.lang; lastKey = ""; render(); return; }
   if (t.dataset.mon) { ui.monthOff = t.dataset.mon === "0" ? 0 : ui.monthOff + +t.dataset.mon; lastKey = ""; render(); return; }
-  if (t.dataset.slot) { ui.calPick = t.dataset.slot; lastKey = ""; render(); return; }
+  if (t.dataset.slot) { ui.calPick = t.dataset.slot; rdReset(); lastKey = ""; render(); return; }
   if (t.dataset.htype) {
     document.querySelectorAll("[data-htype]").forEach(b => b.setAttribute("aria-pressed", String(b === t)));
     ui.htype = t.dataset.htype; filterHooks(); return;

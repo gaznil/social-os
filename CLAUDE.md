@@ -347,6 +347,10 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   asks for the note on the first tap. Checked in Playwright at 390 px (Showcase): every popup opens, arrows/keys/Escape work, no errors,
   no sideways scroll. Not checked by the user yet; writes were not live-tested (Showcase can't write), they use the same handlers as before.
   Safety: approve-type taps are ignored for 0.7 s after a new item slides in (stops a double tap approving the next post). Version 37.
+- **28 Nov 2026: v35 (artifact version 38, user asks).** (1) Expired ideas: "Approve anyway" (sets status picked, shelfLife evergreen,
+  expiresAt null), user rule: expired never blocks approval. (2) Calendar: post popup has **Swap** (pick a ready post of the same account:
+  from the queue = old post goes back to the queue; from another day = the two swap days) and **Back to queue**; under the month grid a
+  **Queue** list (posts with `plannedAt` null, never published) with "Put on this day". Popup no longer re-fades on every data refresh.
 
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
