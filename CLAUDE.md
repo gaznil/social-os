@@ -315,6 +315,8 @@ The user's screen is a Claude artifact dashboard (`dashboard/`). Claude Code is 
   follower gate (Porotta `create_automation` follow check? Meta rules on comment-and-follow asks?). **Next:** read the
   29 Nov run log (RemoteTrigger get_run_log) to confirm Apify ran and what it cost.
 
+- **28 Nov 2026: RADAR BATCH 1 of 4 DONE (reels 1-24 of the 96 saved links).** Method that works (free): yt-dlp (no cookie flag; plain `yt-dlp` works) -> video+caption; local Whisper small on ffmpeg-piped audio (faster-whisper's own decoder is broken with av 19, so audio goes in as a numpy array; ffmpeg is NOT on the bash PATH, add the WinGet Gyan folder); 3 Sonnet agents read ~8 reels each; 2 Sonnet agents verify real tool names/prices/licences + better alternatives; Claude scores (`score-radar`) and writes. Cards saved to dashboard `inspirations` (status scored/merged, `toolCheck` line), files in `private/research/radar/`. Script used: scratchpad build1.py/mkwrites.py (rebuild from this note if lost). **Next: batch 2 = reels 25-48** (sorted by createdAt), then 3, 4; ask the user the questions at the END of each batch only. Still pending from the 23 Nov asks: own-posts archive (Composio) + clash check against it (only the 22 old posts are known so far).
+
 ## 3. WHERE THINGS LIVE
 - This folder: `C:\Projects\social-os` = github.com/gaznil/social-os (PUBLIC).
 - `private\` = github.com/gaznil/social-os-private (PRIVATE), its own git repo, ignored by this one.
